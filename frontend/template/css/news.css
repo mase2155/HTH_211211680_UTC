@@ -37,7 +37,7 @@
 }
 
 .breadcrumbSeparator {
-  margin: 0 10px;
+  margin: 0 0.6rem;
   color: #333333;
   font-size: 1rem;
 }
@@ -52,9 +52,9 @@
 
 .postItem {
   display: flex;
-  gap: 30px;
+  gap: 2rem;
   background-color: #ffffff;
-  padding: 20px;
+  padding: 1.2rem;
   align-items: flex-start;
 }
 
@@ -69,8 +69,11 @@
   height: auto;
   display: block;
   border-radius: 0.4rem;
+  transition: transform 0.5s ease;
 }
-
+.postThumbnail img:hover{
+    transform: scale(1.1); 
+}
 
 .postDetails {
   flex: 1;
@@ -107,18 +110,18 @@
   font-size: 1rem;
   color: #444444;
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin-bottom: 1.2rem;
 }
 
 
 .readMoreBtn {
   display: inline-block;
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   border: 1px solid #dddddd;
-  border-radius: 4px;
+  border-radius: 0.4rem;
   color: #333333;
   background-color: #f8f9fa;
-  font-size: 13px;
+  font-size: 1rem;
   text-decoration: none;
   transition: all 0.2s ease;
 }
