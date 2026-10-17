@@ -1,0 +1,130 @@
+Đề tài: Xây dựng website đặt sân thể thao trực tuyến và quản lý lịch sân
+Công nghệ: ReactJS + Vite | Node.js + Express.js | SQL Server | REST API | JWT | bcrypt
+
+project-root/
+├── README.md
+├── .gitignore
+│
+├── database/                              # Chương 3.3 – thiết kế CSDL SQL Server
+│   ├── schema.sql                         # Tạo bảng: Users, FieldTypes, Fields, TimeSlots, Prices, Bookings
+│   └── seed.sql                           # Dữ liệu mẫu: loại sân (bóng đá, cầu lông, tennis, pickleball)
+│
+├── backend/                               # Chương 4.1 – Node.js + Express.js + SQL Server
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── db.js                      # Kết nối SQL Server (chuỗi kết nối từ biến môi trường)
+│   │   ├── controllers/                   # Nhận Request/Response, gọi Service
+│   │   │   ├── authController.js          # Đăng ký, đăng nhập, đăng xuất
+│   │   │   ├── userController.js          # Thông tin cá nhân; Admin CRUD người dùng
+│   │   │   ├── fieldTypeController.js     # Quản lý loại sân
+│   │   │   ├── fieldController.js         # Quản lý sân; tìm kiếm/lọc sân
+│   │   │   ├── timeSlotController.js      # Quản lý khung giờ hoạt động
+│   │   │   ├── priceController.js         # Quản lý giá thuê sân
+│   │   │   ├── bookingController.js       # Đặt sân, lịch sử, hủy đơn, quản lý đơn
+│   │   │   └── statsController.js         # Thống kê số đơn, doanh thu theo ngày/tháng
+│   │   ├── services/                      # Logic nghiệp vụ
+│   │   │   ├── authService.js             # JWT, bcrypt
+│   │   │   ├── fieldService.js            # Lọc theo tên, loại sân, ngày, khung giờ, khoảng giá
+│   │   │   ├── bookingService.js          # Kiểm tra khung giờ trống, chống đặt trùng lịch, tính tiền
+│   │   │   └── statsService.js            # Tổng hợp đơn đặt sân và doanh thu (phục vụ biểu đồ)
+│   │   ├── routes/                        # RESTful API
+│   │   │   ├── authRoutes.js              # /api/auth
+│   │   │   ├── userRoutes.js              # /api/users
+│   │   │   ├── fieldTypeRoutes.js         # /api/field-types
+│   │   │   ├── fieldRoutes.js             # /api/fields
+│   │   │   ├── timeSlotRoutes.js          # /api/time-slots
+│   │   │   ├── priceRoutes.js             # /api/prices
+│   │   │   ├── bookingRoutes.js           # /api/bookings
+│   │   │   └── statsRoutes.js             # /api/stats
+│   │   ├── middlewares/
+│   │   │   ├── authMiddleware.js          # Xác thực JWT
+│   │   │   └── roleMiddleware.js          # Phân quyền Admin / Khách hàng
+│   │   ├── models/                        # Câu lệnh SQL (driver mssql)
+│   │   │   ├── userModel.js
+│   │   │   ├── fieldTypeModel.js
+│   │   │   ├── fieldModel.js
+│   │   │   ├── timeSlotModel.js
+│   │   │   ├── priceModel.js
+│   │   │   └── bookingModel.js
+│   │   ├── utils/
+│   │   │   ├── hash.js                    # Mã hóa mật khẩu bcrypt
+│   │   │   ├── jwt.js                     # Tạo và kiểm tra token JWT
+│   │   │   └── datetime.js                # Xử lý ngày giờ, kiểm tra hạn hủy đơn
+│   │   └── index.js                       # Khởi chạy Express, gắn routes
+│   ├── uploads/                           # Hình ảnh sân do quản trị viên tải lên
+│   ├── .env.example                       # Mẫu biến môi trường (không chứa secret thật)
+│   ├── .env                               # Chuỗi kết nối SQL Server, JWT secret (không commit)
+│   └── package.json
+│
+├── frontend/                              # Chương 4.2 – ReactJS + Vite, giao diện responsive
+    ├── public/                            # File tĩnh (logo, favicon)
+    ├── src/
+    │   ├── assets/                        # Hình ảnh, icon, CSS chung
+    │   ├── components/                    # Component dùng chung
+    │   │   ├── Navbar.jsx
+    │   │   ├── Footer.jsx
+    │   │   ├── Modal.jsx
+    │   │   └── charts/                    # Biểu đồ thống kê doanh thu, số đơn (Admin)
+    │   ├── layouts/
+    │   │   ├── ClientLayout.jsx           # Bố cục trang khách hàng
+    │   │   └── AdminLayout.jsx            # Bố cục trang quản trị
+    │   ├── pages/
+    │   │   ├── client/                    # Chương 4.2.1 – giao diện khách hàng
+    │   │   │   ├── Home.jsx               # Trang chủ
+    │   │   │   ├── SearchFields.jsx       # Tìm kiếm, lọc sân
+    │   │   │   ├── FieldDetail.jsx        # Chi tiết sân (ảnh, mô tả, giá, địa chỉ)
+    │   │   │   ├── FieldSchedule.jsx      # Lịch sân theo ngày (trống / đã đặt)
+    │   │   │   ├── Booking.jsx            # Đặt sân trực tuyến
+    │   │   │   ├── Payment.jsx            # Thanh toán mô phỏng hoặc thanh toán khi đến sân
+    │   │   │   ├── BookingHistory.jsx     # Lịch sử đặt sân, hủy đơn (khi chưa đến giờ sử dụng)
+    │   │   │   ├── Profile.jsx            # Quản lý thông tin cá nhân
+    │   │   │   ├── Login.jsx
+    │   │   │   └── Register.jsx
+    │   │   └── admin/                     # Chương 4.2.2 – giao diện quản trị viên
+    │   │       ├── Dashboard.jsx          # Chương 4.2.3 – thống kê đơn hàng, biểu đồ doanh thu
+    │   │       ├── UserManagement.jsx     # CRUD người dùng
+    │   │       ├── FieldTypeManagement.jsx
+    │   │       ├── FieldManagement.jsx
+    │   │       ├── TimeSlotManagement.jsx
+    │   │       ├── PriceManagement.jsx
+    │   │       └── BookingManagement.jsx  # Theo dõi đơn, hạn chế trùng lịch
+    │   ├── services/                      # Gọi REST API (axios)
+    │   │   ├── authService.js
+    │   │   ├── fieldService.js
+    │   │   ├── bookingService.js
+    │   │   └── statsService.js
+    │   ├── contexts/
+    │   │   └── AuthContext.jsx            # Trạng thái đăng nhập toàn cục
+    │   ├── utils/
+    │   │   └── format.js                  # Định dạng tiền tệ, ngày giờ
+    │   ├── App.jsx                        # Router: route khách hàng, route Admin (bảo vệ bằng JWT)
+    │   └── main.jsx                       # Entry point Vite
+    ├── index.html
+    ├── package.json
+    └── vite.config.js
+│
+├── postman/                               # Chương 5 – kiểm thử API bằng Postman (làm SAU khi xong backend)
+│   ├── SportBooking.postman_collection.json
+│   │                                      # Collection: Auth, Fields, Bookings, Admin CRUD, Stats
+│   └── SportBooking.postman_environment.json
+│                                          # Biến: baseUrl, accessToken, userId, fieldId, bookingId
+│
+└── docs/                                  # Tài liệu kiểm thử đưa vào báo cáo chương 5
+    └── test-cases.md                      # 5.2.1 Tìm kiếm/lọc sân
+                                           # 5.2.2 Trùng khung giờ; hủy đơn quá hạn
+                                           # 5.2.3 Độ chính xác biểu đồ thống kê
+
+Thứ tự thực hiện (bám kế hoạch đề cương):
+1. Code backend + CSDL + frontend (Chương 4)  ← đang làm
+2. Kiểm thử Postman + kịch bản giao diện     ← bước tiếp theo khi code xong
+3. Tích hợp, sửa lỗi, chạy ổn định local      ← “hoàn thiện hệ thống”
+
+Ghi chú về “triển khai” trong đề cương:
+- Chương 4 tên “Xây dựng và triển khai hệ thống” nghĩa là VIẾT và CHẠY được
+  Backend API, kết nối SQL Server, giao diện React — không bắt buộc thuê host.
+- Công cụ trong đề cương: VS Code, SSMS, Postman, Figma, Draw.io, Git/GitLab.
+  Không yêu cầu deploy Vercel/Azure/Render.
+- Kế hoạch mục 6: “Tích hợp, kiểm thử và hoàn thiện” = chạy local, test, sửa lỗi.
+- Hướng phát triển (Chương 6.3): cổng thanh toán thật, email… là mở rộng sau,
+  không thuộc phạm vi bắt buộc hiện tại.
+- Chỉ cần host online nếu giáo viên hướng dẫn yêu cầu thêm khi bảo vệ.
