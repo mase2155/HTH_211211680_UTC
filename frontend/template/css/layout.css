@@ -47,8 +47,8 @@ header {
     z-index: 9999;
 }
 
-header .header-logo img {
-    width: 25%;
+header .header-logo a img {
+    width: 4rem;
 }
 
 header .header-logo {
