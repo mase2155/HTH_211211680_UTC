@@ -1,0 +1,72 @@
+.features-wrapper {
+    background-color: #f8f9fa; 
+}
+
+.feature-card {
+    background-color: #ffffff;
+    border: 0.0625rem solid #eef2f5;          
+    border-radius: 0.75rem;                
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05); 
+    height: 100%;                        
+    cursor: pointer;
+    
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-0.5rem);         
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12); 
+    border-color: #e0e6ed;
+}
+
+.icon-circle {
+    width: 4.6875rem;
+    height: 4.6875rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: #ffffff;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover .icon-circle {
+    transform: scale(1.08);              
+}
+
+.icon-support {
+    background-color: #3bbbf5; 
+}
+
+.icon-admin {
+    background-color: #ff764a; 
+}
+
+.icon-speed {
+    background-color: #2e3e50; 
+}
+
+.icon-design {
+    background-color: #88db9f; 
+}
+
+.icon-offer {
+    background-color: #f15243; 
+}
+
+.icon-saving {
+    background-color: #8ce1fc; 
+}
+
+.feature-title {
+    color: #2b2b2b;
+    font-size: 1.1rem;
+    letter-spacing: 0.0125rem;
+}
+
+.feature-desc {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #6c757d;
+}
