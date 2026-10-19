@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Lịch Sân Bóng Đá Trực Tuyến</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- File CSS riêng -->
+    <link rel="stylesheet" href="../css/test.css">
+</head>
+<body>
+
+    <div class="booking-page-wrapper py-5">
+        <div class="container">
+            
+            <!-- TIÊU ĐỀ TRANG -->
+            <div class="text-center mb-5">
+                <h1 class="page-title fw-bold">HỆ THỐNG ĐẶT LỊCH SÂN BÓNG TRỰC TUYẾN</h1>
+                <p class="page-subtitle text-muted">Điền thông tin đặt sân phía dưới hoặc tra cứu tình trạng sân trống theo khung giờ thực tế</p>
+            </div>
+
+            <!-- PHẦN 1: FORM ĐIỀN THÔNG TIN ĐẶT SÂN -->
+            <div class="booking-form-card p-4 p-md-5 mb-5">
+                <h3 class="form-section-title fw-bold mb-4">
+                    <i class="fa-solid fa-file-pen me-2"></i> Phiếu Đặt Sân Trực Tuyến
+                </h3>
+                
+                <form>
+                    <div class="row g-3">
+                        <!-- Họ và tên -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Họ và tên khách hàng</label>
+                            <input type="text" class="form-control" placeholder="Nhập họ và tên..." required>
+                        </div>
+                        
+                        <!-- Số điện thoại -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Số điện thoại liên hệ</label>
+                            <input type="tel" class="form-control" placeholder="Nhập số điện thoại..." required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Địa chỉ Email</label>
+                            <input type="email" class="form-control" placeholder="Nhập email nhận xác nhận...">
+                        </div>
+
+                        <!-- Chọn Loại Sân -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Loại sân</label>
+                            <select class="form-select" required>
+                                <option value="" selected disabled>-- Chọn loại sân --</option>
+                                <option value="sân 5">Sân 5 người</option>
+                                <option value="sân 7">Sân 7 người</option>
+                                <option value="sân 11">Sân 11 người</option>
+                            </select>
+                        </div>
+
+                        <!-- Chọn Sân Cụ Thể -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Chọn sân số</label>
+                            <select class="form-select" required>
+                                <option value="" selected disabled>-- Chọn sân cụ thể --</option>
+                                <option value="sân 1">Sân số 01</option>
+                                <option value="sân 2">Sân số 02</option>
+                                <option value="sân 3">Sân số 03</option>
+                                <option value="sân 4">Sân số 04</option>
+                            </select>
+                        </div>
+
+                        <!-- Ngày đặt sân -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Ngày đá</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+
+                        <!-- Khung giờ -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Khung giờ</label>
+                            <select class="form-select" required>
+                                <option value="" selected disabled>-- Chọn khung giờ --</option>
+                                <option value="06:00 - 07:30">06:00 - 07:30</option>
+                                <option value="16:00 - 17:30">16:00 - 17:30</option>
+                                <option value="17:30 - 19:00">17:30 - 19:00 (Giờ vàng)</option>
+                                <option value="19:00 - 20:30">19:00 - 20:30 (Giờ vàng)</option>
+                                <option value="20:30 - 22:00">20:30 - 22:00</option>
+                            </select>
+                        </div>
+
+                        <!-- Ghi chú -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Yêu cầu / Ghi chú thêm</label>
+                            <textarea class="form-control" rows="2" placeholder="Ví dụ: Thuê thêm bóng, trọng tài, nước uống..."></textarea>
+                        </div>
+
+                        <!-- Nút Submit -->
+                        <div class="col-12 text-end mt-4">
+                            <button type="submit" class="btn btn-submit-booking px-5 py-2 fw-bold text-white">
+                                <i class="fa-solid fa-check-circle me-2"></i> Gửi Yêu Cầu Đặt Sân
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- PHẦN 2: BẢNG TRẠNG THÁI SÂN TRONG NGÀY -->
+            <div class="status-board-card p-4 p-md-5">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                    <div>
+                        <h3 class="form-section-title fw-bold mb-1">
+                            <i class="fa-solid fa-calendar-days me-2"></i> Trạng Thái Sân Trực Tuyến Trong Ngày
+                        </h3>
+                        <p class="text-muted mb-0">Cập nhật lịch trống / đã đặt theo thời gian thực</p>
+                    </div>
+                    <!-- Chú thích trạng thái -->
+                    <div class="legend-box d-flex gap-3 mt-3 mt-md-0">
+                        <span class="badge-status available"><i class="fa-solid fa-circle me-1"></i> Còn trống</span>
+                        <span class="badge-status booked"><i class="fa-solid fa-circle me-1"></i> Đã đặt</span>
+                        <span class="badge-status maintenance"><i class="fa-solid fa-circle me-1"></i> Bảo trì</span>
+                    </div>
+                </div>
+
+                <!-- Bảng trạng thái -->
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center align-middle custom-status-table">
+                        <thead>
+                            <tr>
+                                <th>Khung Giờ</th>
+                                <th>Sân 01 (Sân 7)</th>
+                                <th>Sân 02 (Sân 7)</th>
+                                <th>Sân 03 (Sân 5)</th>
+                                <th>Sân 04 (Sân 5)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-semibold">06:00 - 07:30</td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                                <td><span class="slot-status slot-maintenance">Bảo trì</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">07:30 - 09:00</td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">16:00 - 17:30</td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">17:30 - 19:00</td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">19:00 - 20:30</td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                                <td><span class="slot-status slot-booked">Đã đặt</span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">20:30 - 22:00</td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                                <td><span class="slot-status slot-available">Còn trống</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

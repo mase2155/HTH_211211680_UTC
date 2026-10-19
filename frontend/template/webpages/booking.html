@@ -14,6 +14,7 @@
             rel="stylesheet"
             integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
             crossorigin="anonymous">
+        
     </head>
     <body>
         <header>
@@ -25,7 +26,9 @@
                             class="container-fluid d-flex justify-content-between">
                             <div
                                 class="header-logo">
-                               <a href="homepage.html"><img src="../img/layout/logo.jfif" alt="logo"></a>
+                                <a href="homepage.html"><img
+                                        src="../img/layout/logo.jfif"
+                                        alt="logo"></a>
                             </div>
                             <button class="navbar-toggler" type="button"
                                 data-bs-toggle="collapse"
@@ -78,12 +81,103 @@
             </div>
         </header>
         <main>
-            
+            <section class="booking-form">
+                <div class="content-form">
+                    <div class="booking-form-card container p-4 p-md-5 mb-5">
+                    <h3 class="form-section-title mb-4">
+                        <i class="fa-solid fa-file-pen me-2"></i> Phiếu Đặt Sân
+                        Trực Tuyến
+                    </h3>
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Họ và tên
+                                    khách hàng</label>
+                                <input type="text" class="form-control"
+                                    placeholder="Nhập họ và tên..." required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Số điện
+                                    thoại liên hệ</label>
+                                <input type="tel" class="form-control"
+                                    placeholder="Nhập số điện thoại..."
+                                    required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Địa chỉ
+                                    Email</label>
+                                <input type="email" class="form-control"
+                                    placeholder="Nhập email nhận xác nhận...">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Loại
+                                    sân</label>
+                                <select class="form-select" required>
+                                    <option value selected disabled>-- Chọn loại
+                                        sân --</option>
+                                    <option value="sân 5">Bóng Đá</option>
+                                    <option value="sân 7">PickleBall</option>
+                                    <option value="sân 11">Tennis</option>
+                                    <option value="sân 11">Cầu Lông</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Chọn sân
+                                    số</label>
+                                <select class="form-select" required>
+                                    <option value selected disabled>-- Chọn sân
+                                        cụ thể --</option>
+                                    <option value="sân 1">Sân số 01</option>
+                                    <option value="sân 2">Sân số 02</option>
+                                    <option value="sân 3">Sân số 03</option>
+                                    <option value="sân 4">Sân số 04</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Ngày
+                                    đá</label>
+                                <input type="date" class="form-control"
+                                    required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Khung
+                                    giờ</label>
+                                <select class="form-select" required>
+                                    <option value selected disabled>-- Chọn
+                                        khung giờ --</option>
+                                    <option value="06:00 - 07:30">06:00 -
+                                        07:30</option>
+                                    <option value="16:00 - 17:30">16:00 -
+                                        17:30</option>
+                                    <option value="17:30 - 19:00">17:30 - 19:00
+                                        (Giờ vàng)</option>
+                                    <option value="19:00 - 20:30">19:00 - 20:30
+                                        (Giờ vàng)</option>
+                                    <option value="20:30 - 22:00">20:30 -
+                                        22:00</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Yêu cầu /
+                                    Ghi chú thêm</label>
+                                <textarea class="form-control" rows="2"
+                                    placeholder="Ví dụ: Thuê thêm bóng, trọng tài, nước uống..."></textarea>
+                            </div>
+                            <div class="col-12 text-end mt-4">
+                                <button type="submit"
+                                    class="btn-submit-booking px-5 py-2 ">
+                                    <i
+                                        class="fa-solid fa-check-circle me-2"></i>
+                                    Gửi Yêu Cầu Đặt Sân
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </section>
         </main>
-        <aside>
-
-        </aside>
-       <footer class="info-company">
+        <footer class="info-company">
             <div class="container">
                 <div class="contact">
                     <div><h3>Thông Tin Chung</h3></div>
@@ -97,7 +191,8 @@
                         <a href="#">dev.hung.utc@gmail.com</a>
                     </div>
                     <div class="phoneAndMail">
-                        <i class="fa-solid fa-location-dot"></i> Số 132 Phố Cầu Giấy, Nghĩa Đô , Hà Nội
+                        <i class="fa-solid fa-location-dot"></i> Số 132 Phố Cầu
+                        Giấy, Nghĩa Đô , Hà Nội
                     </div>
                 </div>
                 <div class="about-us-footer">
@@ -128,7 +223,9 @@
         </footer>
         <section id="caption">
             <div class="author">
-                <p>Created by <span>Hung Mase | <a href="https://www.facebook.com/hungmaseco2k5"> FB : Lê Đình Hùng</a></span></p>
+                <p>Created by <span>Hung Mase | <a
+                            href="https://www.facebook.com/hungmaseco2k5"> FB :
+                            Lê Đình Hùng</a></span></p>
             </div>
         </section>
     </body>
