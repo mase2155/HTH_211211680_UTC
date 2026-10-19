@@ -2,7 +2,7 @@
 
 Đồ án cử nhân CNTT — Hà Thế Hưng (211211680).
 
-Công nghệ: ReactJS + Vite, Node.js + Express.js, SQL Server, REST API, JWT, bcrypt.
+Công nghệ: ReactJS + Vite, Node.js + Express.js, SQL Server, REST API
 
 ## Cấu trúc
 
