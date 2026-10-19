@@ -23,4 +23,3 @@ npm install
 npm run dev
 ```
 
-Logic nghiệp vụ sẽ được bổ sung theo từng giai đoạn. Hiện tại các API/trang trả về khung chưa triển khai (HTTP 501 hoặc trang placeholder).
