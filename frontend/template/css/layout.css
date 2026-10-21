@@ -48,13 +48,15 @@ header {
 }
 header .navbar-nav a{
     color: white;
+    padding-right: 10rem;
 }
 header .header-logo a img {
     width: 4rem;
 }
 
 header .header-logo {
-    width: 20rem;
+    width: 4.1rem;
+    padding-left: 17rem;
 }
 
 header .nav-item a {
@@ -91,6 +93,22 @@ header .nav-item:last-child a::after {
     left: auto;
     right: 0;
     width: 70%;
+}
+.user-login-icon a {
+    display: inline-block;
+    padding: 8px; 
+    color: white; 
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.user-login-icon i{
+    font-size: 2.5rem;
+}
+
+.user-login-icon a:hover {
+    color: #2c2e53; 
+    transform: scale(1.3); 
 }
 
 /* Footer  */
