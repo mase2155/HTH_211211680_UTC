@@ -96,7 +96,7 @@ header .nav-item:last-child a::after {
 }
 .user-login-icon a {
     display: inline-block;
-    padding: 8px; 
+    padding: 0.5rem; 
     color: white; 
     text-decoration: none;
     cursor: pointer;
