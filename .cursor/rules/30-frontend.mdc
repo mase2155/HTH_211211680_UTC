@@ -1,0 +1,40 @@
+---
+description: Kiến trúc và chuẩn code Frontend (ReactJS + Vite)
+globs: frontend/**/*.{js,jsx,css}
+alwaysApply: false
+---
+
+# Frontend – tổ chức theo feature
+
+- `src/app/`: khởi tạo App, router, providers (QueryClient, Auth, Toaster).
+- `src/api/httpClient.js`: **instance axios duy nhất** (baseURL `/api/v1`, gắn Bearer token, tự refresh khi 401).
+- `src/features/<feature>/`: `<feature>.api.js` (gọi API), `<feature>.hooks.js` (TanStack Query), `components/`.
+- `src/pages/client|admin|auth/`: trang ghép từ components + hooks; không gọi axios trực tiếp.
+- `src/components/`: UI dùng chung (layout, Modal, Pagination, Spinner...), không chứa logic nghiệp vụ.
+- `src/constants/`, `src/utils/`, `src/styles/`, `src/assets/`.
+
+## Bắt buộc
+- Function component + hooks. Tên component PascalCase, file `.jsx`; hook bắt đầu bằng `use`.
+- Dữ liệu từ server chỉ qua TanStack Query (`useQuery`/`useMutation`); query key lấy từ `constants/queryKeys.js`.
+  Sau mutation phải `invalidateQueries` các key liên quan.
+- Form dùng React Hook Form + Zod; thông báo lỗi tiếng Việt; disable nút khi đang submit.
+- Hiển thị lỗi bằng `getErrorMessage(error)` (đọc `error.response.data.error.message`) + toast.
+- Mọi trang có đủ 3 trạng thái: đang tải, lỗi, rỗng.
+- Access token chỉ giữ trong bộ nhớ (`api/tokenStore.js`); KHÔNG lưu token vào localStorage.
+- Route cần đăng nhập/quyền Admin bọc bằng `ProtectedRoute`. Ẩn nút trên UI không thay thế kiểm tra ở backend.
+- Định dạng tiền/ngày bằng `utils/format.js` (VND, `DD/MM/YYYY`).
+
+```jsx
+// ❌ SAI – gọi axios trong page, tự quản lý loading
+useEffect(() => { axios.get('/api/v1/fields').then((r) => setFields(r.data)); }, []);
+
+// ✅ ĐÚNG
+const { data, isLoading, isError } = useFields(filters); // features/fields/fields.hooks.js
+```
+
+## Giao diện
+- Giữ nhận diện từ `frontend/template/` (màu chính `#bd945f`, phụ `#2c2e53`, font Gotham, Bootstrap 5, Font Awesome).
+- `frontend/template/` chỉ là bản thiết kế tham khảo: KHÔNG import, KHÔNG sửa; tài nguyên dùng thật nằm trong `src/assets/`.
+- CSS của từng trang phải bọc trong class gốc của trang (vd `.home-page`, `.booking-page`, `.auth-page`)
+  để không ghi đè lẫn nhau. Không viết selector toàn cục cho `body`, `.container`, `*` trong CSS trang.
+- Responsive tối thiểu cho mobile (≥ 360px), tablet, desktop.

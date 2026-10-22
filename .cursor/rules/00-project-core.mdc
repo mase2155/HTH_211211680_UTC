@@ -1,0 +1,37 @@
+---
+description: Quy tắc cốt lõi của dự án đặt sân thể thao – luôn áp dụng
+alwaysApply: true
+---
+
+# Dự án: Website đặt sân thể thao trực tuyến và quản lý lịch sân
+
+Nguồn sự thật về kiến trúc: `STRUCTURE.md`. Không tạo thư mục/file ngoài cây đã mô tả
+khi chưa cập nhật `STRUCTURE.md` trước.
+
+## Công nghệ (cố định, không thay thế)
+- Ngôn ngữ: JavaScript (không TypeScript), HTML5, CSS3.
+- Frontend: ReactJS 18 + Vite, React Router, Axios, TanStack Query, React Hook Form + Zod, Bootstrap 5.
+- Backend: Node.js + Express 5 (CommonJS `require`), driver `mssql`.
+- CSDL: SQL Server. API: RESTful, prefix `/api/v1`. Xác thực: JWT. Mật khẩu: bcrypt.
+- KHÔNG thêm thư viện mới khi chưa được yêu cầu; nếu cần, nêu lý do và cập nhật `STRUCTURE.md`.
+
+## Nguyên tắc chung
+- Code đặt đúng tầng/thư mục; không nhét logic vào sai chỗ (xem rules backend/frontend).
+- Tên biến/hàm/file: tiếng anh ( Quy tắc đặt tên biến , hàm là camelCase ). Thông báo hiển thị cho người dùng: tiếng Việt.
+- Không hard-code secret, URL, cấu hình nghiệp vụ → dùng biến môi trường qua `backend/src/config/env.js`
+  hoặc `import.meta.env.VITE_*` ở frontend. Thêm biến mới thì cập nhật `.env.example`.
+- Không commit `.env`, `node_modules`, `uploads/*`, `dist`.
+- Không để code chết, `console.log` debug, TODO không có mô tả.
+- Mỗi thay đổi nghiệp vụ phải giữ đúng các quy tắc nghiệp vụ trong `20-business-rules.mdc`.
+
+## Hằng số nghiệp vụ dùng chung (không viết chuỗi trực tiếp)
+- Role: `Admin`, `Customer`.
+- Booking status: `Pending`, `Confirmed`, `Completed`, `Cancelled`.
+- Payment method: `Online` (thanh toán mô phỏng), `PayAtField`.
+- Payment status: `Unpaid`, `Paid`, `Refunded`.
+- Field status: `Active`, `Maintenance`, `Inactive`. Day type: `Weekday`, `Weekend`.
+
+## Thời gian
+- Múi giờ nghiệp vụ: `Asia/Ho_Chi_Minh` (biến `APP_TIMEZONE`).
+- Ngày dạng `YYYY-MM-DD`, giờ dạng `HH:mm` khi trao đổi qua API.
+- Timestamp hệ thống (CreatedAt, ExpiresAt...) lưu UTC; trả về ISO 8601.

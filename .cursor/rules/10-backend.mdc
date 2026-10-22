@@ -1,0 +1,58 @@
+---
+description: Kiến trúc và chuẩn code Backend (Node.js + Express + SQL Server)
+globs: backend/**/*.js
+alwaysApply: false
+---
+
+# Backend – kiến trúc phân tầng theo module
+
+Mỗi nghiệp vụ là 1 thư mục trong `backend/src/modules/<module>/`:
+`<name>.routes.js` → `<name>.controller.js` → `<name>.service.js` → `<name>.repository.js`,
+kèm `<name>.validation.js` (schema Zod).
+
+| Tầng | Được làm | Cấm |
+|---|---|---|
+| routes | Khai báo path, gắn `authenticate`, `authorize`, `validate`, upload | Logic nghiệp vụ, SQL |
+| controller | Lấy `req.validated` / `req.user`, gọi service, trả bằng `utils/response.js` | SQL, quy tắc nghiệp vụ |
+| service | Quy tắc nghiệp vụ, transaction, ném `AppError` | Truy cập `req`/`res`, viết SQL |
+| repository | SQL tham số hóa qua `mssql`, map cột → camelCase bằng alias | Quy tắc nghiệp vụ, ném lỗi HTTP |
+
+- Chiều phụ thuộc chỉ đi xuống. Service được gọi repository của module khác; không import controller/routes khác module.
+- Router được mount duy nhất tại `src/routes/index.js`. `app.js` dựng app, `server.js` khởi chạy + graceful shutdown.
+
+## Bắt buộc
+- Validate mọi input bằng middleware `validate({ params, query, body })`; controller chỉ đọc `req.validated.*`.
+- Lỗi nghiệp vụ: `throw new AppError(status, ERROR_CODES.X, 'Thông báo tiếng Việt')`. Không `res.status(...)` thủ công trong service.
+- Express 5 tự bắt lỗi async → không bọc try/catch chỉ để `next(err)`.
+- Response thống nhất:
+  - Thành công: `{ success: true, data, meta? }` (meta cho phân trang: `page, limit, total, totalPages`).
+  - Lỗi: `{ success: false, error: { code, message, details? } }` – chỉ do `errorHandler` sinh ra.
+- SQL luôn dùng `request.input(name, sql.Type, value)`. TUYỆT ĐỐI không nối chuỗi giá trị người dùng vào câu SQL.
+- Câu SELECT dùng alias camelCase: `f.FieldId AS id`, ngày `CONVERT(VARCHAR(10), col, 23)`, giờ `CONVERT(VARCHAR(5), col, 108)`.
+- Thao tác nhiều câu lệnh phải dùng `withTransaction(async (tx) => ...)` và truyền `tx` xuống repository.
+- Log bằng `logger`/`req.log` (pino); không `console.log`. Không log password, token.
+- Không trả `PasswordHash` hay trường nhạy cảm ra API.
+
+```js
+// ❌ SAI – controller viết SQL, nối chuỗi
+const r = await pool.request().query(`SELECT * FROM Fields WHERE Name = '${req.query.name}'`);
+
+// ✅ ĐÚNG
+// controller
+async function search(req, res) {
+  const { items, meta } = await fieldService.search(req.validated.query, req.user);
+  return ok(res, items, meta);
+}
+// repository
+request.input('keyword', sql.NVarChar(160), `%${escapeLike(keyword)}%`);
+```
+
+## Bảo mật
+- Access token JWT (15 phút) qua header `Authorization: Bearer`; refresh token ngẫu nhiên lưu hash SHA-256
+  trong bảng `RefreshTokens`, gửi bằng cookie httpOnly `sameSite=strict`, xoay vòng mỗi lần refresh.
+- Route quản trị luôn có `authenticate, authorize(ROLES.ADMIN)`.
+- Giữ `helmet`, `cors` theo `CORS_ORIGINS`, rate-limit (chặt hơn cho `/auth`), giới hạn body JSON.
+- Upload ảnh: chỉ JPG/PNG/WEBP, ≤ `UPLOAD_MAX_SIZE_MB`, tên file UUID, lưu `uploads/fields/`.
+
+## Kiểm thử
+- Test đặt trong `backend/tests/` (Jest + Supertest). Mỗi quy tắc nghiệp vụ trong service cần unit test (mock repository).

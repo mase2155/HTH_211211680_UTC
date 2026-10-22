@@ -1,0 +1,26 @@
+---
+description: Quy tắc thiết kế và thay đổi CSDL SQL Server
+globs: database/**/*.sql,backend/scripts/**/*.js,backend/src/modules/**/*.repository.js
+alwaysApply: false
+---
+
+# CSDL SQL Server
+
+- Mọi thay đổi cấu trúc bằng file migration mới: `database/migrations/NNN_mo_ta.sql` (số tăng dần, 3 chữ số).
+  KHÔNG sửa migration đã chạy/đã commit; KHÔNG `DROP TABLE` dữ liệu thật trong migration.
+- Migration được ghi nhận vào bảng `SchemaMigrations` bởi `npm run db:migrate`. Tách batch bằng dòng `GO`.
+- Dữ liệu mẫu đặt trong `database/seeds/`, phải idempotent (`WHERE NOT EXISTS`), chạy bằng `npm run db:seed`.
+  Mật khẩu mẫu không viết vào SQL; tài khoản Admin do `scripts/seed.js` tạo bằng bcrypt.
+
+## Quy ước đặt tên
+- Bảng: PascalCase số nhiều (`Bookings`), schema `dbo`. Khóa chính `<Entity>Id` INT IDENTITY.
+- Ràng buộc: `PK_`, `FK_<Bảng>_<BảngTham chiếu>`, `UQ_`, `CK_`, `DF_`; index `IX_`, unique index `UX_`.
+- Chuỗi tiếng Việt: `NVARCHAR` + literal `N'...'`. Tiền: `DECIMAL(12,0)` (VND). Ngày: `DATE`, giờ: `TIME(0)`,
+  thời điểm: `DATETIME2(0)` mặc định `SYSUTCDATETIME()`.
+- Mỗi bảng có `CreatedAt`; bảng cho phép sửa có `UpdatedAt` (repository tự set `SYSUTCDATETIME()` khi UPDATE).
+- Giá trị enum được khóa bằng `CHECK` và phải khớp hằng số trong `backend/src/constants/`.
+
+## Truy vấn
+- Phân trang: `ORDER BY ... OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY` + `COUNT(*) OVER() AS totalCount`.
+- Tìm kiếm LIKE phải escape ký tự `% _ [` trước khi truyền tham số.
+- Danh sách id truyền vào `IN (...)` bằng tham số sinh động `@id0, @id1...`, không nối chuỗi.

@@ -6,5 +6,6 @@ Công nghệ: ReactJS + Vite, Node.js + Express.js, SQL Server, REST API
 
 ## Cấu trúc
 
-Xem file `Cấu trúc project Hà Thế Hưng.txt`.
+Xem file `STRUCTURE.md` (cây thư mục, nhiệm vụ từng thành phần, tiến độ).
+Quy tắc code cho AI nằm trong `.cursor/rules/`.
 

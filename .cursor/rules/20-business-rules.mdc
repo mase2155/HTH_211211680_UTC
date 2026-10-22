@@ -1,0 +1,38 @@
+---
+description: Quy tắc nghiệp vụ đặt sân, thanh toán, hủy đơn, thống kê – áp dụng khi sửa backend hoặc luồng đặt sân
+globs: backend/src/modules/**/*.js,frontend/src/features/bookings/**,frontend/src/features/schedule/**,frontend/src/pages/**/*.jsx
+alwaysApply: false
+---
+
+# Quy tắc nghiệp vụ (backend là nơi kiểm tra cuối cùng, frontend chỉ hỗ trợ hiển thị)
+
+## Sân, khung giờ, giá
+- BR01: Khung giờ (`TimeSlots`) gắn với **loại sân**; các sân cùng loại dùng chung khung giờ.
+- BR02: Khung giờ cùng loại sân không được chồng lấn nhau. Không sửa giờ của khung đang có đơn tương lai.
+- BR03: Giá (`Prices`) theo `sân + khung giờ + loại ngày` (Thứ 7, CN = `Weekend`). Thiếu giá → không cho đặt.
+- BR04: Không xóa cứng dữ liệu đang được đơn đặt sân tham chiếu → trả `409 RESOURCE_IN_USE`, gợi ý chuyển trạng thái ngừng hoạt động.
+
+## Đặt sân
+- BR05: Ngày đặt từ hôm nay đến hôm nay + `BOOKING_MAX_DAYS_AHEAD`. Không đặt khung giờ đã bắt đầu.
+- BR06: Sân phải `Active`, loại sân đang hoạt động, khung giờ đang hoạt động và đúng loại sân, ngày đó không nằm trong `FieldClosures`.
+- BR07: **Chống trùng lịch**: 1 sân + 1 khung giờ + 1 ngày chỉ có 1 đơn chưa hủy. Đảm bảo bằng unique index
+  `UX_Bookings_ActiveSlot` + transaction; lỗi trùng → `409 SLOT_ALREADY_BOOKED`. Không chỉ kiểm tra bằng SELECT.
+- BR08: `TotalAmount` luôn do server tính từ bảng giá; bỏ qua mọi giá client gửi lên.
+- BR09: Một khách tối đa `BOOKING_MAX_PENDING_PER_USER` đơn `Pending` chưa thanh toán.
+
+## Thanh toán
+- BR10: `Online` (mô phỏng): tạo đơn `Pending/Unpaid`, giữ chỗ `BOOKING_HOLD_MINUTES` phút (`HoldExpiresAt`).
+  Thanh toán thành công → `Confirmed/Paid`. Hết hạn → job hệ thống chuyển `Cancelled`.
+- BR11: `PayAtField`: tạo đơn `Pending/Unpaid`; Admin xác nhận → `Confirmed`; Admin hoàn thành → `Completed/Paid`.
+
+## Hủy đơn & chuyển trạng thái
+- BR12: Khách chỉ hủy đơn của mình, trạng thái `Pending`/`Confirmed`, và trước giờ bắt đầu ít nhất
+  `BOOKING_CANCEL_BEFORE_MINUTES` phút. Đơn đã `Paid` khi hủy → `Refunded`.
+- BR13: Admin chuyển trạng thái theo bảng: `Pending → Confirmed | Cancelled`, `Confirmed → Completed | Cancelled`.
+  `Completed`, `Cancelled` là trạng thái cuối. Chỉ `Completed` khi khung giờ đã bắt đầu.
+- BR14: Cập nhật trạng thái dùng điều kiện `WHERE Status = @currentStatus` (chống ghi đè đồng thời);
+  0 dòng bị ảnh hưởng → `409`.
+
+## Thống kê
+- BR15: Doanh thu = tổng `TotalAmount` của đơn `PaymentStatus = Paid`, nhóm theo `BookingDate`.
+- BR16: Số đơn = đơn có `Status <> Cancelled` (kèm số đơn hủy riêng). Kỳ không có dữ liệu vẫn trả về giá trị 0.
