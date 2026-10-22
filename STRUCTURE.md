@@ -39,6 +39,7 @@ HTH_211211680_UTC/
 │   └── 40-database.mdc                # Migration, đặt tên, truy vấn SQL Server
 ├── STRUCTURE.md                       # File này
 ├── README.md                          # Giới thiệu + hướng dẫn chạy
+├── reportChap2.md                     # Chương 2 báo cáo: phân tích, use case, ERD, luồng nghiệp vụ
 ├── .gitignore
 │
 ├── database/                          # CSDL SQL Server
@@ -47,7 +48,8 @@ HTH_211211680_UTC/
 │   │   └── 002_site_content.sql       # NewsPosts, PartnerItems (tin tức & đối tác)
 │   └── seeds/
 │       ├── 001_master_data.sql        # Loại sân, khung giờ, sân, bảng giá mẫu (idempotent)
-│       └── 002_site_content.sql         # Bài tin & thẻ đối tác mẫu (idempotent)
+│       ├── 002_site_content.sql       # Bài tin & thẻ đối tác mẫu (idempotent)
+│       └── 003_admin_profile.sql      # Đồng bộ hồ sơ Admin đồ án (idempotent)
 │
 ├── backend/
 │   ├── scripts/
@@ -180,11 +182,9 @@ HTH_211211680_UTC/
 │   └── vite.config.js                 # Proxy /api, /uploads → backend
 │
 ├── postman/
-│   ├── SportBooking.postman_collection.json   # Collection kiểm thử API (Chương 5)
+│   ├── SportBooking.postman_collection.json   # Collection kiểm thử API (Chương 5) — bổ sung sau
 │   └── SportBooking.postman_environment.json  # baseUrl, accessToken, fieldId, bookingId...
-│
-└── docs/
-    ├── system-design.md               # Use case, ERD, luồng nghiệp vụ, danh sách API (cho báo cáo)
+└── docs/                              # (Giai đoạn 6) — chưa tạo thư mục
     └── test-cases.md                  # Kịch bản kiểm thử Chương 5
 ```
 
@@ -231,12 +231,12 @@ HTH_211211680_UTC/
 
 ## 5. Nhiệm vụ cần thực hiện (theo kế hoạch đề cương)
 
-### Giai đoạn 2 – Thiết kế hệ thống (20/09 – 04/10)
+### Giai đoạn 2 – Thiết kế hệ thống (20/09 – 04/10) — **100%**
 - ✅ Phân tích yêu cầu từ đề cương, chốt kiến trúc, công nghệ
-- ✅ Thiết kế CSDL `database/migrations/001_init_schema.sql`
-- ✅ Dữ liệu mẫu `database/seeds/001_master_data.sql`
+- ✅ Thiết kế CSDL `database/migrations/001_init_schema.sql`, mở rộng `002_site_content.sql`
+- ✅ Dữ liệu mẫu `database/seeds/001_master_data.sql`, `002`, `003_admin_profile.sql`
 - ✅ Rules cho AI `.cursor/rules/` + file `STRUCTURE.md`
-- ⬜ `docs/system-design.md`: Use case, ERD (Draw.io), sơ đồ luồng đặt sân / thanh toán / hủy
+- ✅ Tài liệu Chương 2 báo cáo: `reportChap2.md` (use case, ERD Mermaid, luồng đặt sân / thanh toán / hủy, kiến trúc)
 
 ### Giai đoạn 3 – Backend, RESTful API, CSDL (05/10 – 25/10)
 - ✅ `config/env.js`, `config/logger.js`, `package.json`, `.env.example`
