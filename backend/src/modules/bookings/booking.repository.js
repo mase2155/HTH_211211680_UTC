@@ -18,9 +18,9 @@ const BOOKING_COLUMNS = `
   b.Status AS status,
   b.PaymentMethod AS paymentMethod,
   b.PaymentStatus AS paymentStatus,
-  CONVERT(VARCHAR(23), b.PaidAt, 126) AS paidAt,
-  CONVERT(VARCHAR(23), b.HoldExpiresAt, 126) AS holdExpiresAt,
-  CONVERT(VARCHAR(23), b.CancelledAt, 126) AS cancelledAt,
+  CASE WHEN b.PaidAt IS NULL THEN NULL ELSE CONCAT(CONVERT(VARCHAR(23), b.PaidAt, 126), 'Z') END AS paidAt,
+  CASE WHEN b.HoldExpiresAt IS NULL THEN NULL ELSE CONCAT(CONVERT(VARCHAR(23), b.HoldExpiresAt, 126), 'Z') END AS holdExpiresAt,
+  CASE WHEN b.CancelledAt IS NULL THEN NULL ELSE CONCAT(CONVERT(VARCHAR(23), b.CancelledAt, 126), 'Z') END AS cancelledAt,
   b.CancelReason AS cancelReason,
   CONVERT(VARCHAR(23), b.CreatedAt, 126) AS createdAt
 `;

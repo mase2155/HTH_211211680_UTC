@@ -154,7 +154,7 @@ async function simulatePayment(id, user) {
   if (booking.status !== BOOKING_STATUS.PENDING || booking.paymentStatus !== PAYMENT_STATUS.UNPAID) {
     throw new AppError(409, ERROR_CODES.CONFLICT, 'Đơn không ở trạng thái chờ thanh toán');
   }
-  if (booking.holdExpiresAt && new Date(booking.holdExpiresAt) < new Date()) {
+  if (booking.holdExpiresAt && Date.parse(booking.holdExpiresAt) < Date.now()) {
     throw new AppError(409, ERROR_CODES.CONFLICT, 'Đơn đã hết thời gian giữ chỗ');
   }
   const updated = await bookingRepository.markPaid(id);

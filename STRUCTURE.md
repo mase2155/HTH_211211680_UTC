@@ -244,11 +244,11 @@ HTH_211211680_UTC/
 - 🟡 Unit test nghiệp vụ đặt sân/hủy đơn (mở rộng thêm); ESLint module mới sạch
 
 ### Giai đoạn 4 – Giao diện khách hàng (26/10 – 15/11)
-- ⬜ Cài thư viện, `app/`, `api/httpClient.js`, `tokenStore.js`, `AuthContext`, `ProtectedRoute`
-- ⬜ Chép font/ảnh từ `template/` sang `src/assets/`, chuyển CSS template sang `styles/` (bọc theo class trang)
-- ⬜ Header, Footer, ClientLayout, AuthLayout
-- ⬜ Trang chủ, Tin tức, Đối tác, Liên hệ (từ template)
-- ⬜ Đăng nhập, Đăng ký
+- ✅ Cài thư viện, `app/`, `api/httpClient.js`, `tokenStore.js`, `AuthContext`, `ProtectedRoute`
+- 🟡 Chép font/ảnh từ `template/` sang `src/assets/`, chuyển CSS template sang `styles/` (một phần trang; Tin tức/Đối tác/Liên hệ chưa full template)
+- ✅ Header, Footer, ClientLayout, AuthLayout, `main.jsx`, router lazy load, `npm run build` OK
+- 🟡 Trang chủ (banner + tính năng); Tin tức, Đối tác, Liên hệ (placeholder)
+- ✅ Đăng nhập, Đăng ký (RHF + Zod, gọi API)
 - ⬜ Tìm kiếm/lọc sân, Chi tiết sân + lịch theo ngày
 - ⬜ Đặt sân (phiếu đặt + bảng trạng thái), Thanh toán mô phỏng
 - ⬜ Lịch sử đặt sân + hủy đơn, Hồ sơ cá nhân + đổi mật khẩu

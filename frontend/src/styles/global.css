@@ -1,0 +1,39 @@
+:root {
+  --color-primary: #bd945f;
+  --color-secondary: #2c2e53;
+}
+
+body {
+  margin: 0;
+  font-family: 'Gotham-Medium', system-ui, sans-serif;
+  color: #333;
+}
+
+a {
+  text-decoration: none;
+}
+
+.nav-link.active {
+  color: var(--color-primary) !important;
+}
+
+.page-placeholder {
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.form-error-text {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.alert-auth {
+  max-width: 420px;
+  margin: 0 auto 1rem;
+}
