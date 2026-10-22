@@ -39,7 +39,8 @@ HTH_211211680_UTC/
 │   └── 40-database.mdc                # Migration, đặt tên, truy vấn SQL Server
 ├── STRUCTURE.md                       # File này
 ├── README.md                          # Giới thiệu + hướng dẫn chạy
-├── reportChap2.md                     # Chương 2 báo cáo: phân tích, use case, ERD, luồng nghiệp vụ
+├── reportChap2.md                     # Chương 2 báo cáo (nguồn Markdown)
+├── reportChap2.docx                   # Chương 2 báo cáo (Word, xuất từ .md bằng Pandoc)
 ├── .gitignore
 │
 ├── database/                          # CSDL SQL Server
@@ -108,8 +109,8 @@ HTH_211211680_UTC/
 │   │       └── index.js               # Mount toàn bộ router dưới /api/v1 + /health
 │   ├── tests/
 │   │   ├── setupEnv.js                # Biến môi trường giả cho Jest
-│   │   ├── unit/                      # Test service, utils (mock repository)
-│   │   └── integration/               # Test HTTP bằng Supertest
+│   │   ├── unit/                      # datetime, token, sql, booking.service, newsPost.service
+│   │   └── integration/               # app, auth, bookings (Supertest + CSDL)
 │   ├── uploads/fields/                # Ảnh sân do Admin tải lên (không commit)
 │   ├── .env.example
 │   ├── eslint.config.js
@@ -238,7 +239,7 @@ HTH_211211680_UTC/
 - ✅ Rules cho AI `.cursor/rules/` + file `STRUCTURE.md`
 - ✅ Tài liệu Chương 2 báo cáo: `reportChap2.md` (use case, ERD Mermaid, luồng đặt sân / thanh toán / hủy, kiến trúc)
 
-### Giai đoạn 3 – Backend, RESTful API, CSDL (05/10 – 25/10)
+### Giai đoạn 3 – Backend, RESTful API, CSDL (05/10 – 25/10) — **100%**
 - ✅ `config/env.js`, `config/logger.js`, `package.json`, `.env.example`
 - ✅ `config/database.js` (pool, transaction)
 - ✅ `constants/*`, `utils/*`, `middlewares/*`
@@ -251,8 +252,9 @@ HTH_211211680_UTC/
 - ✅ Module `prices`, `fieldClosures`
 - ✅ Module `schedule` (lịch 1 sân, bảng nhiều sân)
 - ✅ Module `bookings` (BR05–BR14) + job `expirePendingBookings`
-- ✅ Module `stats` (BR15–BR16)
-- 🟡 Unit test nghiệp vụ đặt sân/hủy đơn (mở rộng thêm); ESLint module mới sạch
+- ✅ Module `stats` (BR15–BR16), `newsPosts`, `partnerItems`
+- ✅ Test: `tests/unit/booking.service.test.js`, `newsPost.service.test.js`; integration `bookings.test.js` (409 trùng slot, hủy đơn; cần DB đã seed)
+- ✅ `npm run lint` sạch lỗi (backend)
 
 ### Giai đoạn 4 – Giao diện khách hàng (26/10 – 15/11)
 - ✅ Cài thư viện, `app/`, `api/httpClient.js`, `tokenStore.js`, `AuthContext`, `ProtectedRoute`

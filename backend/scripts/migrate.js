@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-await-in-loop -- script CLI chạy tuần tự và in tiến trình */
+/* eslint-disable no-console -- script CLI in tiến trình */
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');

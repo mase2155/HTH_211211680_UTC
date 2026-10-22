@@ -56,7 +56,6 @@ async function executeSqlScript(executor, script) {
   const batches = splitSqlBatches(script);
   for (const batch of batches) {
     const request = executor instanceof sql.Transaction ? new sql.Request(executor) : executor.request();
-    // eslint-disable-next-line no-await-in-loop -- các batch phải chạy tuần tự
     await request.batch(batch);
   }
 }
