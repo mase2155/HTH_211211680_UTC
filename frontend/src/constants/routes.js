@@ -4,6 +4,7 @@ export const ROUTES = {
   login: '/login',
   register: '/register',
   booking: '/booking',
+  payment: (bookingId) => `/payment/${bookingId}`,
   history: '/history',
   profile: '/profile',
   news: '/news',

@@ -13,10 +13,6 @@ a {
   text-decoration: none;
 }
 
-.nav-link.active {
-  color: var(--color-primary) !important;
-}
-
 .page-placeholder {
   min-height: 40vh;
   display: flex;

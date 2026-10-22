@@ -245,13 +245,13 @@ HTH_211211680_UTC/
 
 ### Giai đoạn 4 – Giao diện khách hàng (26/10 – 15/11)
 - ✅ Cài thư viện, `app/`, `api/httpClient.js`, `tokenStore.js`, `AuthContext`, `ProtectedRoute`
-- 🟡 Chép font/ảnh từ `template/` sang `src/assets/`, chuyển CSS template sang `styles/` (một phần trang; Tin tức/Đối tác/Liên hệ chưa full template)
+- ✅ Chép font/ảnh từ `template/` sang `src/assets/`, CSS trang trong `styles/pages/` (homepage, booking, news, customer/partners, contact, login, register)
 - ✅ Header, Footer, ClientLayout, AuthLayout, `main.jsx`, router lazy load, `npm run build` OK
-- 🟡 Trang chủ (banner + tính năng); Tin tức, Đối tác, Liên hệ (placeholder)
-- ✅ Đăng nhập, Đăng ký (RHF + Zod, gọi API)
-- ⬜ Tìm kiếm/lọc sân, Chi tiết sân + lịch theo ngày
-- ⬜ Đặt sân (phiếu đặt + bảng trạng thái), Thanh toán mô phỏng
-- ⬜ Lịch sử đặt sân + hủy đơn, Hồ sơ cá nhân + đổi mật khẩu
+- ✅ Trang chủ, Đặt lịch (phiếu + bảng trạng thái), Tin tức, Đối tác (`customer.html`), Liên hệ — theo `template/webpages`
+- ✅ Đăng nhập, Đăng ký (RHF + Zod, gọi API; giao diện template)
+- ✅ Tìm kiếm/lọc sân (`/search`); chi tiết sân + lịch theo ngày gộp trong luồng đặt sân
+- ✅ Đặt sân (form API + bảng trạng thái `/schedule`), thanh toán mô phỏng (`/payment/:id`)
+- ✅ Lịch sử đặt sân + hủy đơn, Hồ sơ cá nhân + đổi mật khẩu
 
 ### Giai đoạn 5 – Quản trị & thống kê (16/11 – 29/11)
 - ⬜ AdminLayout + sidebar

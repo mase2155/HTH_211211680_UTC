@@ -14,6 +14,8 @@ const PartnersPage = lazy(() => import('../pages/client/PartnersPage'));
 const ContactPage = lazy(() => import('../pages/client/ContactPage'));
 const ProfilePage = lazy(() => import('../pages/client/ProfilePage'));
 const MyBookingsPage = lazy(() => import('../pages/client/MyBookingsPage'));
+const PaymentPage = lazy(() => import('../pages/client/PaymentPage'));
+const SearchFieldsPage = lazy(() => import('../pages/client/SearchFieldsPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
 function PageLoader() {
@@ -34,6 +36,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: suspense(<HomePage />) },
       { path: ROUTES.booking.slice(1), element: suspense(<BookingPage />) },
+      { path: ROUTES.search.slice(1), element: suspense(<SearchFieldsPage />) },
       { path: ROUTES.news.slice(1), element: suspense(<NewsPage />) },
       { path: ROUTES.partners.slice(1), element: suspense(<PartnersPage />) },
       { path: ROUTES.contact.slice(1), element: suspense(<ContactPage />) },
@@ -42,6 +45,7 @@ export const router = createBrowserRouter([
         children: [
           { path: ROUTES.profile.slice(1), element: suspense(<ProfilePage />) },
           { path: ROUTES.history.slice(1), element: suspense(<MyBookingsPage />) },
+          { path: 'payment/:bookingId', element: suspense(<PaymentPage />) },
         ],
       },
     ],

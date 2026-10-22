@@ -3,17 +3,27 @@ import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../features/auth/AuthContext';
 import logo from '../../assets/images/layout/logo.jfif';
 
+const navLinkClass = ({ isActive }) => `text-uppercase nav-link${isActive ? ' active' : ''}`;
+
+const navItems = [
+  { to: ROUTES.home, label: 'Trang chủ', end: true },
+  { to: ROUTES.booking, label: 'Đặt Lịch' },
+  { to: ROUTES.news, label: 'Tin Tức' },
+  { to: ROUTES.partners, label: 'Đối Tác' },
+  { to: ROUTES.contact, label: 'Liên hệ' },
+];
+
 export default function Header() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="site-header">
+    <header>
       <div className="header-nav">
-        <nav className="navbar navbar-expand-md">
+        <nav className="navbar navbar-expand-md navbar-dark">
           <div className="container-fluid d-flex justify-content-between">
             <div className="header-logo">
               <Link to={ROUTES.home}>
-                <img src={logo} alt="Logo" />
+                <img src={logo} alt="logo" />
               </Link>
             </div>
             <button
@@ -27,47 +37,32 @@ export default function Header() {
             >
               <span className="navbar-toggler-icon" />
             </button>
-            <div className="navbar_main collapse navbar-collapse" id="navbarNavDropdown">
+            <div className="navbar_main" id="navbarNavDropdown">
               <ul className="navbar-nav text-center">
-                <li className="nav-item">
-                  <NavLink className="text-uppercase nav-link" to={ROUTES.home}>
-                    Trang chủ
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="text-uppercase nav-link" to={ROUTES.booking}>
-                    Đặt lịch
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="text-uppercase nav-link" to={ROUTES.news}>
-                    Tin tức
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="text-uppercase nav-link" to={ROUTES.partners}>
-                    Đối tác
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="text-uppercase nav-link" to={ROUTES.contact}>
-                    Liên hệ
-                  </NavLink>
-                </li>
+                {navItems.map((item) => (
+                  <li key={item.to} className="nav-item">
+                    <NavLink to={item.to} end={item.end} className={navLinkClass}>
+                      {item.label}
+                    </NavLink>
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="user-login-icon">
               {user ? (
                 <div className="dropdown">
                   <button
-                    className="btn btn-link text-white dropdown-toggle text-decoration-none"
                     type="button"
+                    className="user-login-toggle"
                     data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    title={user.fullName}
+                    aria-label="Tài khoản"
                   >
-                    <i className="fa-solid fa-user me-1" />
-                    {user.fullName}
+                    <i className="fa-solid fa-image-portrait" />
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end">
+                    <li className="dropdown-header text-truncate">{user.fullName}</li>
                     <li>
                       <Link className="dropdown-item" to={ROUTES.profile}>
                         Hồ sơ

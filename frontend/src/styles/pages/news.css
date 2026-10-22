@@ -1,0 +1,132 @@
+.all-section {
+    background-color: #f5f5f5;
+    padding-bottom: 4rem;
+}
+
+
+.breadcrumbSection {
+  width: 100%;
+  padding: 9rem 0 1.5rem 0;
+}
+
+.breadcrumbList {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+}
+
+.breadcrumbItem {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumbLink {
+  color: #1a1b5c; 
+  text-decoration: none;
+  transition: color 0.2s ease;
+  padding-left: 2rem;
+}
+
+.breadcrumbLink:hover {
+  color: #c49a6c;
+  text-decoration: none;
+}
+
+.breadcrumbSeparator {
+  margin: 0 0.6rem;
+  color: #333333;
+  font-size: 1rem;
+}
+
+.breadcrumbCurrent {
+  color: #1a1b5c;
+  cursor: default;
+}
+.main-content {
+    background-color: #ffffff;
+}
+
+.postItem {
+  display: flex;
+  gap: 2rem;
+  background-color: #ffffff;
+  padding: 1.2rem;
+  align-items: flex-start;
+}
+
+
+.postThumbnail {
+  flex: 0 0 26.5rem;
+  max-width: 100%;
+}
+
+.postThumbnail img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0.4rem;
+  transition: transform 0.5s ease;
+}
+.postThumbnail img:hover{
+    transform: scale(1.1); 
+}
+
+.postDetails {
+  flex: 1;
+}
+
+
+.postMeta {
+  font-size: 1rem;
+  color: #666666;
+  margin-bottom: 0.6rem;
+  display: flex;
+  gap: 1.2rem;
+}
+
+
+.postTitle {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.postTitle a {
+  color: #1a1b5c;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-weight: 800;
+}
+
+.postTitle a:hover {
+  color: #c49a6c;
+}
+
+
+.postExcerpt {
+  font-size: 1rem;
+  color: #444444;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+
+
+.readMoreBtn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid #dddddd;
+  border-radius: 0.4rem;
+  color: #333333;
+  background-color: #f8f9fa;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.readMoreBtn:hover {
+  background-color: #eeeeee;
+  border-color: #cccccc;
+}
