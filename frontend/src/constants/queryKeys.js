@@ -8,4 +8,9 @@ export const queryKeys = {
   scheduleBoard: (fieldTypeId, date) => ['schedule', 'board', fieldTypeId, date],
   bookingsMe: (filters) => ['bookings', 'me', filters],
   bookingDetail: (id) => ['bookings', id],
+  adminBookings: (filters) => ['admin', 'bookings', filters],
+  adminFields: (filters) => ['admin', 'fields', filters],
+  adminStatsOverview: ['admin', 'stats', 'overview'],
+  newsPosts: (filters) => ['newsPosts', filters],
+  partnerItems: (filters) => ['partnerItems', filters],
 };

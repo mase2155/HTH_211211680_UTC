@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import ProtectedRoute from '../features/auth/ProtectedRoute';
 import AuthLayout from '../layouts/AuthLayout';
@@ -17,6 +17,13 @@ const MyBookingsPage = lazy(() => import('../pages/client/MyBookingsPage'));
 const PaymentPage = lazy(() => import('../pages/client/PaymentPage'));
 const SearchFieldsPage = lazy(() => import('../pages/client/SearchFieldsPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const AdminLayout = lazy(() => import('../layouts/AdminLayout'));
+const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
+const AdminNewsPage = lazy(() => import('../pages/admin/AdminNewsPage'));
+const AdminPartnersPage = lazy(() => import('../pages/admin/AdminPartnersPage'));
+const AdminBookingsPage = lazy(() => import('../pages/admin/AdminBookingsPage'));
+const AdminFieldsPage = lazy(() => import('../pages/admin/AdminFieldsPage'));
+const AdminOrderStatusPage = lazy(() => import('../pages/admin/AdminOrderStatusPage'));
 
 function PageLoader() {
   return (
@@ -57,5 +64,24 @@ export const router = createBrowserRouter([
       { path: ROUTES.register.slice(1), element: suspense(<RegisterPage />) },
     ],
   },
+  {
+    path: ROUTES.admin,
+    element: <ProtectedRoute roles={['Admin']} />,
+    children: [
+      {
+        element: suspense(<AdminLayout />),
+        children: [
+          { index: true, element: suspense(<AdminDashboard />) },
+          { path: 'content/news', element: suspense(<AdminNewsPage />) },
+          { path: 'content/partners', element: suspense(<AdminPartnersPage />) },
+          { path: 'operations/bookings', element: suspense(<AdminBookingsPage />) },
+          { path: 'operations/fields', element: suspense(<AdminFieldsPage />) },
+          { path: 'operations/order-status', element: suspense(<AdminOrderStatusPage />) },
+        ],
+      },
+    ],
+  },
+  { path: '/admin-demo', element: <Navigate to={ROUTES.admin} replace /> },
+  { path: '/admin-demo/*', element: <Navigate to={ROUTES.admin} replace /> },
   { path: '*', element: suspense(<NotFoundPage />) },
 ]);

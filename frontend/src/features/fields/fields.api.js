@@ -11,3 +11,8 @@ export async function fetchFieldByIdApi(id) {
   const { data } = await httpClient.get(`/fields/${id}`);
   return data.data;
 }
+
+export async function updateFieldApi(id, payload) {
+  const { data } = await httpClient.patch(`/fields/${id}`, payload);
+  return data.data;
+}

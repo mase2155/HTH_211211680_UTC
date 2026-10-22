@@ -24,3 +24,13 @@ export async function cancelBookingApi(id, reason) {
   const { data } = await httpClient.patch(`/bookings/${id}/cancel`, reason ? { reason } : {});
   return data.data;
 }
+
+export async function fetchAllBookingsApi(params = {}) {
+  const { data } = await httpClient.get('/bookings', { params: { page: 1, limit: 30, ...params } });
+  return { items: data.data, meta: data.meta };
+}
+
+export async function adminUpdateBookingStatusApi(id, payload) {
+  const { data } = await httpClient.patch(`/bookings/${id}/status`, payload);
+  return data.data;
+}

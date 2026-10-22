@@ -1,7 +1,16 @@
-import { partnerCards } from '../../constants/newsPosts';
+import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '../../constants/queryKeys';
+import { fetchPartnerItemsApi } from '../../features/partnerItems/partnerItems.api';
 import '../../styles/pages/customer.css';
 
 export default function PartnersPage() {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: queryKeys.partnerItems({ public: true, active: true }),
+    queryFn: () => fetchPartnerItemsApi({ isActive: true, limit: 50 }),
+  });
+
+  const cards = data?.items ?? [];
+
   return (
     <div className="partners-page">
       <div className="all-section">
@@ -19,12 +28,16 @@ export default function PartnersPage() {
         </section>
         <section>
           <div className="container">
+            {isLoading && <p className="text-muted">Đang tải…</p>}
+            {isError && <p className="text-danger">Không tải được danh sách đối tác.</p>}
             <div className="postGrid">
-              {partnerCards.map((card) => (
+              {cards.map((card) => (
                 <div key={card.id} className="postCard">
                   <div className="cardMedia">
                     <a href="#top">
-                      <img src={card.image} alt={card.imageAlt} className="cardImage" />
+                      {card.imageUrl ? (
+                        <img src={card.imageUrl} alt={card.title} className="cardImage" />
+                      ) : null}
                     </a>
                   </div>
                   <div className="cardBody">

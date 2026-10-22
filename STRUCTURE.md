@@ -43,9 +43,11 @@ HTH_211211680_UTC/
 │
 ├── database/                          # CSDL SQL Server
 │   ├── migrations/
-│   │   └── 001_init_schema.sql        # Tạo 8 bảng, ràng buộc, index chống đặt trùng
+│   │   ├── 001_init_schema.sql        # Tạo 8 bảng, ràng buộc, index chống đặt trùng
+│   │   └── 002_site_content.sql       # NewsPosts, PartnerItems (tin tức & đối tác)
 │   └── seeds/
-│       └── 001_master_data.sql        # Loại sân, khung giờ, sân, bảng giá mẫu (idempotent)
+│       ├── 001_master_data.sql        # Loại sân, khung giờ, sân, bảng giá mẫu (idempotent)
+│       └── 002_site_content.sql         # Bài tin & thẻ đối tác mẫu (idempotent)
 │
 ├── backend/
 │   ├── scripts/
@@ -62,6 +64,7 @@ HTH_211211680_UTC/
 │   │   │   ├── roles.js               # Admin, Customer
 │   │   │   ├── booking.js             # Trạng thái đơn, thanh toán, bảng chuyển trạng thái, DayType
 │   │   │   ├── field.js               # Trạng thái sân, trạng thái ô lịch (available/booked/...)
+│   │   │   ├── content.js             # Trạng thái bài tin (Draft/Published)
 │   │   │   └── errorCodes.js          # Mã lỗi dùng chung cho API
 │   │   ├── middlewares/
 │   │   │   ├── authenticate.js        # Xác thực JWT (bắt buộc / tùy chọn)
@@ -93,7 +96,9 @@ HTH_211211680_UTC/
 │   │   │   ├── fieldClosures/         # Ngày sân nghỉ / bảo trì
 │   │   │   ├── schedule/              # Lịch sân theo ngày (1 sân) và bảng trạng thái nhiều sân
 │   │   │   ├── bookings/              # Đặt sân, chống trùng, thanh toán mô phỏng, hủy, Admin duyệt
-│   │   │   └── stats/                 # Tổng quan, doanh thu theo ngày/tháng, hiệu suất từng sân
+│   │   │   ├── stats/                 # Tổng quan, doanh thu theo ngày/tháng, hiệu suất từng sân
+│   │   │   ├── newsPosts/             # CRUD tin tức (GET public, POST/PATCH/DELETE Admin)
+│   │   │   └── partnerItems/          # CRUD đối tác hiển thị trang Khách hàng
 │   │   │       (mỗi module: *.routes.js · *.controller.js · *.service.js · *.repository.js · *.validation.js)
 │   │   ├── jobs/
 │   │   │   └── expirePendingBookings.js  # Mỗi phút hủy đơn Online quá hạn giữ chỗ
@@ -110,7 +115,7 @@ HTH_211211680_UTC/
 │
 ├── frontend/
 │   ├── template/                      # Bản thiết kế HTML/CSS gốc – CHỈ THAM KHẢO, không import
-│   ├── public/                        # favicon
+│   ├── public/                        # favicon, news/* (ảnh tin tức/đối tác phục vụ URL tĩnh)
 │   ├── src/
 │   │   ├── main.jsx                   # Entry Vite, import CSS toàn cục
 │   │   ├── app/
@@ -130,7 +135,9 @@ HTH_211211680_UTC/
 │   │   │   ├── schedule/              # ScheduleBoard (bảng trạng thái), SlotPicker
 │   │   │   ├── bookings/              # API + hooks đơn, BookingStatusBadge, BookingForm
 │   │   │   ├── users/                 # API + hooks người dùng / hồ sơ
-│   │   │   └── stats/                 # API + hooks thống kê, RevenueChart, StatCard
+│   │   │   ├── stats/                 # API + hooks thống kê, RevenueChart, StatCard
+│   │   │   ├── newsPosts/             # newsPosts.api.js
+│   │   │   └── partnerItems/          # partnerItems.api.js
 │   │   ├── components/
 │   │   │   ├── layout/                # Header, Footer, AdminSidebar
 │   │   │   └── ui/                    # Modal, ConfirmDialog, Pagination, Spinner, EmptyState, ErrorState
@@ -154,13 +161,13 @@ HTH_211211680_UTC/
 │   │   │   │   ├── LoginPage.jsx          # Template login
 │   │   │   │   └── RegisterPage.jsx       # Template register
 │   │   │   ├── admin/
-│   │   │   │   ├── DashboardPage.jsx      # Thống kê đơn, doanh thu, biểu đồ
-│   │   │   │   ├── UsersPage.jsx
-│   │   │   │   ├── FieldTypesPage.jsx
-│   │   │   │   ├── FieldsPage.jsx         # Kèm ảnh + ngày nghỉ
-│   │   │   │   ├── TimeSlotsPage.jsx
-│   │   │   │   ├── PricesPage.jsx         # Lưới giá theo sân
-│   │   │   │   └── BookingsPage.jsx       # Lọc, duyệt, hoàn thành, hủy đơn
+│   │   │   │   ├── AdminDashboard.jsx     # Tổng quan + liên kết Section 1/2
+│   │   │   │   ├── AdminNewsPage.jsx      # CRUD tin tức
+│   │   │   │   ├── AdminPartnersPage.jsx  # CRUD đối tác
+│   │   │   │   ├── AdminBookingsPage.jsx  # Lọc, duyệt, hủy, hoàn thành đơn
+│   │   │   │   ├── AdminFieldsPage.jsx    # Cập nhật trạng thái sân
+│   │   │   │   └── AdminOrderStatusPage.jsx # Workflow chuyển trạng thái
+│   │   │   │   (mở rộng sau: UsersPage, FieldTypesPage, TimeSlotsPage, PricesPage, biểu đồ doanh thu)
 │   │   │   └── NotFoundPage.jsx
 │   │   ├── constants/                 # routes.js, queryKeys.js, bookingLabels.js
 │   │   ├── utils/                     # format.js, errors.js, date.js
@@ -195,6 +202,8 @@ HTH_211211680_UTC/
 | `Prices` | Giá sân × khung giờ × loại ngày | unique (FieldId, TimeSlotId, DayType) |
 | `FieldClosures` | Ngày sân nghỉ/bảo trì | unique (FieldId, ClosedDate) |
 | `Bookings` | Đơn đặt sân | **UX_Bookings_ActiveSlot** (FieldId, TimeSlotId, BookingDate) WHERE Status ≠ Cancelled |
+| `NewsPosts` | Bài tin tức | Status ∈ {Draft, Published} |
+| `PartnerItems` | Thẻ đối tác trang khách | IsActive, SortOrder |
 
 ---
 
@@ -214,6 +223,8 @@ HTH_211211680_UTC/
 | Đơn đặt | `POST /bookings`, `GET /bookings/me`, `GET /bookings/:id`, `POST /bookings/:id/payment`, `PATCH /bookings/:id/cancel` | Customer |
 | Đơn (Admin) | `GET /bookings`, `PATCH /bookings/:id/status` | Admin |
 | Thống kê | `GET /stats/overview`, `GET /stats/revenue?groupBy=day\|month`, `GET /stats/fields` | Admin |
+| Tin tức | `GET /news-posts`, `GET /news-posts/:id` · `POST`, `PATCH /:id`, `DELETE /:id` | Public · Admin |
+| Đối tác | `GET /partner-items`, `GET /partner-items/:id` · `POST`, `PATCH /:id`, `DELETE /:id` | Public · Admin |
 | Hệ thống | `GET /health` | Public |
 
 ---
@@ -254,10 +265,11 @@ HTH_211211680_UTC/
 - ✅ Lịch sử đặt sân + hủy đơn, Hồ sơ cá nhân + đổi mật khẩu
 
 ### Giai đoạn 5 – Quản trị & thống kê (16/11 – 29/11)
-- ⬜ AdminLayout + sidebar
-- ⬜ Quản lý người dùng, loại sân, sân (ảnh, ngày nghỉ), khung giờ, bảng giá
-- ⬜ Quản lý đơn đặt sân (lọc, duyệt, hoàn thành, hủy)
-- ⬜ Dashboard: số đơn, doanh thu theo ngày/tháng, biểu đồ, hiệu suất từng sân
+- ✅ `AdminLayout` + sidebar (`/admin`, role Admin), `admin.css`
+- ✅ Section 1: CRUD tin tức & đối tác (`newsPosts`, `partnerItems`, migration `002`); trang Tin tức / Đối tác đọc API
+- ✅ Section 2: đơn đặt lịch (lọc, duyệt, hủy, hoàn thành), cập nhật trạng thái sân, workflow trạng thái đơn
+- 🟡 Dashboard tổng quan (số đơn chờ, doanh thu tổng); biểu đồ doanh thu / hiệu suất sân chưa có UI
+- ⬜ Quản lý người dùng, loại sân, khung giờ, bảng giá, upload ảnh sân đầy đủ trên admin
 
 ### Giai đoạn 6 – Tích hợp, kiểm thử, hoàn thiện (30/11 – 13/12)
 - ⬜ Postman collection đủ các nhóm API + test script lưu token/id

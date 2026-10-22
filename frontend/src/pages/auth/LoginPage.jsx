@@ -6,7 +6,6 @@ import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../features/auth/AuthContext';
 import { loginSchema } from '../../features/auth/auth.schemas';
 import { getErrorMessage } from '../../utils/errors';
-import '../../styles/pages/login.css';
 
 export default function LoginPage() {
   const { login, isAuthenticated, loginState } = useAuth();
@@ -95,7 +94,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <section id="caption">
+      <section className="auth-caption">
         <div className="author">
           <p>
             Created by{' '}

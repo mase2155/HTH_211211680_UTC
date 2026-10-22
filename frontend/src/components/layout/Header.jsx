@@ -1,7 +1,9 @@
 import { Link, NavLink } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
+import { ADMIN_PROFILE } from '../../constants/adminProfile';
 import { useAuth } from '../../features/auth/AuthContext';
 import logo from '../../assets/images/layout/logo.jfif';
+import '../../styles/account-menu.css';
 
 const navLinkClass = ({ isActive }) => `text-uppercase nav-link${isActive ? ' active' : ''}`;
 
@@ -15,6 +17,9 @@ const navItems = [
 
 export default function Header() {
   const { user, logout } = useAuth();
+  const isAdmin = user?.role === 'Admin';
+  const displayName = isAdmin ? ADMIN_PROFILE.fullName : user?.fullName;
+  const displayMeta = isAdmin ? `MSSV ${ADMIN_PROFILE.studentId}` : user?.email;
 
   return (
     <header>
@@ -56,39 +61,43 @@ export default function Header() {
                     className="user-login-toggle"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
-                    title={user.fullName}
+                    title={displayName}
                     aria-label="Tài khoản"
                   >
                     <i className="fa-solid fa-image-portrait" />
                   </button>
-                  <ul className="dropdown-menu dropdown-menu-end">
-                    <li className="dropdown-header text-truncate">{user.fullName}</li>
-                    <li>
-                      <Link className="dropdown-item" to={ROUTES.profile}>
+                  <div className="dropdown-menu dropdown-menu-end account-dropdown-menu">
+                    <div className="account-dropdown-head">
+                      <span className="account-dropdown-name">{displayName}</span>
+                      <span className="account-dropdown-meta text-truncate d-block">{displayMeta}</span>
+                      <span className="account-dropdown-role">{isAdmin ? 'Quản trị viên' : 'Khách hàng'}</span>
+                    </div>
+                    <div className="account-dropdown-body">
+                      <Link className="account-dropdown-item" to={ROUTES.profile}>
+                        <i className="fa-solid fa-id-card" />
                         Hồ sơ
                       </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item" to={ROUTES.history}>
-                        Lịch sử đặt sân
+                      <Link className="account-dropdown-item" to={ROUTES.history}>
+                        <i className="fa-solid fa-clock-rotate-left" />
+                        {isAdmin ? 'Lịch sử đặt lịch' : 'Lịch sử đặt sân'}
                       </Link>
-                    </li>
-                    {user.role === 'Admin' && (
-                      <li>
-                        <Link className="dropdown-item" to={ROUTES.admin}>
-                          Quản trị
+                      {isAdmin && (
+                        <Link className="account-dropdown-item account-dropdown-item--admin" to={ROUTES.admin}>
+                          <i className="fa-solid fa-gauge-high" />
+                          Bảng quản trị
                         </Link>
-                      </li>
-                    )}
-                    <li>
-                      <hr className="dropdown-divider" />
-                    </li>
-                    <li>
-                      <button type="button" className="dropdown-item" onClick={() => logout()}>
+                      )}
+                      <hr className="account-dropdown-divider" />
+                      <button
+                        type="button"
+                        className="account-dropdown-item account-dropdown-item--logout"
+                        onClick={() => logout()}
+                      >
+                        <i className="fa-solid fa-right-from-bracket" />
                         Đăng xuất
                       </button>
-                    </li>
-                  </ul>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <Link to={ROUTES.login} title="Đăng nhập">

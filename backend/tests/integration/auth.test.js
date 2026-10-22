@@ -1,11 +1,12 @@
 const request = require('supertest');
 const app = require('../../src/app');
+const config = require('../../src/config/env');
 
 describe('auth API', () => {
   test('đăng nhập Admin thành công', async () => {
     const res = await request(app).post('/api/v1/auth/login').send({
-      email: 'admin@sportbooking.vn',
-      password: 'Admin@123456',
+      email: config.admin.email ?? 'hathehung260923@gmail.com',
+      password: process.env.ADMIN_PASSWORD ?? 'Admin@123456',
     });
 
     expect(res.status).toBe(200);
@@ -19,7 +20,7 @@ describe('auth API', () => {
 
   test('sai mật khẩu trả INVALID_CREDENTIALS', async () => {
     const res = await request(app).post('/api/v1/auth/login').send({
-      email: 'admin@sportbooking.vn',
+      email: config.admin.email ?? 'hathehung260923@gmail.com',
       password: 'wrong-password',
     });
 

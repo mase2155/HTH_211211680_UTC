@@ -22,7 +22,7 @@ async function runSqlSeeds(pool) {
 }
 
 async function seedAdmin(pool) {
-  const { email, password, fullName } = config.admin;
+  const { email, password, fullName, phone } = config.admin;
   if (!email || !password) {
     throw new Error('Thiếu ADMIN_EMAIL hoặc ADMIN_PASSWORD trong backend/.env');
   }
@@ -37,14 +37,24 @@ async function seedAdmin(pool) {
     return;
   }
 
+  const adminRow = await pool
+    .request()
+    .query(`SELECT TOP 1 UserId FROM dbo.Users WHERE Role = N'${ROLES.ADMIN}' ORDER BY UserId`);
+
+  if (adminRow.recordset.length > 0) {
+    console.log('= Đã có tài khoản Admin khác email — cập nhật qua seed 003_admin_profile.sql');
+    return;
+  }
+
   await pool
     .request()
     .input('fullName', sql.NVarChar(100), fullName)
     .input('email', sql.NVarChar(150), email.toLowerCase())
     .input('passwordHash', sql.NVarChar(255), await hashPassword(password))
+    .input('phone', sql.NVarChar(20), phone ?? null)
     .input('role', sql.NVarChar(20), ROLES.ADMIN)
     .query(
-      'INSERT INTO dbo.Users (FullName, Email, PasswordHash, Role) VALUES (@fullName, @email, @passwordHash, @role)',
+      'INSERT INTO dbo.Users (FullName, Email, PasswordHash, Phone, Role) VALUES (@fullName, @email, @passwordHash, @phone, @role)',
     );
   console.log(`+ Đã tạo tài khoản Admin: ${email}`);
 }

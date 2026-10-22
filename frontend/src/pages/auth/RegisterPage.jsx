@@ -6,7 +6,6 @@ import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../features/auth/AuthContext';
 import { registerSchema } from '../../features/auth/auth.schemas';
 import { getErrorMessage } from '../../utils/errors';
-import '../../styles/pages/register.css';
 
 export default function RegisterPage() {
   const { register: registerUser, isAuthenticated, registerState } = useAuth();
@@ -122,7 +121,7 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
-      <section id="caption">
+      <section className="auth-caption">
         <div className="author">
           <p>
             Created by{' '}

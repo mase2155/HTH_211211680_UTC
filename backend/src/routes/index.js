@@ -12,6 +12,8 @@ const fieldRoutes = require('../modules/fields/field.routes');
 const scheduleRoutes = require('../modules/schedule/schedule.routes');
 const bookingRoutes = require('../modules/bookings/booking.routes');
 const statsRoutes = require('../modules/stats/stats.routes');
+const newsPostRoutes = require('../modules/newsPosts/newsPost.routes');
+const partnerItemRoutes = require('../modules/partnerItems/partnerItem.routes');
 
 const router = express.Router();
 
@@ -23,6 +25,8 @@ router.use('/fields', fieldRoutes);
 router.use('/schedule', scheduleRoutes);
 router.use('/bookings', bookingRoutes);
 router.use('/stats', statsRoutes);
+router.use('/news-posts', newsPostRoutes);
+router.use('/partner-items', partnerItemRoutes);
 
 router.get('/health', async (req, res) => {
   try {

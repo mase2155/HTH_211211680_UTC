@@ -47,6 +47,7 @@ const envSchema = z.object({
   ADMIN_EMAIL: z.string().email().optional(),
   ADMIN_PASSWORD: z.string().min(8, 'ADMIN_PASSWORD phải có ít nhất 8 ký tự').optional(),
   ADMIN_FULL_NAME: z.string().min(1).default('Quản trị viên'),
+  ADMIN_PHONE: z.string().max(20).optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -104,6 +105,7 @@ const config = Object.freeze({
     email: env.ADMIN_EMAIL,
     password: env.ADMIN_PASSWORD,
     fullName: env.ADMIN_FULL_NAME,
+    phone: env.ADMIN_PHONE,
   }),
 });
 
