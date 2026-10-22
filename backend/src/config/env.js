@@ -43,6 +43,10 @@ const envSchema = z.object({
 
   UPLOAD_DIR: z.string().default('uploads'),
   UPLOAD_MAX_SIZE_MB: z.coerce.number().positive().default(2),
+
+  ADMIN_EMAIL: z.string().email().optional(),
+  ADMIN_PASSWORD: z.string().min(8, 'ADMIN_PASSWORD phải có ít nhất 8 ký tự').optional(),
+  ADMIN_FULL_NAME: z.string().min(1).default('Quản trị viên'),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -95,6 +99,11 @@ const config = Object.freeze({
   upload: Object.freeze({
     rootDir: path.resolve(__dirname, '../..', env.UPLOAD_DIR),
     maxSizeBytes: Math.round(env.UPLOAD_MAX_SIZE_MB * 1024 * 1024),
+  }),
+  admin: Object.freeze({
+    email: env.ADMIN_EMAIL,
+    password: env.ADMIN_PASSWORD,
+    fullName: env.ADMIN_FULL_NAME,
   }),
 });
 

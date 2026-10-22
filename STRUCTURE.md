@@ -229,13 +229,14 @@ HTH_211211680_UTC/
 
 ### Giai đoạn 3 – Backend, RESTful API, CSDL (05/10 – 25/10)
 - ✅ `config/env.js`, `config/logger.js`, `package.json`, `.env.example`
-- ⬜ `config/database.js` (pool, transaction)
-- ⬜ `constants/*`, `utils/*`, `middlewares/*`
-- ⬜ `app.js`, `server.js`, `routes/index.js`, `/health`
-- ⬜ `scripts/migrate.js`, `scripts/seed.js` → chạy được `npm run db:migrate && npm run db:seed`
-- ⬜ Module `auth` (đăng ký, đăng nhập, refresh token xoay vòng, đăng xuất)
+- ✅ `config/database.js` (pool, transaction)
+- ✅ `constants/*`, `utils/*`, `middlewares/*`
+- ✅ `app.js`, `server.js`, `routes/index.js`, `/health`
+- ✅ `scripts/migrate.js`, `scripts/seed.js` → chạy được `npm run db:migrate && npm run db:seed`
+- ✅ Module `auth` (đăng ký, đăng nhập, refresh token xoay vòng, đăng xuất)
+- ✅ Module `fieldTypes` (CRUD cơ bản)
 - ⬜ Module `users` (hồ sơ, đổi mật khẩu, Admin quản lý + khóa tài khoản)
-- ⬜ Module `fieldTypes`, `timeSlots` (chống chồng lấn), `fields` (upload ảnh, tìm kiếm/lọc)
+- ⬜ Module `timeSlots` (chống chồng lấn), `fields` (upload ảnh, tìm kiếm/lọc)
 - ⬜ Module `prices`, `fieldClosures`
 - ⬜ Module `schedule` (lịch 1 sân, bảng nhiều sân)
 - ⬜ Module `bookings` (BR05–BR14) + job `expirePendingBookings`

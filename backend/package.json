@@ -50,6 +50,7 @@
     ],
     "setupFiles": [
       "<rootDir>/tests/setupEnv.js"
-    ]
+    ],
+    "globalTeardown": "<rootDir>/tests/globalTeardown.js"
   }
 }
