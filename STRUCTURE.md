@@ -235,13 +235,13 @@ HTH_211211680_UTC/
 - ✅ `scripts/migrate.js`, `scripts/seed.js` → chạy được `npm run db:migrate && npm run db:seed`
 - ✅ Module `auth` (đăng ký, đăng nhập, refresh token xoay vòng, đăng xuất)
 - ✅ Module `fieldTypes` (CRUD cơ bản)
-- ⬜ Module `users` (hồ sơ, đổi mật khẩu, Admin quản lý + khóa tài khoản)
-- ⬜ Module `timeSlots` (chống chồng lấn), `fields` (upload ảnh, tìm kiếm/lọc)
-- ⬜ Module `prices`, `fieldClosures`
-- ⬜ Module `schedule` (lịch 1 sân, bảng nhiều sân)
-- ⬜ Module `bookings` (BR05–BR14) + job `expirePendingBookings`
-- ⬜ Module `stats` (BR15–BR16)
-- ⬜ Unit test service đặt sân, hủy đơn, datetime; ESLint sạch
+- ✅ Module `users` (hồ sơ, đổi mật khẩu, Admin quản lý + khóa tài khoản)
+- ✅ Module `timeSlots` (chống chồng lấn), `fields` (upload ảnh, tìm kiếm/lọc)
+- ✅ Module `prices`, `fieldClosures`
+- ✅ Module `schedule` (lịch 1 sân, bảng nhiều sân)
+- ✅ Module `bookings` (BR05–BR14) + job `expirePendingBookings`
+- ✅ Module `stats` (BR15–BR16)
+- 🟡 Unit test nghiệp vụ đặt sân/hủy đơn (mở rộng thêm); ESLint module mới sạch
 
 ### Giai đoạn 4 – Giao diện khách hàng (26/10 – 15/11)
 - ⬜ Cài thư viện, `app/`, `api/httpClient.js`, `tokenStore.js`, `AuthContext`, `ProtectedRoute`

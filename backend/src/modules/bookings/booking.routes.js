@@ -1,0 +1,45 @@
+const express = require('express');
+const validate = require('../../middlewares/validate');
+const { authenticate } = require('../../middlewares/authenticate');
+const authorize = require('../../middlewares/authorize');
+const { ROLES } = require('../../constants/roles');
+const bookingController = require('./booking.controller');
+const {
+  createBody,
+  listMineQuery,
+  listAllQuery,
+  cancelBody,
+  adminStatusBody,
+  idParams,
+} = require('./booking.validation');
+
+const router = express.Router();
+
+router.get(
+  '/',
+  authenticate,
+  authorize(ROLES.ADMIN),
+  validate({ query: listAllQuery }),
+  bookingController.listAll,
+);
+
+router.post('/', authenticate, validate({ body: createBody }), bookingController.create);
+router.get('/me', authenticate, validate({ query: listMineQuery }), bookingController.listMine);
+router.get('/:id', authenticate, validate({ params: idParams }), bookingController.getById);
+router.post('/:id/payment', authenticate, validate({ params: idParams }), bookingController.simulatePayment);
+router.patch(
+  '/:id/cancel',
+  authenticate,
+  validate({ params: idParams, body: cancelBody }),
+  bookingController.cancel,
+);
+
+router.patch(
+  '/:id/status',
+  authenticate,
+  authorize(ROLES.ADMIN),
+  validate({ params: idParams, body: adminStatusBody }),
+  bookingController.adminUpdateStatus,
+);
+
+module.exports = router;

@@ -2,12 +2,15 @@ const config = require('./config/env');
 const logger = require('./config/logger');
 const { getPool, closePool } = require('./config/database');
 const app = require('./app');
+const { startExpirePendingBookingsJob } = require('./jobs/expirePendingBookings');
 
 const SHUTDOWN_TIMEOUT_MS = 10000;
 
 async function start() {
   await getPool();
   logger.info({ database: config.db.name }, 'Đã kết nối SQL Server');
+
+  const stopExpireJob = startExpirePendingBookingsJob();
 
   const server = app.listen(config.port, () => {
     logger.info(`API đang chạy tại http://localhost:${config.port}/api/v1 (${config.env})`);
@@ -27,6 +30,7 @@ async function start() {
 
     server.close(async () => {
       try {
+        stopExpireJob();
         await closePool();
         process.exit(0);
       } catch (error) {

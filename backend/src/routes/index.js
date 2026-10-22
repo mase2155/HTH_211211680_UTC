@@ -5,12 +5,24 @@ const { ok } = require('../utils/response');
 const { ERROR_CODES } = require('../constants/errorCodes');
 
 const authRoutes = require('../modules/auth/auth.routes');
+const userRoutes = require('../modules/users/user.routes');
 const fieldTypeRoutes = require('../modules/fieldTypes/fieldType.routes');
+const timeSlotRoutes = require('../modules/timeSlots/timeSlot.routes');
+const fieldRoutes = require('../modules/fields/field.routes');
+const scheduleRoutes = require('../modules/schedule/schedule.routes');
+const bookingRoutes = require('../modules/bookings/booking.routes');
+const statsRoutes = require('../modules/stats/stats.routes');
 
 const router = express.Router();
 
 router.use('/auth', authRoutes);
+router.use('/users', userRoutes);
 router.use('/field-types', fieldTypeRoutes);
+router.use('/time-slots', timeSlotRoutes);
+router.use('/fields', fieldRoutes);
+router.use('/schedule', scheduleRoutes);
+router.use('/bookings', bookingRoutes);
+router.use('/stats', statsRoutes);
 
 router.get('/health', async (req, res) => {
   try {

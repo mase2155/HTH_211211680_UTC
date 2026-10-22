@@ -29,7 +29,7 @@ async function list({ page, limit, isActive }, tx) {
   `);
 
   const total = result.recordset[0]?.totalCount ?? 0;
-  const items = result.recordset.map(({ totalCount, ...row }) => row);
+  const items = result.recordset.map(({ totalCount: _total, ...row }) => row);
   return { items, total };
 }
 
