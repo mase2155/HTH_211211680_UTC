@@ -77,6 +77,10 @@ export default function AdminNewsPage() {
       {message.text && (
         <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'}`}>{message.text}</div>
       )}
+      <p className="small text-muted mb-3">
+        Thêm bài và đặt trạng thái <strong>Đã xuất bản</strong> sẽ tự hiển thị thêm trên trang <strong>Tin tức</strong>,
+        không cần xóa bài cũ.
+      </p>
       <div className="card">
         <div className="card-header">
           <span>Danh sách bài viết</span>

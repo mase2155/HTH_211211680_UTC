@@ -71,6 +71,10 @@ export default function AdminPartnersPage() {
       {message.text && (
         <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'}`}>{message.text}</div>
       )}
+      <p className="small text-muted mb-3">
+        Thêm đối tác mới sẽ tự xuất hiện thêm một thẻ trên trang <strong>Đối tác</strong> (cùng kiểu card), không
+        cần xóa mục cũ. Thứ tự hiển thị theo cột &quot;Thứ tự&quot;.
+      </p>
       <div className="card">
         <div className="card-header">
           <span>Danh sách đối tác</span>
@@ -79,7 +83,11 @@ export default function AdminPartnersPage() {
             className="btn btn-primary"
             onClick={() => {
               setEditingId(null);
-              setForm(emptyForm);
+              const nextOrder =
+                items.length > 0
+                  ? Math.max(...items.map((i) => Number(i.sortOrder) || 0)) + 1
+                  : 1;
+              setForm({ ...emptyForm, sortOrder: nextOrder });
             }}
           >
             <i className="fa-solid fa-plus me-1" /> Thêm

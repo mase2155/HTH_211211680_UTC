@@ -51,3 +51,16 @@ VALUES (N'Cụm sân tập luyện Ông Mập Pickleball - Sân 521 Minh Khai', 
 IF NOT EXISTS (SELECT 1 FROM dbo.PartnerItems WHERE Title = N'Cụm 5 sân hot nhất khu đô thị An Khánh - Win Win Tennis')
 INSERT INTO dbo.PartnerItems (Title, ImageUrl, IsFeatured, SortOrder, IsActive)
 VALUES (N'Cụm 5 sân hot nhất khu đô thị An Khánh - Win Win Tennis', N'/news/tennis.jpg', 0, 4, 1);
+
+IF NOT EXISTS (SELECT 1 FROM dbo.NewsPosts WHERE Title = N'Sân thể thao đa năng ALOBO Hub - Thanh Xuân')
+INSERT INTO dbo.NewsPosts (Title, Excerpt, ImageUrl, Status)
+VALUES (
+  N'Sân thể thao đa năng ALOBO Hub - Thanh Xuân',
+  N'Cụm sân đa môn tại Thanh Xuân — minh họa thêm bài tin mà không cần xóa bài cũ; trang Tin tức tự hiển thị thêm khối nội dung.',
+  N'/news/football.webp',
+  N'Published'
+);
+
+IF NOT EXISTS (SELECT 1 FROM dbo.PartnerItems WHERE Title = N'ALOBO Hub - Đa môn thể thao Thanh Xuân')
+INSERT INTO dbo.PartnerItems (Title, ImageUrl, IsFeatured, SortOrder, IsActive)
+VALUES (N'ALOBO Hub - Đa môn thể thao Thanh Xuân', N'/news/pickleball.png', 0, 5, 1);
