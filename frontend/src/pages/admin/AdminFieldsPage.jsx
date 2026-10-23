@@ -23,11 +23,24 @@ const PAYMENT_METHODS = [
   { value: 'PayAtField', label: 'Thanh toán tại sân' },
 ];
 
-function formatVnd(amount) {
-  return new Intl.NumberFormat('vi-VN').format(amount ?? 0);
+function statusLabel(value) {
+  return FIELD_STATUSES.find((s) => s.value === value)?.label ?? value;
 }
 
-function FieldPricesModal({ field, onClose }) {
+function buildFieldSaveSuccessMessage(payload, field) {
+  const statusChanged = payload.status !== undefined && payload.status !== field.status;
+  const nameChanged = payload.name !== undefined && payload.name !== field.name;
+  const addressChanged = payload.address !== undefined && payload.address !== field.address;
+  if (statusChanged && !nameChanged && !addressChanged) {
+    return `Đã cập nhật trạng thái sân thành công (${statusLabel(payload.status)}).`;
+  }
+  if (statusChanged && (nameChanged || addressChanged)) {
+    return `Đã lưu thông tin và trạng thái sân thành công (${statusLabel(payload.status)}).`;
+  }
+  return 'Đã lưu thông tin sân thành công.';
+}
+
+function FieldPricesModal({ field, onClose, onNotice }) {
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState({});
 
@@ -72,7 +85,11 @@ function FieldPricesModal({ field, onClose }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'fieldPrices', field.id] });
+      onNotice({ type: 'success', text: 'Đã cập nhật giá và khung giờ thành công.' });
       onClose();
+    },
+    onError: (err) => {
+      onNotice({ type: 'danger', text: getErrorMessage(err) });
     },
   });
 
@@ -154,7 +171,7 @@ function FieldPricesModal({ field, onClose }) {
               disabled={saveMutation.isPending || loading || slots.length === 0}
               onClick={() => saveMutation.mutate()}
             >
-              {saveMutation.isPending ? 'Đang lưu…' : 'Lưu bảng giá'}
+              {saveMutation.isPending ? 'Đang lưu…' : 'Lưu'}
             </button>
           </div>
         </div>
@@ -163,16 +180,21 @@ function FieldPricesModal({ field, onClose }) {
   );
 }
 
-function FieldRow({ field, onStatusChange, onSaveDetails, onOpenPrices, isSaving }) {
+function FieldRow({ field, onSave, onOpenPrices, isSaving }) {
   const [name, setName] = useState(field.name);
   const [address, setAddress] = useState(field.address ?? '');
+  const [status, setStatus] = useState(field.status);
 
   useEffect(() => {
     setName(field.name);
     setAddress(field.address ?? '');
-  }, [field.name, field.address]);
+    setStatus(field.status);
+  }, [field.name, field.address, field.status]);
 
-  const dirty = name.trim() !== field.name || address.trim() !== (field.address ?? '');
+  const dirty =
+    name.trim() !== field.name ||
+    address.trim() !== (field.address ?? '') ||
+    status !== field.status;
 
   return (
     <tr>
@@ -198,8 +220,9 @@ function FieldRow({ field, onStatusChange, onSaveDetails, onOpenPrices, isSaving
         <select
           className="form-select form-select-sm"
           style={{ maxWidth: '11rem' }}
-          value={field.status}
-          onChange={(e) => onStatusChange(field.id, e.target.value)}
+          value={status}
+          disabled={isSaving}
+          onChange={(e) => setStatus(e.target.value)}
         >
           {FIELD_STATUSES.map((s) => (
             <option key={s.value} value={s.value}>
@@ -213,7 +236,13 @@ function FieldRow({ field, onStatusChange, onSaveDetails, onOpenPrices, isSaving
           type="button"
           className="btn btn-sm btn-outline-primary me-1"
           disabled={!dirty || isSaving}
-          onClick={() => onSaveDetails(field.id, { name: name.trim(), address: address.trim() })}
+          onClick={() =>
+            onSave(field, {
+              name: name.trim(),
+              address: address.trim(),
+              status,
+            })
+          }
         >
           Lưu
         </button>
@@ -229,6 +258,7 @@ export default function AdminFieldsPage() {
   const queryClient = useQueryClient();
   const [filterTypeId, setFilterTypeId] = useState('');
   const [priceField, setPriceField] = useState(null);
+  const [notice, setNotice] = useState(null);
   const [createForm, setCreateForm] = useState({
     fieldTypeId: '',
     name: '',
@@ -258,8 +288,27 @@ export default function AdminFieldsPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => updateFieldApi(id, payload),
-    onSuccess: invalidateFields,
+    onSuccess: (_, { fieldSnapshot, payload }) => {
+      invalidateFields();
+      setNotice({ type: 'success', text: buildFieldSaveSuccessMessage(payload, fieldSnapshot) });
+    },
+    onError: (err) => {
+      setNotice({
+        type: 'danger',
+        text: getErrorMessage(err) || 'Không lưu được thay đổi sân. Vui lòng thử lại.',
+      });
+    },
   });
+
+  const handleSaveField = (field, draft) => {
+    setNotice(null);
+    const payload = {};
+    if (draft.name !== field.name) payload.name = draft.name;
+    if (draft.address !== (field.address ?? '')) payload.address = draft.address;
+    if (draft.status !== field.status) payload.status = draft.status;
+    if (Object.keys(payload).length === 0) return;
+    updateMutation.mutate({ id: field.id, payload, fieldSnapshot: field });
+  };
 
   const createMutation = useMutation({
     mutationFn: () =>
@@ -311,10 +360,20 @@ export default function AdminFieldsPage() {
         sân, không cấu hình riêng từng sân. Quản lý đơn tại mục <em>Đơn đặt lịch</em>.
       </div>
 
-      {(updateMutation.isError || createMutation.isError) && (
-        <div className="alert alert-danger">
-          {getErrorMessage(updateMutation.error || createMutation.error)}
+      {notice && (
+        <div className={`alert alert-${notice.type} alert-dismissible fade show`} role="alert">
+          {notice.text}
+          <button
+            type="button"
+            className="btn-close"
+            aria-label="Đóng"
+            onClick={() => setNotice(null)}
+          />
         </div>
+      )}
+
+      {createMutation.isError && (
+        <div className="alert alert-danger">{getErrorMessage(createMutation.error)}</div>
       )}
 
       <div className="card mb-3">
@@ -431,9 +490,10 @@ export default function AdminFieldsPage() {
                   <FieldRow
                     key={f.id}
                     field={f}
-                    isSaving={updateMutation.isPending}
-                    onStatusChange={(id, status) => updateMutation.mutate({ id, payload: { status } })}
-                    onSaveDetails={(id, payload) => updateMutation.mutate({ id, payload })}
+                    isSaving={
+                      updateMutation.isPending && updateMutation.variables?.id === f.id
+                    }
+                    onSave={handleSaveField}
                     onOpenPrices={setPriceField}
                   />
                 ))}
@@ -453,7 +513,13 @@ export default function AdminFieldsPage() {
         </div>
       </div>
 
-      {priceField && <FieldPricesModal field={priceField} onClose={() => setPriceField(null)} />}
+      {priceField && (
+        <FieldPricesModal
+          field={priceField}
+          onClose={() => setPriceField(null)}
+          onNotice={setNotice}
+        />
+      )}
     </>
   );
 }
