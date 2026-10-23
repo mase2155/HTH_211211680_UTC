@@ -1,6 +1,7 @@
 const { sql, createRequest } = require('../../config/database');
 const { toOffset } = require('../../utils/pagination');
 const { escapeLike, LIKE_ESCAPE_CLAUSE } = require('../../utils/sql');
+const { nextContentIdByCount, reseedContentIdentity } = require('../../utils/sequentialContentId');
 
 const FIELD_COLUMNS = `
   f.FieldId AS id,
@@ -86,8 +87,10 @@ async function findById(id, tx) {
 }
 
 async function insert(data, tx) {
+  const nextId = await nextContentIdByCount('fields', tx);
   const request = await createRequest(tx);
-  const result = await request
+  await request
+    .input('id', sql.Int, nextId)
     .input('fieldTypeId', sql.Int, data.fieldTypeId)
     .input('name', sql.NVarChar(150), data.name)
     .input('address', sql.NVarChar(255), data.address)
@@ -95,11 +98,13 @@ async function insert(data, tx) {
     .input('imageUrl', sql.NVarChar(500), data.imageUrl ?? null)
     .input('status', sql.NVarChar(20), data.status)
     .query(`
-      INSERT INTO dbo.Fields (FieldTypeId, Name, Address, Description, ImageUrl, Status)
-      OUTPUT INSERTED.FieldId AS id
-      VALUES (@fieldTypeId, @name, @address, @description, @imageUrl, @status)
+      SET IDENTITY_INSERT dbo.Fields ON;
+      INSERT INTO dbo.Fields (FieldId, FieldTypeId, Name, Address, Description, ImageUrl, Status)
+      VALUES (@id, @fieldTypeId, @name, @address, @description, @imageUrl, @status);
+      SET IDENTITY_INSERT dbo.Fields OFF;
     `);
-  return findById(result.recordset[0].id, tx);
+  await reseedContentIdentity('fields', tx);
+  return findById(nextId, tx);
 }
 
 async function update(id, data, tx) {
@@ -125,8 +130,14 @@ async function update(id, data, tx) {
   return findById(id, tx);
 }
 
+async function deleteBookingsByFieldId(fieldId, tx) {
+  const request = await createRequest(tx);
+  await request.input('id', sql.Int, fieldId).query('DELETE FROM dbo.Bookings WHERE FieldId = @id');
+}
+
 async function remove(id, tx) {
   const request = await createRequest(tx);
+  await deleteBookingsByFieldId(id, tx);
   const result = await request.input('id', sql.Int, id).query('DELETE FROM dbo.Fields WHERE FieldId = @id');
   return result.rowsAffected[0] > 0;
 }
@@ -140,4 +151,12 @@ async function countActiveBookings(fieldId, tx) {
   return result.recordset[0].cnt;
 }
 
-module.exports = { list, findById, insert, update, remove, countActiveBookings };
+module.exports = {
+  list,
+  findById,
+  insert,
+  update,
+  remove,
+  countActiveBookings,
+  deleteBookingsByFieldId,
+};

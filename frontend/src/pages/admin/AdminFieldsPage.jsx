@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../../constants/queryKeys';
 import {
   createFieldApi,
+  deleteFieldApi,
   fetchAdminFieldsApi,
   fetchFieldPricesApi,
   replaceFieldPricesApi,
@@ -12,6 +13,7 @@ import { fetchFieldTypesApi } from '../../features/fieldTypes/fieldTypes.api';
 import { fetchTimeSlotsApi } from '../../features/timeSlots/timeSlots.api';
 import { getErrorMessage } from '../../utils/errors';
 import { formatAmount, parseAmount } from '../../utils/format';
+import { getNextContentId } from '../../utils/contentId';
 
 const FIELD_STATUSES = [
   { value: 'Active', label: 'Hoạt động' },
@@ -182,85 +184,13 @@ function FieldPricesModal({ field, onClose, onNotice }) {
   );
 }
 
-function FieldRow({ field, onSave, onOpenPrices, isSaving }) {
-  const [name, setName] = useState(field.name);
-  const [address, setAddress] = useState(field.address ?? '');
-  const [status, setStatus] = useState(field.status);
-
-  useEffect(() => {
-    setName(field.name);
-    setAddress(field.address ?? '');
-    setStatus(field.status);
-  }, [field.name, field.address, field.status]);
-
-  const dirty =
-    name.trim() !== field.name ||
-    address.trim() !== (field.address ?? '') ||
-    status !== field.status;
-
-  return (
-    <tr>
-      <td>{field.id}</td>
-      <td>
-        <input
-          className="form-control form-control-sm"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={150}
-        />
-      </td>
-      <td>
-        <input
-          className="form-control form-control-sm"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          maxLength={255}
-        />
-      </td>
-      <td>{field.fieldTypeName}</td>
-      <td>
-        <select
-          className="form-select form-select-sm"
-          style={{ maxWidth: '11rem' }}
-          value={status}
-          disabled={isSaving}
-          onChange={(e) => setStatus(e.target.value)}
-        >
-          {FIELD_STATUSES.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
-            </option>
-          ))}
-        </select>
-      </td>
-      <td className="text-nowrap">
-        <button
-          type="button"
-          className="btn btn-sm btn-outline-primary me-1"
-          disabled={!dirty || isSaving}
-          onClick={() =>
-            onSave(field, {
-              name: name.trim(),
-              address: address.trim(),
-              status,
-            })
-          }
-        >
-          Lưu
-        </button>
-        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => onOpenPrices(field)}>
-          Giá &amp; giờ
-        </button>
-      </td>
-    </tr>
-  );
-}
-
 export default function AdminFieldsPage() {
   const queryClient = useQueryClient();
   const [filterTypeId, setFilterTypeId] = useState('');
   const [priceField, setPriceField] = useState(null);
   const [notice, setNotice] = useState(null);
+  const [editingFieldId, setEditingFieldId] = useState(null);
+  const [editForm, setEditForm] = useState(null);
   const [createForm, setCreateForm] = useState({
     fieldTypeId: '',
     name: '',
@@ -288,11 +218,19 @@ export default function AdminFieldsPage() {
   const invalidateFields = () =>
     queryClient.invalidateQueries({ queryKey: ['admin', 'fields'] });
 
+  const fields = useMemo(() => {
+    const items = data?.items ?? [];
+    return [...items].sort((a, b) => Number(a.id) - Number(b.id));
+  }, [data?.items]);
+  const fieldTypes = typesQuery.data ?? [];
+  const nextFieldId = getNextContentId(fields, data?.meta?.total);
+
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }) => updateFieldApi(id, payload),
-    onSuccess: (_, { fieldSnapshot, payload }) => {
+    onSuccess: (_, { fieldSnapshot, payload, onDone }) => {
       invalidateFields();
       setNotice({ type: 'success', text: buildFieldSaveSuccessMessage(payload, fieldSnapshot) });
+      onDone?.();
     },
     onError: (err) => {
       setNotice({
@@ -302,14 +240,63 @@ export default function AdminFieldsPage() {
     },
   });
 
-  const handleSaveField = (field, draft) => {
+  const deleteMutation = useMutation({
+    mutationFn: (id) => deleteFieldApi(id),
+    onSuccess: () => {
+      if (editingFieldId) {
+        setEditingFieldId(null);
+        setEditForm(null);
+      }
+      invalidateFields();
+      setNotice({ type: 'success', text: 'Đã xóa sân.' });
+    },
+    onError: (err) => {
+      setNotice({ type: 'danger', text: getErrorMessage(err) });
+    },
+  });
+
+  const editingField = useMemo(
+    () => fields.find((f) => f.id === editingFieldId) ?? null,
+    [fields, editingFieldId],
+  );
+
+  function startEditField(field) {
+    setEditingFieldId(field.id);
+    setEditForm({
+      name: field.name ?? '',
+      address: field.address ?? '',
+      description: field.description ?? '',
+      status: field.status ?? 'Active',
+    });
+    setNotice(null);
+  }
+
+  function cancelEditField() {
+    setEditingFieldId(null);
+    setEditForm(null);
+  }
+
+  const handleSaveEditField = () => {
+    if (!editingField || !editForm) return;
     setNotice(null);
     const payload = {};
-    if (draft.name !== field.name) payload.name = draft.name;
-    if (draft.address !== (field.address ?? '')) payload.address = draft.address;
-    if (draft.status !== field.status) payload.status = draft.status;
-    if (Object.keys(payload).length === 0) return;
-    updateMutation.mutate({ id: field.id, payload, fieldSnapshot: field });
+    const name = editForm.name.trim();
+    const address = editForm.address.trim();
+    const description = editForm.description.trim();
+    if (name !== editingField.name) payload.name = name;
+    if (address !== (editingField.address ?? '')) payload.address = address;
+    if (description !== (editingField.description ?? '')) payload.description = description || undefined;
+    if (editForm.status !== editingField.status) payload.status = editForm.status;
+    if (Object.keys(payload).length === 0) {
+      setNotice({ type: 'warning', text: 'Chưa có thay đổi để lưu.' });
+      return;
+    }
+    updateMutation.mutate({
+      id: editingField.id,
+      payload,
+      fieldSnapshot: editingField,
+      onDone: cancelEditField,
+    });
   };
 
   const createMutation = useMutation({
@@ -332,9 +319,6 @@ export default function AdminFieldsPage() {
       invalidateFields();
     },
   });
-
-  const fields = data?.items ?? [];
-  const fieldTypes = typesQuery.data ?? [];
 
   const countByType = useMemo(() => {
     const map = {};
@@ -376,7 +360,17 @@ export default function AdminFieldsPage() {
         <div className="card-header">Thêm sân mới</div>
         <div className="card-body">
           <form className="row g-2 align-items-end" onSubmit={handleCreate}>
-            <div className="col-md-3">
+            <div className="col-md-1">
+              <label className="form-label small mb-1">ID</label>
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                readOnly
+                disabled
+                value={nextFieldId}
+              />
+            </div>
+            <div className="col-md-2">
               <label className="form-label small mb-1">Loại sân</label>
               <select
                 className="form-select form-select-sm"
@@ -483,15 +477,43 @@ export default function AdminFieldsPage() {
               </thead>
               <tbody>
                 {fields.map((f) => (
-                  <FieldRow
-                    key={f.id}
-                    field={f}
-                    isSaving={
-                      updateMutation.isPending && updateMutation.variables?.id === f.id
-                    }
-                    onSave={handleSaveField}
-                    onOpenPrices={setPriceField}
-                  />
+                  <tr key={f.id}>
+                    <td>{f.id}</td>
+                    <td>{f.name}</td>
+                    <td>{f.address}</td>
+                    <td>{f.fieldTypeName}</td>
+                    <td>{statusLabel(f.status)}</td>
+                    <td className="text-nowrap">
+                      <div className="btn-action-group d-inline-flex flex-wrap gap-1">
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-secondary"
+                          onClick={() => startEditField(f)}
+                        >
+                          Sửa
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() => setPriceField(f)}
+                        >
+                          Giá &amp; giờ
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger"
+                          disabled={deleteMutation.isPending}
+                          onClick={() => {
+                            if (window.confirm(`Xóa sân "${f.name}"? Hành động này không thể hoàn tác.`)) {
+                              deleteMutation.mutate(f.id);
+                            }
+                          }}
+                        >
+                          Xóa
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -508,6 +530,110 @@ export default function AdminFieldsPage() {
           )}
         </div>
       </div>
+
+      {editingField && editForm && (
+        <div className="card mt-3">
+          <div className="card-header">Sửa sân #{editingField.id}</div>
+          <div className="card-body">
+            <div className="row g-3">
+              <div className="col-md-2">
+                <label className="form-label small" htmlFor="edit-field-id">
+                  ID
+                </label>
+                <input
+                  id="edit-field-id"
+                  type="text"
+                  className="form-control form-control-sm"
+                  readOnly
+                  disabled
+                  value={editingField.id}
+                />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label small">Loại sân</label>
+                <input className="form-control form-control-sm" value={editingField.fieldTypeName} readOnly disabled />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label small" htmlFor="edit-field-name">
+                  Tên sân
+                </label>
+                <input
+                  id="edit-field-name"
+                  className="form-control form-control-sm"
+                  maxLength={150}
+                  value={editForm.name}
+                  onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label small" htmlFor="edit-field-status">
+                  Trạng thái
+                </label>
+                <select
+                  id="edit-field-status"
+                  className="form-select form-select-sm"
+                  value={editForm.status}
+                  disabled={updateMutation.isPending}
+                  onChange={(e) => setEditForm((f) => ({ ...f, status: e.target.value }))}
+                >
+                  {FIELD_STATUSES.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-12">
+                <label className="form-label small" htmlFor="edit-field-address">
+                  Địa chỉ
+                </label>
+                <input
+                  id="edit-field-address"
+                  className="form-control form-control-sm"
+                  maxLength={255}
+                  value={editForm.address}
+                  onChange={(e) => setEditForm((f) => ({ ...f, address: e.target.value }))}
+                />
+              </div>
+              <div className="col-12">
+                <label className="form-label small" htmlFor="edit-field-description">
+                  Mô tả
+                </label>
+                <textarea
+                  id="edit-field-description"
+                  className="form-control form-control-sm"
+                  rows={3}
+                  maxLength={2000}
+                  value={editForm.description}
+                  onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
+                />
+              </div>
+              <div className="col-12 d-flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className="btn btn-warning btn-sm"
+                  disabled={
+                    !editForm.name.trim() ||
+                    !editForm.address.trim() ||
+                    updateMutation.isPending
+                  }
+                  onClick={handleSaveEditField}
+                >
+                  {updateMutation.isPending ? 'Đang lưu…' : 'Lưu'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary btn-sm"
+                  disabled={updateMutation.isPending}
+                  onClick={cancelEditField}
+                >
+                  Hủy
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {priceField && (
         <FieldPricesModal

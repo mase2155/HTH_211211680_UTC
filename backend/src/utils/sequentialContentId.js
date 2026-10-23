@@ -3,6 +3,7 @@ const { sql, createRequest } = require('../config/database');
 const TABLE_CONFIG = Object.freeze({
   partnerItems: { table: 'dbo.PartnerItems', idColumn: 'PartnerItemId' },
   newsPosts: { table: 'dbo.NewsPosts', idColumn: 'NewsPostId' },
+  fields: { table: 'dbo.Fields', idColumn: 'FieldId' },
 });
 
 async function nextContentIdByCount(tableKey, tx) {

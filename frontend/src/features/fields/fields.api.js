@@ -39,3 +39,7 @@ export async function updateFieldApi(id, payload) {
   const { data } = await httpClient.patch(`/fields/${id}`, payload);
   return data.data;
 }
+
+export async function deleteFieldApi(id) {
+  await httpClient.delete(`/fields/${id}`);
+}

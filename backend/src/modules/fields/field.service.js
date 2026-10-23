@@ -84,8 +84,8 @@ async function remove(id) {
       'Sân đang có đơn đặt, không thể xóa. Hãy chuyển sang trạng thái ngừng hoạt động.',
     );
   }
+  const current = await getById(id);
   try {
-    const current = await getById(id);
     await fieldRepository.remove(id);
     await deleteFieldImage(current.imageUrl);
   } catch (error) {
