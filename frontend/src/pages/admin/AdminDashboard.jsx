@@ -25,8 +25,8 @@ export default function AdminDashboard() {
   return (
     <>
       <div className="content-header">
-        <h1>Tổng quan</h1>
-        <p className="breadcrumb-demo">Admin / Dashboard</p>
+        <h1>Báo cáo hệ thống</h1>
+        <p className="breadcrumb-demo">Admin / Báo cáo hệ thống</p>
       </div>
       <div className="row g-3">
         <div className="col-md-4">

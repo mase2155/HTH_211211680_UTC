@@ -6,6 +6,8 @@ import '../styles/admin.css';
 
 const adminBase = ROUTES.admin;
 
+const reportNav = [{ to: adminBase, label: 'Báo cáo hệ thống', icon: 'fa-chart-pie' }];
+
 const contentNav = [
   { to: `${adminBase}/content/news`, label: 'Tin tức', icon: 'fa-newspaper' },
   { to: `${adminBase}/content/partners`, label: 'Đối tác', icon: 'fa-handshake' },
@@ -51,6 +53,11 @@ export default function AdminLayout() {
             ALOBO <span>Admin</span>
           </Link>
           <nav className="mt-2">
+            <ul className="nav-sidebar">
+              {reportNav.map((item) => (
+                <SidebarLink key={item.to} {...item} />
+              ))}
+            </ul>
             <p className="nav-section-title">Section 1 — Nội dung website</p>
             <ul className="nav-sidebar">
               {contentNav.map((item) => (

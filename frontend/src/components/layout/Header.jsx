@@ -77,14 +77,16 @@ export default function Header() {
                         <i className="fa-solid fa-id-card" />
                         Hồ sơ
                       </Link>
-                      <Link className="account-dropdown-item" to={ROUTES.history}>
-                        <i className="fa-solid fa-clock-rotate-left" />
-                        {isAdmin ? 'Lịch sử đặt lịch' : 'Lịch sử đặt sân'}
-                      </Link>
+                      {!isAdmin && (
+                        <Link className="account-dropdown-item" to={ROUTES.history}>
+                          <i className="fa-solid fa-clock-rotate-left" />
+                          Lịch sử đặt sân
+                        </Link>
+                      )}
                       {isAdmin && (
                         <Link className="account-dropdown-item account-dropdown-item--admin" to={ROUTES.admin}>
                           <i className="fa-solid fa-gauge-high" />
-                          Bảng quản trị
+                          Báo cáo hệ thống
                         </Link>
                       )}
                       <hr className="account-dropdown-divider" />

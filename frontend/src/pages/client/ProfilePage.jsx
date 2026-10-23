@@ -243,13 +243,17 @@ export default function ProfilePage() {
             <h1 className="fw-bold text-center mb-4">{isAdmin ? 'Hồ sơ quản trị viên' : 'Hồ sơ cá nhân'}</h1>
             {isAdmin ? <AdminProfileView /> : <CustomerProfileView />}
             <p className="text-center text-muted mt-4 mb-0">
-              <Link to={ROUTES.history}>{isAdmin ? 'Xem lịch sử đặt lịch' : 'Lịch sử đặt sân'}</Link>
-              {' · '}
+              {!isAdmin && (
+                <>
+                  <Link to={ROUTES.history}>Lịch sử đặt sân</Link>
+                  {' · '}
+                </>
+              )}
               <Link to={ROUTES.booking}>Đặt lịch sân</Link>
               {isAdmin && (
                 <>
                   {' · '}
-                  <Link to={ROUTES.admin}>Bảng quản trị</Link>
+                  <Link to={ROUTES.admin}>Báo cáo hệ thống</Link>
                 </>
               )}
             </p>

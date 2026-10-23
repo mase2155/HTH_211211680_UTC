@@ -1,10 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../../constants/queryKeys';
 import {
-  adminUpdateBookingStatusApi,
   cancelBookingApi,
   createBookingApi,
-  fetchAllBookingsApi,
   fetchBookingByIdApi,
   fetchMyBookingsApi,
   payBookingApi,
@@ -15,26 +13,6 @@ export function useMyBookings(filters = {}, options = {}) {
     queryKey: queryKeys.bookingsMe(filters),
     queryFn: () => fetchMyBookingsApi(filters),
     enabled: options.enabled !== false,
-  });
-}
-
-export function useAdminBookingsList(filters = {}, options = {}) {
-  return useQuery({
-    queryKey: queryKeys.adminBookings({ ...filters, clientHistory: true }),
-    queryFn: () => fetchAllBookingsApi(filters),
-    enabled: options.enabled !== false,
-  });
-}
-
-export function useAdminUpdateBookingStatus() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, status, cancelReason }) =>
-      adminUpdateBookingStatusApi(id, { status, cancelReason }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['bookings', 'me'] });
-    },
   });
 }
 
