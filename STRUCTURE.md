@@ -41,6 +41,7 @@ HTH_211211680_UTC/
 ├── README.md                          # Giới thiệu + hướng dẫn chạy
 ├── reportChap2.md                     # Chương 2 báo cáo (nguồn Markdown)
 ├── reportChap2.docx                   # Chương 2 báo cáo (Word, xuất từ .md bằng Pandoc)
+├── reportChap3.md                     # Chương 3 báo cáo: triển khai Backend/API/CSDL (giải thích intern)
 ├── .gitignore
 │
 ├── database/                          # CSDL SQL Server

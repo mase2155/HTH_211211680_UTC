@@ -26,7 +26,10 @@ Backend test (cần CSDL đã migrate/seed): `cd backend && npm test`
 Xem file `STRUCTURE.md` (cây thư mục, nhiệm vụ từng thành phần, tiến độ).
 Quy tắc code cho AI nằm trong `.cursor/rules/`.
 
-## Báo cáo thiết kế (Chương 2)
+## Báo cáo (theo chương đồ án)
 
-Xem `reportChap2.md` hoặc **`reportChap2.docx`** (Word) — phân tích yêu cầu, use case, ERD, kiến trúc và luồng nghiệp vụ.
+| Chương | File | Nội dung |
+|--------|------|----------|
+| 2 — Thiết kế | `reportChap2.md` / `reportChap2.docx` | Use case, ERD, luồng nghiệp vụ |
+| 3 — Backend | **`reportChap3.md`** | Cài đặt API, CSDL, workflow code (mức intern) |
 
