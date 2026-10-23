@@ -395,7 +395,7 @@ export default function AdminFieldsPage() {
               <option value="">Tất cả</option>
               {fieldTypes.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.name} ({countByType[t.name] ?? 0} đang hoạt động)
+                  {t.name}
                 </option>
               ))}
             </select>
