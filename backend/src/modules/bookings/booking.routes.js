@@ -10,6 +10,7 @@ const {
   listAllQuery,
   cancelBody,
   adminStatusBody,
+  adminUpdateBody,
   idParams,
 } = require('./booking.validation');
 
@@ -40,6 +41,14 @@ router.patch(
   authorize(ROLES.ADMIN),
   validate({ params: idParams, body: adminStatusBody }),
   bookingController.adminUpdateStatus,
+);
+
+router.patch(
+  '/:id',
+  authenticate,
+  authorize(ROLES.ADMIN),
+  validate({ params: idParams, body: adminUpdateBody }),
+  bookingController.adminUpdate,
 );
 
 module.exports = router;

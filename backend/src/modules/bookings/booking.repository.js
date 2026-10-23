@@ -15,6 +15,7 @@ const BOOKING_COLUMNS = `
   b.CustomerPhone AS customerPhone,
   b.Note AS note,
   b.TotalAmount AS totalAmount,
+  p.Amount AS expectedAmount,
   b.Status AS status,
   b.PaymentMethod AS paymentMethod,
   b.PaymentStatus AS paymentStatus,
@@ -25,12 +26,22 @@ const BOOKING_COLUMNS = `
   CONVERT(VARCHAR(23), b.CreatedAt, 126) AS createdAt
 `;
 
+const BOOKING_FROM = `
+  FROM dbo.Bookings b
+  JOIN dbo.Fields f ON f.FieldId = b.FieldId
+  LEFT JOIN dbo.Prices p ON p.FieldId = b.FieldId
+    AND p.TimeSlotId = b.TimeSlotId
+    AND p.DayType = CASE
+      WHEN DATEPART(WEEKDAY, b.BookingDate) IN (1, 7) THEN N'Weekend'
+      ELSE N'Weekday'
+    END
+`;
+
 async function findById(id, tx) {
   const request = await createRequest(tx);
   const result = await request.input('id', sql.Int, id).query(`
     SELECT ${BOOKING_COLUMNS}
-    FROM dbo.Bookings b
-    JOIN dbo.Fields f ON f.FieldId = b.FieldId
+    ${BOOKING_FROM}
     WHERE b.BookingId = @id
   `);
   return result.recordset[0] ?? null;
@@ -91,8 +102,7 @@ async function listByUser({ userId, page, limit, status }, tx) {
   }
   const result = await request.query(`
     SELECT ${BOOKING_COLUMNS}, COUNT(*) OVER() AS totalCount
-    FROM dbo.Bookings b
-    JOIN dbo.Fields f ON f.FieldId = b.FieldId
+    ${BOOKING_FROM}
     ${where}
     ORDER BY b.CreatedAt DESC
     OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
@@ -121,8 +131,7 @@ async function listAll(filters, tx) {
   }
   const result = await request.query(`
     SELECT ${BOOKING_COLUMNS}, COUNT(*) OVER() AS totalCount
-    FROM dbo.Bookings b
-    JOIN dbo.Fields f ON f.FieldId = b.FieldId
+    ${BOOKING_FROM}
     ${where}
     ORDER BY b.BookingDate DESC, b.StartTime DESC
     OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
@@ -191,6 +200,34 @@ async function updateStatus(id, { fromStatus, toStatus, cancelReason }, tx) {
   return result.rowsAffected[0] > 0;
 }
 
+async function patchDetails(id, data, tx) {
+  const request = await createRequest(tx);
+  request.input('id', sql.Int, id);
+  const sets = ['UpdatedAt = SYSUTCDATETIME()'];
+  if (data.customerName !== undefined) {
+    request.input('customerName', sql.NVarChar(100), data.customerName);
+    sets.push('CustomerName = @customerName');
+  }
+  if (data.customerPhone !== undefined) {
+    request.input('customerPhone', sql.VarChar(20), data.customerPhone);
+    sets.push('CustomerPhone = @customerPhone');
+  }
+  if (data.note !== undefined) {
+    request.input('note', sql.NVarChar(500), data.note ?? null);
+    sets.push('Note = @note');
+  }
+  if (data.paymentStatus !== undefined) {
+    request.input('paymentStatus', sql.NVarChar(20), data.paymentStatus);
+    sets.push('PaymentStatus = @paymentStatus');
+    if (data.paymentStatus === 'Paid') {
+      sets.push('PaidAt = CASE WHEN PaidAt IS NULL THEN SYSUTCDATETIME() ELSE PaidAt END');
+    }
+  }
+  if (sets.length === 1) return findById(id, tx);
+  await request.query(`UPDATE dbo.Bookings SET ${sets.join(', ')} WHERE BookingId = @id`);
+  return findById(id, tx);
+}
+
 async function expireHeldBookings(tx) {
   const request = await createRequest(tx);
   const result = await request.query(`
@@ -218,5 +255,6 @@ module.exports = {
   markPaid,
   cancelByUser,
   updateStatus,
+  patchDetails,
   expireHeldBookings,
 };

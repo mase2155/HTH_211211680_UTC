@@ -34,3 +34,8 @@ export async function adminUpdateBookingStatusApi(id, payload) {
   const { data } = await httpClient.patch(`/bookings/${id}/status`, payload);
   return data.data;
 }
+
+export async function adminUpdateBookingApi(id, payload) {
+  const { data } = await httpClient.patch(`/bookings/${id}`, payload);
+  return data.data;
+}

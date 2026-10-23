@@ -1,120 +1,426 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../../constants/queryKeys';
 import { ADMIN_STATUS_TRANSITIONS, BOOKING_STATUS } from '../../constants/booking';
-import { BOOKING_STATUS_LABELS, PAYMENT_STATUS_LABELS } from '../../constants/bookingLabels';
-import { adminUpdateBookingStatusApi, fetchAllBookingsApi } from '../../features/bookings/bookings.api';
+import {
+  BOOKING_STATUS_LABELS,
+  PAYMENT_METHOD_LABELS,
+  PAYMENT_STATUS_LABELS,
+} from '../../constants/bookingLabels';
+import { adminUpdateBookingApi, fetchAllBookingsApi } from '../../features/bookings/bookings.api';
+import { formatCurrency, formatDateTime } from '../../utils/format';
+import { evaluateBookingReconciliation } from '../../utils/bookingReconciliation';
 import { getErrorMessage } from '../../utils/errors';
+
+const PAYMENT_STATUS_OPTIONS = ['Unpaid', 'Paid', 'Refunded'];
+
+function statusOptionsFor(booking) {
+  if (!booking) return [];
+  const next = ADMIN_STATUS_TRANSITIONS[booking.status] ?? [];
+  return [booking.status, ...next.filter((s) => s !== booking.status)];
+}
+
+function OrderDetailForm({ booking, onSave, isSaving }) {
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [note, setNote] = useState('');
+  const [status, setStatus] = useState('');
+  const [paymentStatus, setPaymentStatus] = useState('');
+  const [cancelReason, setCancelReason] = useState('');
+
+  useEffect(() => {
+    if (!booking) return;
+    setCustomerName(booking.customerName ?? '');
+    setCustomerPhone(booking.customerPhone ?? '');
+    setNote(booking.note ?? '');
+    setStatus(booking.status);
+    setPaymentStatus(booking.paymentStatus);
+    setCancelReason(booking.cancelReason ?? '');
+  }, [booking]);
+
+  const recon = evaluateBookingReconciliation(booking);
+  const allowedStatuses = statusOptionsFor(booking);
+
+  const dirty =
+    booking &&
+    (customerName.trim() !== booking.customerName ||
+      customerPhone.trim() !== booking.customerPhone ||
+      (note.trim() || '') !== (booking.note ?? '') ||
+      status !== booking.status ||
+      paymentStatus !== booking.paymentStatus ||
+      (status === BOOKING_STATUS.CANCELLED &&
+        cancelReason.trim() !== (booking.cancelReason ?? '')));
+
+  if (!booking) {
+    return <p className="text-muted mb-0">Chọn một đơn trong bảng để xem và chỉnh sửa.</p>;
+  }
+
+  return (
+    <div>
+      <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <span className={`badge ${recon.badgeClass}`}>{recon.label}</span>
+        <span className="small text-muted">{recon.hint}</span>
+      </div>
+
+      <div className="row g-3">
+        <div className="col-md-6">
+          <label className="form-label small">Mã đơn</label>
+          <input className="form-control form-control-sm" value={booking.bookingCode} readOnly disabled />
+        </div>
+        <div className="col-md-6">
+          <label className="form-label small">Ngày tạo</label>
+          <input
+            className="form-control form-control-sm"
+            value={formatDateTime(booking.createdAt)}
+            readOnly
+            disabled
+          />
+        </div>
+        <div className="col-md-6">
+          <label className="form-label small">Sân</label>
+          <input className="form-control form-control-sm" value={booking.fieldName} readOnly disabled />
+        </div>
+        <div className="col-md-6">
+          <label className="form-label small">Ngày / giờ sử dụng</label>
+          <input
+            className="form-control form-control-sm"
+            value={`${booking.bookingDate} · ${booking.startTime}–${booking.endTime}`}
+            readOnly
+            disabled
+          />
+        </div>
+        <div className="col-md-4">
+          <label className="form-label small">Tổng tiền đơn</label>
+          <input className="form-control form-control-sm" value={formatCurrency(booking.totalAmount)} readOnly disabled />
+        </div>
+        <div className="col-md-4">
+          <label className="form-label small">Giá theo bảng giá</label>
+          <input
+            className="form-control form-control-sm"
+            value={
+              booking.expectedAmount != null ? formatCurrency(booking.expectedAmount) : '—'
+            }
+            readOnly
+            disabled
+          />
+        </div>
+        <div className="col-md-4">
+          <label className="form-label small">Hình thức thanh toán</label>
+          <input
+            className="form-control form-control-sm"
+            value={PAYMENT_METHOD_LABELS[booking.paymentMethod] ?? booking.paymentMethod}
+            readOnly
+            disabled
+          />
+        </div>
+        <div className="col-md-6">
+          <label className="form-label small">Tên khách</label>
+          <input
+            className="form-control form-control-sm"
+            value={customerName}
+            maxLength={100}
+            onChange={(e) => setCustomerName(e.target.value)}
+          />
+        </div>
+        <div className="col-md-6">
+          <label className="form-label small">Số điện thoại</label>
+          <input
+            className="form-control form-control-sm"
+            value={customerPhone}
+            maxLength={20}
+            onChange={(e) => setCustomerPhone(e.target.value)}
+          />
+        </div>
+        <div className="col-12">
+          <label className="form-label small">Ghi chú</label>
+          <textarea
+            className="form-control form-control-sm"
+            rows={2}
+            maxLength={500}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        </div>
+        <div className="col-md-6">
+          <label className="form-label small">Trạng thái đơn</label>
+          <select
+            className="form-select form-select-sm"
+            value={status}
+            disabled={isSaving}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            {allowedStatuses.map((s) => (
+              <option key={s} value={s}>
+                {BOOKING_STATUS_LABELS[s] ?? s}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="col-md-6">
+          <label className="form-label small">Trạng thái thanh toán</label>
+          <select
+            className="form-select form-select-sm"
+            value={paymentStatus}
+            disabled={isSaving}
+            onChange={(e) => setPaymentStatus(e.target.value)}
+          >
+            {PAYMENT_STATUS_OPTIONS.map((s) => (
+              <option key={s} value={s}>
+                {PAYMENT_STATUS_LABELS[s] ?? s}
+              </option>
+            ))}
+          </select>
+        </div>
+        {status === BOOKING_STATUS.CANCELLED && (
+          <div className="col-12">
+            <label className="form-label small">Lý do hủy</label>
+            <input
+              className="form-control form-control-sm"
+              value={cancelReason}
+              maxLength={255}
+              placeholder="Tuỳ chọn"
+              onChange={(e) => setCancelReason(e.target.value)}
+            />
+          </div>
+        )}
+        {booking.holdExpiresAt && booking.paymentMethod === 'Online' && (
+          <div className="col-12">
+            <p className="small text-muted mb-0">
+              Hết hạn giữ chỗ online: {formatDateTime(booking.holdExpiresAt)}
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3">
+        <button
+          type="button"
+          className="btn btn-primary btn-sm"
+          disabled={!dirty || isSaving}
+          onClick={() =>
+            onSave({
+              customerName: customerName.trim(),
+              customerPhone: customerPhone.trim(),
+              note: note.trim(),
+              status,
+              paymentStatus,
+              cancelReason: status === BOOKING_STATUS.CANCELLED ? cancelReason.trim() : undefined,
+            })
+          }
+        >
+          {isSaving ? 'Đang lưu…' : 'Lưu'}
+        </button>
+        <span className="small text-muted ms-2">Thay đổi chỉ được gửi lên server khi bấm Lưu.</span>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminOrderStatusPage() {
   const queryClient = useQueryClient();
+  const [statusFilter, setStatusFilter] = useState('');
+  const [bookingDate, setBookingDate] = useState('');
   const [selectedId, setSelectedId] = useState('');
-  const [cancelReason, setCancelReason] = useState('');
-  const [message, setMessage] = useState('');
+  const [notice, setNotice] = useState(null);
 
-  const { data } = useQuery({
-    queryKey: queryKeys.adminBookings({ workflow: true }),
-    queryFn: () => fetchAllBookingsApi({ limit: 50, status: BOOKING_STATUS.PENDING }),
+  const filters = useMemo(
+    () => ({
+      status: statusFilter || undefined,
+      bookingDate: bookingDate || undefined,
+      limit: 100,
+    }),
+    [statusFilter, bookingDate],
+  );
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: queryKeys.adminBookings({ ...filters, orderStatus: true }),
+    queryFn: () => fetchAllBookingsApi(filters),
   });
 
-  const pending = data?.items ?? [];
-  const selected = pending.find((b) => String(b.id) === selectedId) ?? pending[0] ?? null;
+  const bookings = data?.items ?? [];
 
-  const statusMutation = useMutation({
-    mutationFn: ({ id, status }) =>
-      adminUpdateBookingStatusApi(id, {
-        status,
-        cancelReason: status === BOOKING_STATUS.CANCELLED ? cancelReason || undefined : undefined,
-      }),
+  const selected = useMemo(
+    () => bookings.find((b) => String(b.id) === selectedId) ?? null,
+    [bookings, selectedId],
+  );
+
+  useEffect(() => {
+    if (bookings.length === 0) {
+      setSelectedId('');
+      return;
+    }
+    if (!selectedId || !bookings.some((b) => String(b.id) === selectedId)) {
+      setSelectedId(String(bookings[0].id));
+    }
+  }, [bookings, selectedId]);
+
+  const saveMutation = useMutation({
+    mutationFn: ({ id, payload }) => adminUpdateBookingApi(id, payload),
     onSuccess: () => {
-      setMessage('Đã cập nhật trạng thái.');
+      setNotice({ type: 'success', text: 'Đã lưu thay đổi đơn thành công.' });
       queryClient.invalidateQueries({ queryKey: ['admin', 'bookings'] });
     },
-    onError: (err) => setMessage(getErrorMessage(err)),
+    onError: (err) => {
+      setNotice({
+        type: 'danger',
+        text: getErrorMessage(err) || 'Không lưu được đơn. Vui lòng thử lại.',
+      });
+    },
   });
 
-  const nextStatuses = selected ? ADMIN_STATUS_TRANSITIONS[selected.status] ?? [] : [];
+  const handleSave = (draft) => {
+    if (!selected) return;
+    setNotice(null);
+    const payload = {};
+    if (draft.customerName !== selected.customerName) payload.customerName = draft.customerName;
+    if (draft.customerPhone !== selected.customerPhone) payload.customerPhone = draft.customerPhone;
+    if ((draft.note || '') !== (selected.note ?? '')) payload.note = draft.note || '';
+    if (draft.paymentStatus !== selected.paymentStatus) payload.paymentStatus = draft.paymentStatus;
+    if (draft.status !== selected.status) {
+      payload.status = draft.status;
+      if (draft.status === BOOKING_STATUS.CANCELLED && draft.cancelReason) {
+        payload.cancelReason = draft.cancelReason;
+      }
+    }
+    if (Object.keys(payload).length === 0) return;
+    saveMutation.mutate({ id: selected.id, payload });
+  };
 
   return (
     <>
       <div className="content-header">
-        <h1>Trạng thái đơn (workflow)</h1>
-        <p className="breadcrumb-demo">Section 2 / Trạng thái đơn</p>
+        <h1>Trạng thái đơn</h1>
+        <p className="breadcrumb-demo">Section 2 / Đối soát &amp; cập nhật đơn đặt sân</p>
       </div>
+
+      {notice && (
+        <div className={`alert alert-${notice.type} alert-dismissible fade show`} role="alert">
+          {notice.text}
+          <button type="button" className="btn-close" aria-label="Đóng" onClick={() => setNotice(null)} />
+        </div>
+      )}
+
       <div className="row g-3">
-        <div className="col-lg-8">
+        <div className="col-lg-7">
           <div className="card">
-            <div className="card-header">Chuyển trạng thái (Admin)</div>
-            <div className="card-body">
-              <p className="demo-hint mb-3">
-                PATCH <code>/api/v1/bookings/:id/status</code> — Pending → Confirmed / Cancelled; Confirmed →
-                Completed / Cancelled.
-              </p>
-              <label className="form-label" htmlFor="workflow-booking">
-                Chọn đơn chờ xử lý
-              </label>
-              <select
-                id="workflow-booking"
-                className="form-select mb-3"
-                value={selected ? String(selected.id) : selectedId}
-                onChange={(e) => setSelectedId(e.target.value)}
-              >
-                {pending.length === 0 && <option value="">Không có đơn Pending</option>}
-                {pending.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.bookingCode} — {b.customerName} ({b.bookingDate})
-                  </option>
-                ))}
-              </select>
-              {selected && (
-                <div className="border rounded p-4 bg-light">
-                  <p className="mb-2">
-                    <strong>Đơn:</strong> {selected.bookingCode}
-                  </p>
-                  <p className="mb-2">
-                    <strong>Thanh toán:</strong>{' '}
-                    {PAYMENT_STATUS_LABELS[selected.paymentStatus] ?? selected.paymentStatus}
-                  </p>
-                  <div className="d-flex flex-wrap gap-2 align-items-center mb-3">
-                    <span className="badge bg-warning text-dark">
-                      {BOOKING_STATUS_LABELS[selected.status] ?? selected.status}
-                    </span>
-                    {nextStatuses.length > 0 && <i className="fa-solid fa-arrow-right text-muted" />}
-                    {nextStatuses.map((status) => (
-                      <button
-                        key={status}
-                        type="button"
-                        className={`btn ${status === BOOKING_STATUS.CANCELLED ? 'btn-outline-danger' : 'btn-success'}`}
-                        disabled={statusMutation.isPending}
-                        onClick={() => statusMutation.mutate({ id: selected.id, status })}
-                      >
-                        {BOOKING_STATUS_LABELS[status] ?? status}
-                      </button>
-                    ))}
-                  </div>
-                  {nextStatuses.includes(BOOKING_STATUS.CANCELLED) && (
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Lý do hủy (tuỳ chọn)"
-                      value={cancelReason}
-                      onChange={(e) => setCancelReason(e.target.value)}
-                    />
-                  )}
-                </div>
+            <div className="card-header d-flex flex-wrap gap-2 align-items-center justify-content-between">
+              <span>Danh sách đơn</span>
+              <div className="d-flex gap-2 flex-wrap">
+                <select
+                  className="form-select form-select-sm"
+                  style={{ width: 'auto' }}
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="">Tất cả trạng thái</option>
+                  {Object.entries(BOOKING_STATUS_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="date"
+                  className="form-control form-control-sm"
+                  style={{ width: 'auto' }}
+                  value={bookingDate}
+                  onChange={(e) => setBookingDate(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="card-body table-responsive">
+              {isLoading && <p className="text-muted mb-0">Đang tải…</p>}
+              {isError && (
+                <p className="text-danger mb-0">Không tải được danh sách đơn. {getErrorMessage(error)}</p>
               )}
-              {message && <p className="mt-3 mb-0 small text-muted">{message}</p>}
+              {!isLoading && !isError && (
+                <table className="table table-sm table-hover table-crud align-middle">
+                  <thead>
+                    <tr>
+                      <th>Mã đơn</th>
+                      <th>Khách / Sân</th>
+                      <th>Ngày giờ</th>
+                      <th>TT đơn</th>
+                      <th>Thanh toán</th>
+                      <th>Đối soát</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bookings.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="text-center text-muted">
+                          Không có đơn phù hợp.
+                        </td>
+                      </tr>
+                    )}
+                    {bookings.map((b) => {
+                      const recon = evaluateBookingReconciliation(b);
+                      const active = String(b.id) === selectedId;
+                      return (
+                        <tr
+                          key={b.id}
+                          className={active ? 'table-primary' : undefined}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setSelectedId(String(b.id))}
+                        >
+                          <td>{b.bookingCode}</td>
+                          <td>
+                            {b.customerName}
+                            <br />
+                            <small className="text-muted">{b.fieldName}</small>
+                          </td>
+                          <td>
+                            {b.bookingDate}
+                            <br />
+                            <small>
+                              {b.startTime}–{b.endTime}
+                            </small>
+                          </td>
+                          <td>{BOOKING_STATUS_LABELS[b.status] ?? b.status}</td>
+                          <td>
+                            {PAYMENT_STATUS_LABELS[b.paymentStatus] ?? b.paymentStatus}
+                            <br />
+                            <small>{formatCurrency(b.totalAmount)}</small>
+                          </td>
+                          <td>
+                            <span className={`badge ${recon.badgeClass}`}>{recon.label}</span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </div>
-        <div className="col-lg-4">
+
+        <div className="col-lg-5">
           <div className="card">
-            <div className="card-header">Quy tắc thanh toán</div>
+            <div className="card-header">Chi tiết &amp; chỉnh sửa đơn</div>
+            <div className="card-body">
+              <OrderDetailForm
+                booking={selected}
+                isSaving={saveMutation.isPending}
+                onSave={handleSave}
+              />
+            </div>
+          </div>
+          <div className="card mt-3">
+            <div className="card-header">Gợi ý đối soát</div>
             <div className="card-body small">
               <ul className="mb-0 ps-3">
-                <li>Online: Unpaid → Paid (khách / mô phỏng)</li>
-                <li>PayAtField: Admin xác nhận tại quầy</li>
-                <li>Hủy đơn đã Paid → Refunded</li>
+                <li>
+                  <span className="badge bg-success me-1">Đối soát đúng</span>: số tiền khớp bảng giá và trạng thái
+                  thanh toán hợp lệ.
+                </li>
+                <li>
+                  <span className="badge bg-danger me-1">Chưa đối soát</span>: đơn chưa xác nhận thanh toán / chờ xử
+                  lý.
+                </li>
+                <li>
+                  <span className="badge bg-danger me-1">Đối soát sai</span>: mâu thuẫn trạng thái hoặc sai số tiền.
+                </li>
               </ul>
             </div>
           </div>

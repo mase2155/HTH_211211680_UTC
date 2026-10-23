@@ -34,4 +34,17 @@ async function adminUpdateStatus(req, res) {
   );
 }
 
-module.exports = { create, getById, listMine, listAll, simulatePayment, cancel, adminUpdateStatus };
+async function adminUpdate(req, res) {
+  return ok(res, await bookingService.adminUpdate(req.validated.params.id, req.validated.body));
+}
+
+module.exports = {
+  create,
+  getById,
+  listMine,
+  listAll,
+  simulatePayment,
+  cancel,
+  adminUpdateStatus,
+  adminUpdate,
+};

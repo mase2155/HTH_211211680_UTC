@@ -189,6 +189,37 @@ async function cancel(id, user, reason) {
   return bookingRepository.findById(id);
 }
 
+async function adminUpdate(id, body) {
+  const booking = await bookingRepository.findById(id);
+  if (!booking) {
+    throw new AppError(404, ERROR_CODES.NOT_FOUND, 'Không tìm thấy đơn đặt sân');
+  }
+
+  const detailPatch = {};
+  if (body.customerName !== undefined) detailPatch.customerName = body.customerName;
+  if (body.customerPhone !== undefined) detailPatch.customerPhone = body.customerPhone;
+  if (body.note !== undefined) detailPatch.note = body.note;
+  if (body.paymentStatus !== undefined) {
+    if (booking.status === BOOKING_STATUS.CANCELLED && body.paymentStatus === PAYMENT_STATUS.PAID) {
+      throw new AppError(400, ERROR_CODES.VALIDATION_ERROR, 'Đơn đã hủy không thể ghi nhận đã thanh toán');
+    }
+    if (body.paymentStatus === PAYMENT_STATUS.REFUNDED && booking.paymentStatus !== PAYMENT_STATUS.PAID) {
+      throw new AppError(400, ERROR_CODES.VALIDATION_ERROR, 'Chỉ hoàn tiền khi đơn đã thanh toán');
+    }
+    detailPatch.paymentStatus = body.paymentStatus;
+  }
+
+  if (Object.keys(detailPatch).length > 0) {
+    await bookingRepository.patchDetails(id, detailPatch);
+  }
+
+  if (body.status !== undefined && body.status !== booking.status) {
+    await adminUpdateStatus(id, { status: body.status, cancelReason: body.cancelReason });
+  }
+
+  return bookingRepository.findById(id);
+}
+
 async function adminUpdateStatus(id, { status: nextStatus, cancelReason }) {
   const booking = await bookingRepository.findById(id);
   if (!booking) {
@@ -224,4 +255,5 @@ module.exports = {
   simulatePayment,
   cancel,
   adminUpdateStatus,
+  adminUpdate,
 };
