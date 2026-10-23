@@ -25,7 +25,7 @@ async function list({ page, limit, isActive }, tx) {
     SELECT ${COLUMNS}, COUNT(*) OVER() AS totalCount
     FROM dbo.PartnerItems
     ${where}
-    ORDER BY SortOrder ASC, PartnerItemId ASC
+    ORDER BY PartnerItemId ASC
     OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
   `);
   const total = result.recordset[0]?.totalCount ?? 0;

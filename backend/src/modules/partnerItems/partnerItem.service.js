@@ -15,7 +15,11 @@ async function getById(id) {
 }
 
 async function create(body) {
-  return partnerItemRepository.insert(body);
+  const item = await partnerItemRepository.insert(body);
+  if (item.sortOrder !== item.id) {
+    return partnerItemRepository.update(item.id, { sortOrder: item.id });
+  }
+  return item;
 }
 
 async function update(id, body) {

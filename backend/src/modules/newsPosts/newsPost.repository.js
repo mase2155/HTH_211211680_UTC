@@ -24,7 +24,7 @@ async function list({ page, limit, status }, tx) {
     SELECT ${COLUMNS}, COUNT(*) OVER() AS totalCount
     FROM dbo.NewsPosts
     ${where}
-    ORDER BY UpdatedAt DESC
+    ORDER BY NewsPostId ASC
     OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
   `);
   const total = result.recordset[0]?.totalCount ?? 0;

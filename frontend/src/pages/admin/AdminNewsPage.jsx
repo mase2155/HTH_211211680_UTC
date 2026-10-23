@@ -11,6 +11,8 @@ import { formatDateTime } from '../../utils/format';
 import { getErrorMessage } from '../../utils/errors';
 import SiteImagePicker from '../../components/admin/SiteImagePicker';
 import { saveSiteContentWithPendingImage } from '../../features/siteContent/siteContentUpload.api';
+import { NEWS_POST_STATUS_LABELS } from '../../constants/newsPostLabels';
+import { getNextContentId } from '../../utils/contentId';
 
 const emptyForm = { title: '', excerpt: '', imageUrl: '', status: 'Draft' };
 
@@ -79,6 +81,8 @@ export default function AdminNewsPage() {
   }
 
   const posts = data?.items ?? [];
+  const nextPostId = getNextContentId(posts);
+  const formDisplayId = editingId ?? nextPostId;
 
   return (
     <>
@@ -90,8 +94,8 @@ export default function AdminNewsPage() {
         <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'}`}>{message.text}</div>
       )}
       <p className="small text-muted mb-3">
-        Thêm bài và đặt trạng thái <strong>Đã xuất bản</strong> sẽ tự hiển thị thêm trên trang <strong>Tin tức</strong>,
-        không cần xóa bài cũ.
+        Thêm bài và đặt trạng thái <strong>Hiển thị</strong> sẽ xuất hiện <strong>phía dưới</strong> các bài cũ trên
+        trang <strong>Tin tức</strong>. ID tự sinh (bài tiếp theo: {nextPostId}), không chỉnh sửa được.
       </p>
       <div className="card">
         <div className="card-header">
@@ -123,7 +127,7 @@ export default function AdminNewsPage() {
                       <span
                         className={`badge ${post.status === 'Published' ? 'badge-published' : 'badge-draft'}`}
                       >
-                        {post.status === 'Published' ? 'Đã xuất bản' : 'Nháp'}
+                        {NEWS_POST_STATUS_LABELS[post.status] ?? post.status}
                       </span>
                     </td>
                     <td>{formatDateTime(post.updatedAt)}</td>
@@ -155,7 +159,20 @@ export default function AdminNewsPage() {
         <div className="card-header">{editingId ? `Sửa bài #${editingId}` : 'Thêm bài mới'}</div>
         <div className="card-body">
           <div className="row g-3">
-            <div className="col-md-8">
+            <div className="col-md-2">
+              <label className="form-label" htmlFor="news-id">
+                ID
+              </label>
+              <input
+                id="news-id"
+                type="text"
+                className="form-control"
+                readOnly
+                disabled
+                value={formDisplayId}
+              />
+            </div>
+            <div className="col-md-6">
               <label className="form-label" htmlFor="news-title">
                 Tiêu đề
               </label>
@@ -177,8 +194,8 @@ export default function AdminNewsPage() {
                 value={form.status}
                 onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
               >
-                <option value="Draft">Nháp</option>
-                <option value="Published">Xuất bản</option>
+                <option value="Draft">{NEWS_POST_STATUS_LABELS.Draft}</option>
+                <option value="Published">{NEWS_POST_STATUS_LABELS.Published}</option>
               </select>
             </div>
             <div className="col-12">

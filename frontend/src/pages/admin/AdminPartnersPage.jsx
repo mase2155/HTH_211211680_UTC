@@ -10,6 +10,7 @@ import {
 import { getErrorMessage } from '../../utils/errors';
 import SiteImagePicker from '../../components/admin/SiteImagePicker';
 import { saveSiteContentWithPendingImage } from '../../features/siteContent/siteContentUpload.api';
+import { getNextContentId } from '../../utils/contentId';
 
 const emptyForm = { title: '', imageUrl: '', isFeatured: false, sortOrder: 0, isActive: true };
 
@@ -27,15 +28,22 @@ export default function AdminPartnersPage() {
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['partnerItems'] });
 
+  const items = data?.items ?? [];
+  const nextPartnerId = getNextContentId(items);
+  const formDisplayId = editingId ?? nextPartnerId;
+
   const saveMutation = useMutation({
-    mutationFn: () =>
-      saveSiteContentWithPendingImage({
+    mutationFn: () => {
+      const displayId = editingId ?? getNextContentId(items);
+      const formWithOrder = { ...form, sortOrder: displayId };
+      return saveSiteContentWithPendingImage({
         editingId,
-        form,
+        form: formWithOrder,
         pendingImageFile,
         createApi: createPartnerItemApi,
         updateApi: updatePartnerItemApi,
-      }),
+      });
+    },
     onSuccess: () => {
       setMessage({ type: 'success', text: editingId ? 'Đã cập nhật đối tác.' : 'Đã thêm đối tác.' });
       setEditingId(null);
@@ -64,14 +72,19 @@ export default function AdminPartnersPage() {
       title: item.title ?? '',
       imageUrl: item.imageUrl ?? '',
       isFeatured: Boolean(item.isFeatured),
-      sortOrder: item.sortOrder ?? 0,
+      sortOrder: item.id,
       isActive: Boolean(item.isActive),
     });
     setPendingImageFile(null);
     setMessage({ type: '', text: '' });
   }
 
-  const items = data?.items ?? [];
+  function startCreate() {
+    setEditingId(null);
+    setPendingImageFile(null);
+    setForm({ ...emptyForm, sortOrder: nextPartnerId });
+    setMessage({ type: '', text: '' });
+  }
 
   return (
     <>
@@ -83,25 +96,14 @@ export default function AdminPartnersPage() {
         <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'}`}>{message.text}</div>
       )}
       <p className="small text-muted mb-3">
-        Thêm đối tác mới sẽ tự xuất hiện thêm một thẻ trên trang <strong>Đối tác</strong> (cùng kiểu card), không
-        cần xóa mục cũ. Thứ tự hiển thị theo cột &quot;Thứ tự&quot;.
+        Thêm đối tác mới (bật <strong>Hiển thị trên web</strong>) sẽ xuất hiện <strong>phía dưới</strong> các mục cũ
+        trên trang <strong>Đối tác</strong>. ID tự sinh (mục tiếp theo: {nextPartnerId}), không chỉnh sửa được; thứ
+        tự hiển thị tự gán theo ID mới.
       </p>
       <div className="card">
         <div className="card-header">
           <span>Danh sách đối tác</span>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => {
-              setEditingId(null);
-              setPendingImageFile(null);
-              const nextOrder =
-                items.length > 0
-                  ? Math.max(...items.map((i) => Number(i.sortOrder) || 0)) + 1
-                  : 1;
-              setForm({ ...emptyForm, sortOrder: nextOrder });
-            }}
-          >
+          <button type="button" className="btn btn-primary" onClick={startCreate}>
             <i className="fa-solid fa-plus me-1" /> Thêm
           </button>
         </div>
@@ -126,7 +128,7 @@ export default function AdminPartnersPage() {
                     <td>{item.id}</td>
                     <td>{item.title}</td>
                     <td>{item.isFeatured ? 'Có' : 'Không'}</td>
-                    <td>{item.sortOrder}</td>
+                    <td>{item.id}</td>
                     <td>{item.isActive ? 'Đang hiện' : 'Ẩn'}</td>
                     <td className="text-end text-nowrap">
                       <div className="btn-action-group d-inline-flex gap-2">
@@ -156,7 +158,20 @@ export default function AdminPartnersPage() {
         <div className="card-header">{editingId ? `Sửa #${editingId}` : 'Thêm đối tác'}</div>
         <div className="card-body">
           <div className="row g-3">
-            <div className="col-12">
+            <div className="col-md-2">
+              <label className="form-label" htmlFor="partner-id">
+                ID
+              </label>
+              <input
+                id="partner-id"
+                type="text"
+                className="form-control"
+                readOnly
+                disabled
+                value={formDisplayId}
+              />
+            </div>
+            <div className="col-md-10">
               <label className="form-label" htmlFor="partner-title">
                 Tiêu đề
               </label>
@@ -185,11 +200,11 @@ export default function AdminPartnersPage() {
               </label>
               <input
                 id="partner-sort"
-                type="number"
-                min={0}
+                type="text"
                 className="form-control"
-                value={form.sortOrder}
-                onChange={(e) => setForm((f) => ({ ...f, sortOrder: Number(e.target.value) || 0 }))}
+                readOnly
+                disabled
+                value={formDisplayId}
               />
             </div>
             <div className="col-md-3 d-flex flex-column gap-2 pt-4">
