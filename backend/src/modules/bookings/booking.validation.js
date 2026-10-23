@@ -41,6 +41,10 @@ const adminStatusBody = z.object({
   cancelReason: z.string().trim().max(255).optional(),
 });
 
+const adminDeleteBody = z.object({
+  adminPassword: z.string().min(1, 'Vui lòng nhập mật khẩu admin'),
+});
+
 const adminUpdateBody = z
   .object({
     customerName: z.string().trim().min(2).max(100).optional(),
@@ -59,5 +63,6 @@ module.exports = {
   cancelBody,
   adminStatusBody,
   adminUpdateBody,
+  adminDeleteBody,
   idParams,
 };

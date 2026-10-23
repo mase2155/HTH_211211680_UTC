@@ -170,20 +170,20 @@ describe('bookingService', () => {
       });
     });
 
-    test('Confirmed → Completed trước giờ chơi bị từ chối', async () => {
-      bookingRepository.findById.mockResolvedValue({
-        id: 1,
-        status: BOOKING_STATUS.CONFIRMED,
-        bookingDate: addDays(today(), 2),
-        startTime: '23:59',
-      });
+    test('Confirmed → Completed trước giờ chơi được Admin cho phép', async () => {
+      bookingRepository.findById
+        .mockResolvedValueOnce({
+          id: 1,
+          status: BOOKING_STATUS.CONFIRMED,
+          bookingDate: addDays(today(), 2),
+          startTime: '23:59',
+        })
+        .mockResolvedValueOnce({ id: 1, status: BOOKING_STATUS.COMPLETED });
+      bookingRepository.updateStatus.mockResolvedValue(true);
 
-      await expect(
-        bookingService.adminUpdateStatus(1, { status: BOOKING_STATUS.COMPLETED }),
-      ).rejects.toMatchObject({
-        status: 409,
-        code: ERROR_CODES.INVALID_STATUS_TRANSITION,
-      });
+      const result = await bookingService.adminUpdateStatus(1, { status: BOOKING_STATUS.COMPLETED });
+
+      expect(result.status).toBe(BOOKING_STATUS.COMPLETED);
     });
   });
 

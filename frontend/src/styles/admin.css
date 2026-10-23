@@ -270,6 +270,55 @@
   border-radius: 0.25rem;
 }
 
+/* Trang trạng thái đơn — bảng danh sách gọn, cuộn riêng, không đè panel chi tiết */
+.admin-shell .admin-order-list-card .card-header {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9375rem;
+}
+
+.admin-shell .admin-order-list-scroll {
+  max-height: min(42vh, 360px);
+  overflow: auto;
+}
+
+.admin-shell .admin-order-list-table {
+  font-size: 0.8125rem;
+}
+
+.admin-shell .admin-order-list-table thead th {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  box-shadow: 0 1px 0 #dee2e6;
+}
+
+.admin-shell .admin-order-list-table tbody td {
+  padding: 0.35rem 0.5rem;
+  line-height: 1.35;
+}
+
+.admin-shell .admin-order-list-table .badge {
+  font-size: 0.6875rem;
+  padding: 0.3em 0.45em;
+}
+
+.admin-shell .admin-order-list-customer {
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+
+.admin-shell .admin-order-list-sub {
+  font-size: 0.6875rem;
+  color: #6c757d;
+}
+
+.admin-shell .admin-order-status-page .table-primary {
+  --bs-table-bg: rgba(189, 148, 95, 0.12);
+}
+
 @media (max-width: 768px) {
   .admin-shell .wrapper {
     flex-direction: column;

@@ -27,6 +27,8 @@ const timeSlotRepository = require('../timeSlots/timeSlot.repository');
 const fieldClosureRepository = require('../fieldClosures/fieldClosure.repository');
 const priceRepository = require('../prices/price.repository');
 const bookingRepository = require('./booking.repository');
+const userRepository = require('../users/user.repository');
+const { comparePassword } = require('../../utils/password');
 
 function assertBookingDateAllowed(bookingDate) {
   const minDate = today();
@@ -220,6 +222,25 @@ async function adminUpdate(id, body) {
   return bookingRepository.findById(id);
 }
 
+async function adminRemove(id, adminUserId, { adminPassword }) {
+  const booking = await bookingRepository.findById(id);
+  if (!booking) {
+    throw new AppError(404, ERROR_CODES.NOT_FOUND, 'Không tìm thấy đơn đặt sân');
+  }
+  const profile = await userRepository.findById(adminUserId);
+  if (!profile) {
+    throw new AppError(404, ERROR_CODES.NOT_FOUND, 'Không tìm thấy tài khoản admin');
+  }
+  const auth = await userRepository.findAuthByEmail(profile.email);
+  if (!auth || !(await comparePassword(adminPassword, auth.passwordHash))) {
+    throw new AppError(401, ERROR_CODES.INVALID_CREDENTIALS, 'Mật khẩu admin không đúng');
+  }
+  const removed = await bookingRepository.removeById(id);
+  if (!removed) {
+    throw new AppError(404, ERROR_CODES.NOT_FOUND, 'Không tìm thấy đơn đặt sân');
+  }
+}
+
 async function adminUpdateStatus(id, { status: nextStatus, cancelReason }) {
   const booking = await bookingRepository.findById(id);
   if (!booking) {
@@ -232,9 +253,6 @@ async function adminUpdateStatus(id, { status: nextStatus, cancelReason }) {
       ERROR_CODES.INVALID_STATUS_TRANSITION,
       'Không thể chuyển sang trạng thái này',
     );
-  }
-  if (nextStatus === BOOKING_STATUS.COMPLETED && !hasStarted(booking.bookingDate, booking.startTime)) {
-    throw new AppError(409, ERROR_CODES.INVALID_STATUS_TRANSITION, 'Chưa đến giờ sử dụng, chưa thể hoàn thành');
   }
   const updated = await bookingRepository.updateStatus(id, {
     fromStatus: booking.status,
@@ -256,4 +274,5 @@ module.exports = {
   cancel,
   adminUpdateStatus,
   adminUpdate,
+  adminRemove,
 };

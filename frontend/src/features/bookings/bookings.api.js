@@ -39,3 +39,7 @@ export async function adminUpdateBookingApi(id, payload) {
   const { data } = await httpClient.patch(`/bookings/${id}`, payload);
   return data.data;
 }
+
+export async function adminDeleteBookingApi(id, adminPassword) {
+  await httpClient.delete(`/bookings/${id}`, { data: { adminPassword } });
+}

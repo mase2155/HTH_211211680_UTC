@@ -11,6 +11,7 @@ const {
   cancelBody,
   adminStatusBody,
   adminUpdateBody,
+  adminDeleteBody,
   idParams,
 } = require('./booking.validation');
 
@@ -49,6 +50,14 @@ router.patch(
   authorize(ROLES.ADMIN),
   validate({ params: idParams, body: adminUpdateBody }),
   bookingController.adminUpdate,
+);
+
+router.delete(
+  '/:id',
+  authenticate,
+  authorize(ROLES.ADMIN),
+  validate({ params: idParams, body: adminDeleteBody }),
+  bookingController.adminRemove,
 );
 
 module.exports = router;

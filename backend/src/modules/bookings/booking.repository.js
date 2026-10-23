@@ -228,6 +228,14 @@ async function patchDetails(id, data, tx) {
   return findById(id, tx);
 }
 
+async function removeById(id, tx) {
+  const request = await createRequest(tx);
+  const result = await request.input('id', sql.Int, id).query(`
+    DELETE FROM dbo.Bookings WHERE BookingId = @id
+  `);
+  return result.rowsAffected[0] > 0;
+}
+
 async function expireHeldBookings(tx) {
   const request = await createRequest(tx);
   const result = await request.query(`
@@ -256,5 +264,6 @@ module.exports = {
   cancelByUser,
   updateStatus,
   patchDetails,
+  removeById,
   expireHeldBookings,
 };

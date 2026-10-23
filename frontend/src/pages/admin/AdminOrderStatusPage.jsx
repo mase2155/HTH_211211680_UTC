@@ -1,66 +1,58 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../../constants/queryKeys';
-import { ADMIN_STATUS_TRANSITIONS, BOOKING_STATUS } from '../../constants/booking';
 import {
   BOOKING_STATUS_LABELS,
   PAYMENT_METHOD_LABELS,
   PAYMENT_STATUS_LABELS,
 } from '../../constants/bookingLabels';
-import { adminUpdateBookingApi, fetchAllBookingsApi } from '../../features/bookings/bookings.api';
+import {
+  adminDeleteBookingApi,
+  adminUpdateBookingApi,
+  fetchAllBookingsApi,
+} from '../../features/bookings/bookings.api';
 import { formatCurrency, formatDateTime } from '../../utils/format';
-import { evaluateBookingReconciliation } from '../../utils/bookingReconciliation';
 import { getErrorMessage } from '../../utils/errors';
 
-const PAYMENT_STATUS_OPTIONS = ['Unpaid', 'Paid', 'Refunded'];
+const PAYMENT_STATUS_OPTIONS = ['Unpaid', 'Paid'];
 
-function statusOptionsFor(booking) {
-  if (!booking) return [];
-  const next = ADMIN_STATUS_TRANSITIONS[booking.status] ?? [];
-  return [booking.status, ...next.filter((s) => s !== booking.status)];
+function normalizePaymentStatus(value) {
+  return value === 'Refunded' ? 'Unpaid' : value;
 }
 
-function OrderDetailForm({ booking, onSave, isSaving }) {
+function OrderDetailForm({ booking, onSave, isSaving, onDelete, isDeleting }) {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [note, setNote] = useState('');
-  const [status, setStatus] = useState('');
-  const [paymentStatus, setPaymentStatus] = useState('');
-  const [cancelReason, setCancelReason] = useState('');
+  const [paymentStatus, setPaymentStatus] = useState('Unpaid');
+  const [deletePassword, setDeletePassword] = useState('');
 
   useEffect(() => {
     if (!booking) return;
     setCustomerName(booking.customerName ?? '');
     setCustomerPhone(booking.customerPhone ?? '');
     setNote(booking.note ?? '');
-    setStatus(booking.status);
-    setPaymentStatus(booking.paymentStatus);
-    setCancelReason(booking.cancelReason ?? '');
+    setPaymentStatus(normalizePaymentStatus(booking.paymentStatus));
+    setDeletePassword('');
   }, [booking]);
-
-  const recon = evaluateBookingReconciliation(booking);
-  const allowedStatuses = statusOptionsFor(booking);
 
   const dirty =
     booking &&
     (customerName.trim() !== booking.customerName ||
       customerPhone.trim() !== booking.customerPhone ||
       (note.trim() || '') !== (booking.note ?? '') ||
-      status !== booking.status ||
-      paymentStatus !== booking.paymentStatus ||
-      (status === BOOKING_STATUS.CANCELLED &&
-        cancelReason.trim() !== (booking.cancelReason ?? '')));
+      paymentStatus !== normalizePaymentStatus(booking.paymentStatus));
 
   if (!booking) {
-    return <p className="text-muted mb-0">Chọn một đơn trong bảng để xem và chỉnh sửa.</p>;
+    return <p className="text-muted mb-0">Chọn một đơn trong bảng để xem và chỉnh sửa thông tin.</p>;
   }
 
   return (
     <div>
-      <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <span className={`badge ${recon.badgeClass}`}>{recon.label}</span>
-        <span className="small text-muted">{recon.hint}</span>
-      </div>
+      <p className="small text-muted mb-3">
+        Chỉ cập nhật thông tin khách và thanh toán. Duyệt / hủy / hoàn thành đơn thực hiện tại mục{' '}
+        <strong>Đơn đặt lịch</strong>.
+      </p>
 
       <div className="row g-3">
         <div className="col-md-6">
@@ -90,16 +82,14 @@ function OrderDetailForm({ booking, onSave, isSaving }) {
           />
         </div>
         <div className="col-md-4">
-          <label className="form-label small">Tổng tiền đơn</label>
+          <label className="form-label small">Tổng tiền</label>
           <input className="form-control form-control-sm" value={formatCurrency(booking.totalAmount)} readOnly disabled />
         </div>
         <div className="col-md-4">
-          <label className="form-label small">Giá theo bảng giá</label>
+          <label className="form-label small">Trạng thái đơn</label>
           <input
             className="form-control form-control-sm"
-            value={
-              booking.expectedAmount != null ? formatCurrency(booking.expectedAmount) : '—'
-            }
+            value={BOOKING_STATUS_LABELS[booking.status] ?? booking.status}
             readOnly
             disabled
           />
@@ -142,21 +132,6 @@ function OrderDetailForm({ booking, onSave, isSaving }) {
           />
         </div>
         <div className="col-md-6">
-          <label className="form-label small">Trạng thái đơn</label>
-          <select
-            className="form-select form-select-sm"
-            value={status}
-            disabled={isSaving}
-            onChange={(e) => setStatus(e.target.value)}
-          >
-            {allowedStatuses.map((s) => (
-              <option key={s} value={s}>
-                {BOOKING_STATUS_LABELS[s] ?? s}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="col-md-6">
           <label className="form-label small">Trạng thái thanh toán</label>
           <select
             className="form-select form-select-sm"
@@ -171,18 +146,6 @@ function OrderDetailForm({ booking, onSave, isSaving }) {
             ))}
           </select>
         </div>
-        {status === BOOKING_STATUS.CANCELLED && (
-          <div className="col-12">
-            <label className="form-label small">Lý do hủy</label>
-            <input
-              className="form-control form-control-sm"
-              value={cancelReason}
-              maxLength={255}
-              placeholder="Tuỳ chọn"
-              onChange={(e) => setCancelReason(e.target.value)}
-            />
-          </div>
-        )}
         {booking.holdExpiresAt && booking.paymentMethod === 'Online' && (
           <div className="col-12">
             <p className="small text-muted mb-0">
@@ -202,15 +165,56 @@ function OrderDetailForm({ booking, onSave, isSaving }) {
               customerName: customerName.trim(),
               customerPhone: customerPhone.trim(),
               note: note.trim(),
-              status,
               paymentStatus,
-              cancelReason: status === BOOKING_STATUS.CANCELLED ? cancelReason.trim() : undefined,
             })
           }
         >
           {isSaving ? 'Đang lưu…' : 'Lưu'}
         </button>
         <span className="small text-muted ms-2">Thay đổi chỉ được gửi lên server khi bấm Lưu.</span>
+      </div>
+
+      <hr className="my-4" />
+      <div className="border border-danger rounded p-3 bg-light">
+        <h6 className="text-danger mb-2">Xóa đơn (hoá đơn)</h6>
+        <p className="small text-muted mb-2">
+          Thao tác không thể hoàn tác. Nhập <strong>mật khẩu tài khoản admin</strong> đang đăng nhập để xác nhận.
+        </p>
+        <div className="row g-2 align-items-end">
+          <div className="col-md-6">
+            <label className="form-label small mb-1" htmlFor="admin-delete-password">
+              Mật khẩu admin
+            </label>
+            <input
+              id="admin-delete-password"
+              type="password"
+              className="form-control form-control-sm"
+              autoComplete="current-password"
+              value={deletePassword}
+              disabled={isDeleting}
+              onChange={(e) => setDeletePassword(e.target.value)}
+            />
+          </div>
+          <div className="col-md-6">
+            <button
+              type="button"
+              className="btn btn-danger btn-sm"
+              disabled={!deletePassword.trim() || isDeleting || isSaving}
+              onClick={() => {
+                if (
+                  !window.confirm(
+                    `Xóa vĩnh viễn đơn ${booking.bookingCode}? Hành động này không thể hoàn tác.`,
+                  )
+                ) {
+                  return;
+                }
+                onDelete(deletePassword);
+              }}
+            >
+              {isDeleting ? 'Đang xóa…' : 'Xóa đơn'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -233,7 +237,7 @@ export default function AdminOrderStatusPage() {
   );
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: queryKeys.adminBookings({ ...filters, orderStatus: true }),
+    queryKey: queryKeys.adminBookings({ ...filters, manageOrders: true }),
     queryFn: () => fetchAllBookingsApi(filters),
   });
 
@@ -254,10 +258,25 @@ export default function AdminOrderStatusPage() {
     }
   }, [bookings, selectedId]);
 
+  const deleteMutation = useMutation({
+    mutationFn: ({ id, adminPassword }) => adminDeleteBookingApi(id, adminPassword),
+    onSuccess: () => {
+      setNotice({ type: 'success', text: 'Đã xóa đơn thành công.' });
+      setSelectedId('');
+      queryClient.invalidateQueries({ queryKey: ['admin', 'bookings'] });
+    },
+    onError: (err) => {
+      setNotice({
+        type: 'danger',
+        text: getErrorMessage(err) || 'Không xóa được đơn. Kiểm tra lại mật khẩu admin.',
+      });
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: ({ id, payload }) => adminUpdateBookingApi(id, payload),
     onSuccess: () => {
-      setNotice({ type: 'success', text: 'Đã lưu thay đổi đơn thành công.' });
+      setNotice({ type: 'success', text: 'Đã lưu thông tin đơn thành công.' });
       queryClient.invalidateQueries({ queryKey: ['admin', 'bookings'] });
     },
     onError: (err) => {
@@ -275,13 +294,8 @@ export default function AdminOrderStatusPage() {
     if (draft.customerName !== selected.customerName) payload.customerName = draft.customerName;
     if (draft.customerPhone !== selected.customerPhone) payload.customerPhone = draft.customerPhone;
     if ((draft.note || '') !== (selected.note ?? '')) payload.note = draft.note || '';
-    if (draft.paymentStatus !== selected.paymentStatus) payload.paymentStatus = draft.paymentStatus;
-    if (draft.status !== selected.status) {
-      payload.status = draft.status;
-      if (draft.status === BOOKING_STATUS.CANCELLED && draft.cancelReason) {
-        payload.cancelReason = draft.cancelReason;
-      }
-    }
+    const currentPayment = normalizePaymentStatus(selected.paymentStatus);
+    if (draft.paymentStatus !== currentPayment) payload.paymentStatus = draft.paymentStatus;
     if (Object.keys(payload).length === 0) return;
     saveMutation.mutate({ id: selected.id, payload });
   };
@@ -289,8 +303,8 @@ export default function AdminOrderStatusPage() {
   return (
     <>
       <div className="content-header">
-        <h1>Trạng thái đơn</h1>
-        <p className="breadcrumb-demo">Section 2 / Đối soát &amp; cập nhật đơn đặt sân</p>
+        <h1>Quản lý đơn</h1>
+        <p className="breadcrumb-demo">Section 2 / Quản lý thông tin đơn đặt sân</p>
       </div>
 
       {notice && (
@@ -300,9 +314,9 @@ export default function AdminOrderStatusPage() {
         </div>
       )}
 
-      <div className="row g-3">
-        <div className="col-lg-7">
-          <div className="card">
+      <div className="admin-order-status-page row g-3">
+        <div className="col-12">
+          <div className="card admin-order-list-card">
             <div className="card-header d-flex flex-wrap gap-2 align-items-center justify-content-between">
               <span>Danh sách đơn</span>
               <div className="d-flex gap-2 flex-wrap">
@@ -328,100 +342,82 @@ export default function AdminOrderStatusPage() {
                 />
               </div>
             </div>
-            <div className="card-body table-responsive">
-              {isLoading && <p className="text-muted mb-0">Đang tải…</p>}
+            <div className="card-body p-0">
+              {isLoading && <p className="text-muted mb-0 p-2">Đang tải…</p>}
               {isError && (
-                <p className="text-danger mb-0">Không tải được danh sách đơn. {getErrorMessage(error)}</p>
+                <p className="text-danger mb-0 p-2">Không tải được danh sách đơn. {getErrorMessage(error)}</p>
               )}
               {!isLoading && !isError && (
-                <table className="table table-sm table-hover table-crud align-middle">
-                  <thead>
-                    <tr>
-                      <th>Mã đơn</th>
-                      <th>Khách / Sân</th>
-                      <th>Ngày giờ</th>
-                      <th>TT đơn</th>
-                      <th>Thanh toán</th>
-                      <th>Đối soát</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bookings.length === 0 && (
+                <div className="table-responsive admin-order-list-scroll">
+                  <table className="table table-sm table-hover table-crud align-middle admin-order-list-table mb-0">
+                    <thead>
                       <tr>
-                        <td colSpan={6} className="text-center text-muted">
-                          Không có đơn phù hợp.
-                        </td>
+                        <th>Mã đơn</th>
+                        <th>Khách / Sân</th>
+                        <th>Ngày giờ</th>
+                        <th>TT đơn</th>
+                        <th>Thanh toán</th>
                       </tr>
-                    )}
-                    {bookings.map((b) => {
-                      const recon = evaluateBookingReconciliation(b);
-                      const active = String(b.id) === selectedId;
-                      return (
-                        <tr
-                          key={b.id}
-                          className={active ? 'table-primary' : undefined}
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => setSelectedId(String(b.id))}
-                        >
-                          <td>{b.bookingCode}</td>
-                          <td>
-                            {b.customerName}
-                            <br />
-                            <small className="text-muted">{b.fieldName}</small>
-                          </td>
-                          <td>
-                            {b.bookingDate}
-                            <br />
-                            <small>
-                              {b.startTime}–{b.endTime}
-                            </small>
-                          </td>
-                          <td>{BOOKING_STATUS_LABELS[b.status] ?? b.status}</td>
-                          <td>
-                            {PAYMENT_STATUS_LABELS[b.paymentStatus] ?? b.paymentStatus}
-                            <br />
-                            <small>{formatCurrency(b.totalAmount)}</small>
-                          </td>
-                          <td>
-                            <span className={`badge ${recon.badgeClass}`}>{recon.label}</span>
+                    </thead>
+                    <tbody>
+                      {bookings.length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="text-center text-muted">
+                            Không có đơn phù hợp.
                           </td>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                      )}
+                      {bookings.map((b) => {
+                        const active = String(b.id) === selectedId;
+                        return (
+                          <tr
+                            key={b.id}
+                            className={active ? 'table-primary' : undefined}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => setSelectedId(String(b.id))}
+                          >
+                            <td className="text-nowrap">{b.bookingCode}</td>
+                            <td>
+                              <span className="admin-order-list-customer">{b.customerName}</span>
+                              <span className="admin-order-list-sub d-block">{b.fieldName}</span>
+                            </td>
+                            <td className="text-nowrap">
+                              {b.bookingDate}{' '}
+                              <span className="admin-order-list-sub">
+                                {b.startTime}–{b.endTime}
+                              </span>
+                            </td>
+                            <td className="text-nowrap">{BOOKING_STATUS_LABELS[b.status] ?? b.status}</td>
+                            <td className="text-nowrap">
+                              {PAYMENT_STATUS_LABELS[b.paymentStatus] ?? b.paymentStatus}
+                              <span className="admin-order-list-sub d-block">{formatCurrency(b.totalAmount)}</span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="col-lg-5">
+        <div className="col-12">
           <div className="card">
-            <div className="card-header">Chi tiết &amp; chỉnh sửa đơn</div>
+            <div className="card-header">Chi tiết &amp; chỉnh sửa thông tin</div>
             <div className="card-body">
               <OrderDetailForm
                 booking={selected}
                 isSaving={saveMutation.isPending}
+                isDeleting={deleteMutation.isPending}
                 onSave={handleSave}
+                onDelete={(adminPassword) => {
+                  if (!selected) return;
+                  setNotice(null);
+                  deleteMutation.mutate({ id: selected.id, adminPassword });
+                }}
               />
-            </div>
-          </div>
-          <div className="card mt-3">
-            <div className="card-header">Gợi ý đối soát</div>
-            <div className="card-body small">
-              <ul className="mb-0 ps-3">
-                <li>
-                  <span className="badge bg-success me-1">Đối soát đúng</span>: số tiền khớp bảng giá và trạng thái
-                  thanh toán hợp lệ.
-                </li>
-                <li>
-                  <span className="badge bg-danger me-1">Chưa đối soát</span>: đơn chưa xác nhận thanh toán / chờ xử
-                  lý.
-                </li>
-                <li>
-                  <span className="badge bg-danger me-1">Đối soát sai</span>: mâu thuẫn trạng thái hoặc sai số tiền.
-                </li>
-              </ul>
             </div>
           </div>
         </div>

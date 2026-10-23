@@ -1,4 +1,4 @@
-const { ok, created } = require('../../utils/response');
+const { ok, created, noContent } = require('../../utils/response');
 const bookingService = require('./booking.service');
 
 async function create(req, res) {
@@ -38,6 +38,11 @@ async function adminUpdate(req, res) {
   return ok(res, await bookingService.adminUpdate(req.validated.params.id, req.validated.body));
 }
 
+async function adminRemove(req, res) {
+  await bookingService.adminRemove(req.validated.params.id, req.user.id, req.validated.body);
+  return noContent(res);
+}
+
 module.exports = {
   create,
   getById,
@@ -47,4 +52,5 @@ module.exports = {
   cancel,
   adminUpdateStatus,
   adminUpdate,
+  adminRemove,
 };

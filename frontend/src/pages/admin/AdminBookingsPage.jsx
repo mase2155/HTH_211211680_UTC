@@ -6,6 +6,10 @@ import { BOOKING_STATUS_LABELS, PAYMENT_STATUS_LABELS } from '../../constants/bo
 import { adminUpdateBookingStatusApi, fetchAllBookingsApi } from '../../features/bookings/bookings.api';
 import { formatCurrency } from '../../utils/format';
 import { getErrorMessage } from '../../utils/errors';
+import {
+  CONFIRM_COMPLETE_BEFORE_SLOT_MESSAGE,
+  isBeforeSlotStart,
+} from '../../utils/bookingDatetime';
 
 const statusBadge = {
   Pending: 'bg-warning text-dark',
@@ -38,16 +42,30 @@ export default function AdminBookingsPage() {
 
   const bookings = data?.items ?? [];
 
+  const requestComplete = (booking) => {
+    if (
+      isBeforeSlotStart(booking) &&
+      !window.confirm(CONFIRM_COMPLETE_BEFORE_SLOT_MESSAGE)
+    ) {
+      return;
+    }
+    statusMutation.mutate({ id: booking.id, status: BOOKING_STATUS.COMPLETED });
+  };
+
   return (
     <>
       <div className="content-header">
         <h1>Đơn đặt lịch</h1>
-        <p className="breadcrumb-demo">Section 2 / Đơn đặt lịch</p>
+        <p className="breadcrumb-demo">Section 2 / Xét duyệt trạng thái đơn</p>
       </div>
+      <p className="small text-muted mb-3">
+        Chỉ dùng để duyệt, hủy hoặc hoàn thành đơn. Sửa thông tin khách / thanh toán tại mục{' '}
+        <strong>Quản lý đơn</strong>.
+      </p>
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="card">
         <div className="card-header">
-          <span>Lọc &amp; duyệt đơn</span>
+          <span>Xét duyệt trạng thái</span>
           <div className="d-flex gap-2 flex-wrap">
             <select
               className="form-select form-select-sm"
@@ -152,9 +170,7 @@ export default function AdminBookingsPage() {
                             type="button"
                             className="btn btn-outline-primary btn-sm"
                             disabled={statusMutation.isPending}
-                            onClick={() =>
-                              statusMutation.mutate({ id: b.id, status: BOOKING_STATUS.COMPLETED })
-                            }
+                            onClick={() => requestComplete(b)}
                           >
                             Hoàn thành
                           </button>
