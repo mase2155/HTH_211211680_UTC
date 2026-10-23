@@ -11,6 +11,7 @@ import {
 import { fetchFieldTypesApi } from '../../features/fieldTypes/fieldTypes.api';
 import { fetchTimeSlotsApi } from '../../features/timeSlots/timeSlots.api';
 import { getErrorMessage } from '../../utils/errors';
+import { formatAmount, parseAmount } from '../../utils/format';
 
 const FIELD_STATUSES = [
   { value: 'Active', label: 'Hoạt động' },
@@ -59,7 +60,7 @@ function FieldPricesModal({ field, onClose, onNotice }) {
   useEffect(() => {
     const next = {};
     for (const row of pricesQuery.data ?? []) {
-      next[`${row.timeSlotId}-${row.dayType}`] = row.amount;
+      next[`${row.timeSlotId}-${row.dayType}`] = formatAmount(row.amount);
     }
     setDraft(next);
   }, [pricesQuery.data]);
@@ -71,7 +72,7 @@ function FieldPricesModal({ field, onClose, onNotice }) {
         for (const dayType of ['Weekday', 'Weekend']) {
           const key = `${slot.id}-${dayType}`;
           const raw = draft[key];
-          const amount = Number.parseInt(String(raw ?? '').replace(/\D/g, ''), 10);
+          const amount = parseAmount(raw);
           if (Number.isNaN(amount) || amount < 0) {
             throw new Error('Giá phải là số nguyên không âm');
           }
@@ -139,14 +140,20 @@ function FieldPricesModal({ field, onClose, onNotice }) {
                           return (
                             <td key={dayType}>
                               <input
-                                type="number"
-                                min={0}
-                                step={1000}
+                                type="text"
+                                inputMode="numeric"
                                 className="form-control form-control-sm"
                                 value={draft[key] ?? ''}
-                                onChange={(e) =>
-                                  setDraft((prev) => ({ ...prev, [key]: e.target.value }))
-                                }
+                                onChange={(e) => {
+                                  const parsed = parseAmount(e.target.value);
+                                  setDraft((prev) => ({
+                                    ...prev,
+                                    [key]:
+                                      Number.isNaN(parsed) && !e.target.value.trim()
+                                        ? ''
+                                        : formatAmount(Number.isNaN(parsed) ? 0 : parsed),
+                                  }));
+                                }}
                               />
                             </td>
                           );
