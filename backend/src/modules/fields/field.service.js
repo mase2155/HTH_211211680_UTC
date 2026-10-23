@@ -1,6 +1,5 @@
 const AppError = require('../../utils/AppError');
 const { ERROR_CODES } = require('../../constants/errorCodes');
-const { FIELD_STATUS } = require('../../constants/field');
 const { buildMeta } = require('../../utils/pagination');
 const { getDayType } = require('../../utils/datetime');
 const { isUniqueViolationOf, isForeignKeyViolation } = require('../../utils/sql');
@@ -19,7 +18,6 @@ function mapListQuery(query) {
       'Lọc theo lịch cần đồng thời bookingDate và timeSlotId',
     );
   }
-  if (!filters.status) filters.status = FIELD_STATUS.ACTIVE;
   return filters;
 }
 

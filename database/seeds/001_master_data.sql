@@ -42,17 +42,18 @@ WHERE NOT EXISTS (
 INSERT INTO dbo.Fields (FieldTypeId, Name, Address, Description)
 SELECT ft.FieldTypeId, v.Name, v.Address, v.Description
 FROM (VALUES
-    (N'Bóng đá', N'Sân bóng đá số 01', N'45 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Sân 5 người, cỏ nhân tạo thế hệ mới, có đèn chiếu sáng.'),
-    (N'Bóng đá', N'Sân bóng đá số 02', N'45 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Sân 5 người, có mái che khán đài.'),
-    (N'Bóng đá', N'Sân bóng đá số 03', N'45 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Sân 7 người, phù hợp giao hữu.'),
-    (N'Bóng đá', N'Sân bóng đá số 04', N'45 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Sân 7 người, có phòng thay đồ.'),
-    (N'Cầu lông', N'Sân cầu lông số 01', N'132 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Thảm tiêu chuẩn BWF, ánh sáng chống chói.'),
-    (N'Cầu lông', N'Sân cầu lông số 02', N'132 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Thảm tiêu chuẩn BWF.'),
-    (N'Cầu lông', N'Sân cầu lông số 03', N'132 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Sân trong nhà, có điều hòa.'),
-    (N'Tennis', N'Sân tennis số 01', N'Khu đô thị An Khánh, Hoài Đức, Hà Nội', N'Mặt sân asphalt nhiều lớp sơn, giảm chấn.'),
-    (N'Tennis', N'Sân tennis số 02', N'Khu đô thị An Khánh, Hoài Đức, Hà Nội', N'Mặt sân cứng, có đèn đêm.'),
-    (N'Pickleball', N'Sân pickleball số 01', N'521 Minh Khai, Hai Bà Trưng, Hà Nội', N'Sân trong nhà, mặt sân chống trơn.'),
-    (N'Pickleball', N'Sân pickleball số 02', N'521 Minh Khai, Hai Bà Trưng, Hà Nội', N'Sân trong nhà, có cho thuê vợt.')
+    (N'Bóng đá', N'Bóng đá - Sân số 1', N'45 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Sân 5 người, cỏ nhân tạo thế hệ mới, có đèn chiếu sáng.'),
+    (N'Bóng đá', N'Bóng đá - Sân số 2', N'45 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Sân 5 người, có mái che khán đài.'),
+    (N'Bóng đá', N'Bóng đá - Sân số 3', N'45 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Sân 7 người, phù hợp giao hữu.'),
+    (N'Cầu lông', N'Cầu lông - Sân số 1', N'132 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Thảm tiêu chuẩn BWF, ánh sáng chống chói.'),
+    (N'Cầu lông', N'Cầu lông - Sân số 2', N'132 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Thảm tiêu chuẩn BWF.'),
+    (N'Cầu lông', N'Cầu lông - Sân số 3', N'132 Cầu Giấy, Nghĩa Đô, Hà Nội', N'Sân trong nhà, có điều hòa.'),
+    (N'Tennis', N'Tennis - Sân số 1', N'Khu đô thị An Khánh, Hoài Đức, Hà Nội', N'Mặt sân asphalt nhiều lớp sơn, giảm chấn.'),
+    (N'Tennis', N'Tennis - Sân số 2', N'Khu đô thị An Khánh, Hoài Đức, Hà Nội', N'Mặt sân cứng, có đèn đêm.'),
+    (N'Tennis', N'Tennis - Sân số 3', N'Khu đô thị An Khánh, Hoài Đức, Hà Nội', N'Sân có mái che một phần.'),
+    (N'Pickleball', N'Pickleball - Sân số 1', N'521 Minh Khai, Hai Bà Trưng, Hà Nội', N'Sân trong nhà, mặt sân chống trơn.'),
+    (N'Pickleball', N'Pickleball - Sân số 2', N'521 Minh Khai, Hai Bà Trưng, Hà Nội', N'Sân trong nhà, có cho thuê vợt.'),
+    (N'Pickleball', N'Pickleball - Sân số 3', N'521 Minh Khai, Hai Bà Trưng, Hà Nội', N'Sân trong nhà, ánh sáng LED.')
 ) AS v(TypeName, Name, Address, Description)
 JOIN dbo.FieldTypes ft ON ft.Name = v.TypeName
 WHERE NOT EXISTS (SELECT 1 FROM dbo.Fields f WHERE f.Name = v.Name);

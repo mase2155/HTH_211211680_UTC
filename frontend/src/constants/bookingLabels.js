@@ -12,7 +12,7 @@ export const PAYMENT_STATUS_LABELS = {
 };
 
 export const PAYMENT_METHOD_LABELS = {
-  Online: 'Thanh toán online (mô phỏng)',
+  Online: 'Thanh toán online ',
   PayAtField: 'Thanh toán tại sân',
 };
 
