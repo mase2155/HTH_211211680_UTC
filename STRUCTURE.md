@@ -102,7 +102,8 @@ HTH_211211680_UTC/
 │   │   │   ├── bookings/              # Đặt sân, chống trùng, thanh toán mô phỏng, hủy, Admin duyệt
 │   │   │   ├── stats/                 # Tổng quan, doanh thu theo ngày/tháng, hiệu suất từng sân
 │   │   │   ├── newsPosts/             # CRUD tin tức (GET public, POST/PATCH/DELETE Admin)
-│   │   │   └── partnerItems/          # CRUD đối tác hiển thị trang Khách hàng
+│   │   │   ├── partnerItems/          # CRUD đối tác hiển thị trang Khách hàng
+│   │   │   └── siteContentUpload/     # POST upload ảnh tin tức/đối tác (Admin, multipart)
 │   │   │       (mỗi module: *.routes.js · *.controller.js · *.service.js · *.repository.js · *.validation.js)
 │   │   ├── jobs/
 │   │   │   └── expirePendingBookings.js  # Mỗi phút hủy đơn Online quá hạn giữ chỗ
@@ -113,6 +114,7 @@ HTH_211211680_UTC/
 │   │   ├── unit/                      # datetime, token, sql, booking.service, newsPost.service
 │   │   └── integration/               # app, auth, bookings (Supertest + CSDL)
 │   ├── uploads/fields/                # Ảnh sân do Admin tải lên (không commit)
+│   ├── uploads/site-content/          # Ảnh tin tức/đối tác do Admin tải lên (không commit)
 │   ├── .env.example
 │   ├── eslint.config.js
 │   └── package.json
@@ -141,7 +143,8 @@ HTH_211211680_UTC/
 │   │   │   ├── users/                 # API + hooks người dùng / hồ sơ
 │   │   │   ├── stats/                 # API + hooks thống kê, RevenueChart, StatCard
 │   │   │   ├── newsPosts/             # newsPosts.api.js
-│   │   │   └── partnerItems/          # partnerItems.api.js
+│   │   │   ├── partnerItems/          # partnerItems.api.js
+│   │   │   └── siteContent/           # siteContentUpload.api.js (ảnh tin/đối tác)
 │   │   ├── components/
 │   │   │   ├── layout/                # Header, Footer, AdminSidebar
 │   │   │   └── ui/                    # Modal, ConfirmDialog, Pagination, Spinner, EmptyState, ErrorState

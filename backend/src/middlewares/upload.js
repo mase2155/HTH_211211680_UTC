@@ -3,7 +3,7 @@ const multer = require('multer');
 const config = require('../config/env');
 const AppError = require('../utils/AppError');
 const { ERROR_CODES } = require('../constants/errorCodes');
-const { FIELD_IMAGE_DIR, ensureUploadDirs } = require('../utils/fileStorage');
+const { FIELD_IMAGE_DIR, SITE_CONTENT_IMAGE_DIR, ensureUploadDirs } = require('../utils/fileStorage');
 
 const ALLOWED_MIME_TYPES = Object.freeze({
   'image/jpeg': '.jpg',
@@ -34,4 +34,16 @@ const uploadFieldImage = multer({
   limits: { fileSize: config.upload.maxSizeBytes, files: 1 },
 }).single('image');
 
-module.exports = { uploadFieldImage };
+const siteContentStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, SITE_CONTENT_IMAGE_DIR),
+  filename: (req, file, cb) =>
+    cb(null, `${crypto.randomUUID()}${ALLOWED_MIME_TYPES[file.mimetype]}`),
+});
+
+const uploadSiteContentImage = multer({
+  storage: siteContentStorage,
+  fileFilter,
+  limits: { fileSize: config.upload.maxSizeBytes, files: 1 },
+}).single('image');
+
+module.exports = { uploadFieldImage, uploadSiteContentImage };

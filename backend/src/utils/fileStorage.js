@@ -5,9 +5,17 @@ const config = require('../config/env');
 const FIELD_IMAGE_DIR = path.join(config.upload.rootDir, 'fields');
 const FIELD_IMAGE_URL_PREFIX = '/uploads/fields/';
 
-const ensureUploadDirs = () => fs.mkdirSync(FIELD_IMAGE_DIR, { recursive: true });
+const SITE_CONTENT_IMAGE_DIR = path.join(config.upload.rootDir, 'site-content');
+const SITE_CONTENT_IMAGE_URL_PREFIX = '/uploads/site-content/';
+
+const ensureUploadDirs = () => {
+  fs.mkdirSync(FIELD_IMAGE_DIR, { recursive: true });
+  fs.mkdirSync(SITE_CONTENT_IMAGE_DIR, { recursive: true });
+};
 
 const toFieldImageUrl = (filename) => `${FIELD_IMAGE_URL_PREFIX}${filename}`;
+
+const toSiteContentImageUrl = (filename) => `${SITE_CONTENT_IMAGE_URL_PREFIX}${filename}`;
 
 // Chỉ xóa file nằm trong thư mục ảnh sân; dùng basename để chặn path traversal
 async function deleteFieldImage(imageUrl) {
@@ -20,4 +28,11 @@ async function deleteFieldImage(imageUrl) {
   }
 }
 
-module.exports = { FIELD_IMAGE_DIR, ensureUploadDirs, toFieldImageUrl, deleteFieldImage };
+module.exports = {
+  FIELD_IMAGE_DIR,
+  SITE_CONTENT_IMAGE_DIR,
+  ensureUploadDirs,
+  toFieldImageUrl,
+  toSiteContentImageUrl,
+  deleteFieldImage,
+};

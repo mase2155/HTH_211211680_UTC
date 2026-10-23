@@ -9,6 +9,8 @@ import {
 } from '../../features/newsPosts/newsPosts.api';
 import { formatDateTime } from '../../utils/format';
 import { getErrorMessage } from '../../utils/errors';
+import SiteImagePicker from '../../components/admin/SiteImagePicker';
+import { saveSiteContentWithPendingImage } from '../../features/siteContent/siteContentUpload.api';
 
 const emptyForm = { title: '', excerpt: '', imageUrl: '', status: 'Draft' };
 
@@ -16,6 +18,7 @@ export default function AdminNewsPage() {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
+  const [pendingImageFile, setPendingImageFile] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   const { data, isLoading, isError } = useQuery({
@@ -27,11 +30,18 @@ export default function AdminNewsPage() {
 
   const saveMutation = useMutation({
     mutationFn: () =>
-      editingId ? updateNewsPostApi(editingId, form) : createNewsPostApi(form),
+      saveSiteContentWithPendingImage({
+        editingId,
+        form,
+        pendingImageFile,
+        createApi: createNewsPostApi,
+        updateApi: updateNewsPostApi,
+      }),
     onSuccess: () => {
       setMessage({ type: 'success', text: editingId ? 'Đã cập nhật bài viết.' : 'Đã thêm bài viết.' });
       setEditingId(null);
       setForm(emptyForm);
+      setPendingImageFile(null);
       invalidate();
     },
     onError: (err) => setMessage({ type: 'danger', text: getErrorMessage(err) }),
@@ -57,12 +67,14 @@ export default function AdminNewsPage() {
       imageUrl: post.imageUrl ?? '',
       status: post.status ?? 'Draft',
     });
+    setPendingImageFile(null);
     setMessage({ type: '', text: '' });
   }
 
   function startCreate() {
     setEditingId(null);
     setForm(emptyForm);
+    setPendingImageFile(null);
     setMessage({ type: '', text: '' });
   }
 
@@ -182,15 +194,14 @@ export default function AdminNewsPage() {
               />
             </div>
             <div className="col-md-6">
-              <label className="form-label" htmlFor="news-image">
-                URL ảnh (vd. /news/badminton.png)
-              </label>
-              <input
+              <SiteImagePicker
                 id="news-image"
-                type="text"
-                className="form-control"
-                value={form.imageUrl}
-                onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
+                label="Ảnh tin tức"
+                imageUrl={form.imageUrl}
+                pendingFile={pendingImageFile}
+                onPendingFileChange={setPendingImageFile}
+                onImageUrlChange={(imageUrl) => setForm((f) => ({ ...f, imageUrl }))}
+                disabled={saveMutation.isPending}
               />
             </div>
             <div className="col-12">

@@ -14,6 +14,7 @@ const bookingRoutes = require('../modules/bookings/booking.routes');
 const statsRoutes = require('../modules/stats/stats.routes');
 const newsPostRoutes = require('../modules/newsPosts/newsPost.routes');
 const partnerItemRoutes = require('../modules/partnerItems/partnerItem.routes');
+const siteContentUploadRoutes = require('../modules/siteContentUpload/siteContentUpload.routes');
 
 const router = express.Router();
 
@@ -27,6 +28,7 @@ router.use('/bookings', bookingRoutes);
 router.use('/stats', statsRoutes);
 router.use('/news-posts', newsPostRoutes);
 router.use('/partner-items', partnerItemRoutes);
+router.use('/site-content-images', siteContentUploadRoutes);
 
 router.get('/health', async (req, res) => {
   try {

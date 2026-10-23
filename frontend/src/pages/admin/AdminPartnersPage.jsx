@@ -8,6 +8,8 @@ import {
   updatePartnerItemApi,
 } from '../../features/partnerItems/partnerItems.api';
 import { getErrorMessage } from '../../utils/errors';
+import SiteImagePicker from '../../components/admin/SiteImagePicker';
+import { saveSiteContentWithPendingImage } from '../../features/siteContent/siteContentUpload.api';
 
 const emptyForm = { title: '', imageUrl: '', isFeatured: false, sortOrder: 0, isActive: true };
 
@@ -15,6 +17,7 @@ export default function AdminPartnersPage() {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
+  const [pendingImageFile, setPendingImageFile] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   const { data, isLoading, isError } = useQuery({
@@ -26,11 +29,18 @@ export default function AdminPartnersPage() {
 
   const saveMutation = useMutation({
     mutationFn: () =>
-      editingId ? updatePartnerItemApi(editingId, form) : createPartnerItemApi(form),
+      saveSiteContentWithPendingImage({
+        editingId,
+        form,
+        pendingImageFile,
+        createApi: createPartnerItemApi,
+        updateApi: updatePartnerItemApi,
+      }),
     onSuccess: () => {
       setMessage({ type: 'success', text: editingId ? 'Đã cập nhật đối tác.' : 'Đã thêm đối tác.' });
       setEditingId(null);
       setForm(emptyForm);
+      setPendingImageFile(null);
       invalidate();
     },
     onError: (err) => setMessage({ type: 'danger', text: getErrorMessage(err) }),
@@ -57,6 +67,7 @@ export default function AdminPartnersPage() {
       sortOrder: item.sortOrder ?? 0,
       isActive: Boolean(item.isActive),
     });
+    setPendingImageFile(null);
     setMessage({ type: '', text: '' });
   }
 
@@ -83,6 +94,7 @@ export default function AdminPartnersPage() {
             className="btn btn-primary"
             onClick={() => {
               setEditingId(null);
+              setPendingImageFile(null);
               const nextOrder =
                 items.length > 0
                   ? Math.max(...items.map((i) => Number(i.sortOrder) || 0)) + 1
@@ -157,15 +169,14 @@ export default function AdminPartnersPage() {
               />
             </div>
             <div className="col-md-6">
-              <label className="form-label" htmlFor="partner-image">
-                URL ảnh
-              </label>
-              <input
+              <SiteImagePicker
                 id="partner-image"
-                type="text"
-                className="form-control"
-                value={form.imageUrl}
-                onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
+                label="Ảnh đối tác"
+                imageUrl={form.imageUrl}
+                pendingFile={pendingImageFile}
+                onPendingFileChange={setPendingImageFile}
+                onImageUrlChange={(imageUrl) => setForm((f) => ({ ...f, imageUrl }))}
+                disabled={saveMutation.isPending}
               />
             </div>
             <div className="col-md-3">
