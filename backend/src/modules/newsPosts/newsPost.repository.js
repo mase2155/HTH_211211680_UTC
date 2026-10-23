@@ -1,5 +1,6 @@
 const { sql, createRequest } = require('../../config/database');
 const { toOffset } = require('../../utils/pagination');
+const { nextContentIdByCount, reseedContentIdentity } = require('../../utils/sequentialContentId');
 
 const COLUMNS = `
   NewsPostId AS id,
@@ -41,18 +42,22 @@ async function findById(id, tx) {
 }
 
 async function insert(data, tx) {
+  const nextId = await nextContentIdByCount('newsPosts', tx);
   const request = await createRequest(tx);
-  const result = await request
+  await request
+    .input('id', sql.Int, nextId)
     .input('title', sql.NVarChar(300), data.title)
     .input('excerpt', sql.NVarChar(1000), data.excerpt ?? null)
     .input('imageUrl', sql.NVarChar(500), data.imageUrl ?? null)
     .input('status', sql.NVarChar(20), data.status)
     .query(`
-      INSERT INTO dbo.NewsPosts (Title, Excerpt, ImageUrl, Status)
-      OUTPUT INSERTED.NewsPostId AS id
-      VALUES (@title, @excerpt, @imageUrl, @status)
+      SET IDENTITY_INSERT dbo.NewsPosts ON;
+      INSERT INTO dbo.NewsPosts (NewsPostId, Title, Excerpt, ImageUrl, Status)
+      VALUES (@id, @title, @excerpt, @imageUrl, @status);
+      SET IDENTITY_INSERT dbo.NewsPosts OFF;
     `);
-  return findById(result.recordset[0].id, tx);
+  await reseedContentIdentity('newsPosts', tx);
+  return findById(nextId, tx);
 }
 
 async function update(id, data, tx) {

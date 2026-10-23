@@ -1,5 +1,6 @@
 const { sql, createRequest } = require('../../config/database');
 const { toOffset } = require('../../utils/pagination');
+const { nextContentIdByCount, reseedContentIdentity } = require('../../utils/sequentialContentId');
 
 const COLUMNS = `
   PartnerItemId AS id,
@@ -42,19 +43,23 @@ async function findById(id, tx) {
 }
 
 async function insert(data, tx) {
+  const nextId = await nextContentIdByCount('partnerItems', tx);
   const request = await createRequest(tx);
-  const result = await request
+  await request
+    .input('id', sql.Int, nextId)
     .input('title', sql.NVarChar(300), data.title)
     .input('imageUrl', sql.NVarChar(500), data.imageUrl ?? null)
     .input('isFeatured', sql.Bit, data.isFeatured ? 1 : 0)
     .input('sortOrder', sql.Int, data.sortOrder)
     .input('isActive', sql.Bit, data.isActive ? 1 : 0)
     .query(`
-      INSERT INTO dbo.PartnerItems (Title, ImageUrl, IsFeatured, SortOrder, IsActive)
-      OUTPUT INSERTED.PartnerItemId AS id
-      VALUES (@title, @imageUrl, @isFeatured, @sortOrder, @isActive)
+      SET IDENTITY_INSERT dbo.PartnerItems ON;
+      INSERT INTO dbo.PartnerItems (PartnerItemId, Title, ImageUrl, IsFeatured, SortOrder, IsActive)
+      VALUES (@id, @title, @imageUrl, @isFeatured, @sortOrder, @isActive);
+      SET IDENTITY_INSERT dbo.PartnerItems OFF;
     `);
-  return findById(result.recordset[0].id, tx);
+  await reseedContentIdentity('partnerItems', tx);
+  return findById(nextId, tx);
 }
 
 async function update(id, data, tx) {

@@ -1,5 +1,5 @@
-/** ID dự kiến cho bài tin / đối tác mới — khớp với IDENTITY SQL Server (max hiện tại + 1). */
-export function getNextContentId(items) {
-  if (!items?.length) return 1;
-  return items.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0) + 1;
+/** ID dự kiến = số bản ghi hiện có + 1 (không phụ thuộc IDENTITY sau khi đã xóa bản ghi). */
+export function getNextContentId(items, total) {
+  const count = typeof total === 'number' ? total : items?.length ?? 0;
+  return count + 1;
 }

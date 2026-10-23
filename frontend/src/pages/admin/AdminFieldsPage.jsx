@@ -19,11 +19,6 @@ const FIELD_STATUSES = [
   { value: 'Inactive', label: 'Ngừng hoạt động' },
 ];
 
-const PAYMENT_METHODS = [
-  { value: 'Online', label: 'Thanh toán trực tuyến ' },
-  { value: 'PayAtField', label: 'Thanh toán tại sân' },
-];
-
 function statusLabel(value) {
   return FIELD_STATUSES.find((s) => s.value === value)?.label ?? value;
 }
@@ -359,12 +354,6 @@ export default function AdminFieldsPage() {
     <>
       <div className="content-header">
         <h1>Quản lý sân</h1>
-        <p className="breadcrumb-demo">Section 2 / Sân — mỗi loại: 3 sân (số 1, 2, 3)</p>
-      </div>
-
-      <div className="alert alert-info py-2 small">
-        <strong>Hình thức thanh toán</strong> ({PAYMENT_METHODS.map((m) => m.label).join(' · ')}) do khách chọn khi đặt
-        sân, không cấu hình riêng từng sân. Quản lý đơn tại mục <em>Đơn đặt lịch</em>.
       </div>
 
       {notice && (

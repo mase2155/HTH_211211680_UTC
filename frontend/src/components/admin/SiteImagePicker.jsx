@@ -53,10 +53,6 @@ export default function SiteImagePicker({
           {label}
         </label>
       )}
-      <p className="small text-muted mb-1">
-        Ảnh chọn từ máy chỉ được ghi vào thư mục ảnh của dự án (backend/uploads/site-content) sau khi thêm hoặc sửa
-        thành công.
-      </p>
       <div className="d-flex flex-wrap gap-2 align-items-center">
         <input
           id={id}

@@ -29,12 +29,12 @@ export default function AdminPartnersPage() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['partnerItems'] });
 
   const items = data?.items ?? [];
-  const nextPartnerId = getNextContentId(items);
+  const nextPartnerId = getNextContentId(items, data?.meta?.total);
   const formDisplayId = editingId ?? nextPartnerId;
 
   const saveMutation = useMutation({
     mutationFn: () => {
-      const displayId = editingId ?? getNextContentId(items);
+      const displayId = editingId ?? getNextContentId(items, data?.meta?.total);
       const formWithOrder = { ...form, sortOrder: displayId };
       return saveSiteContentWithPendingImage({
         editingId,
@@ -90,16 +90,10 @@ export default function AdminPartnersPage() {
     <>
       <div className="content-header">
         <h1>Quản lý đối tác</h1>
-        <p className="breadcrumb-demo">Section 1 / Đối tác</p>
       </div>
       {message.text && (
         <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'}`}>{message.text}</div>
       )}
-      <p className="small text-muted mb-3">
-        Thêm đối tác mới (bật <strong>Hiển thị trên web</strong>) sẽ xuất hiện <strong>phía dưới</strong> các mục cũ
-        trên trang <strong>Đối tác</strong>. ID tự sinh (mục tiếp theo: {nextPartnerId}), không chỉnh sửa được; thứ
-        tự hiển thị tự gán theo ID mới.
-      </p>
       <div className="card">
         <div className="card-header">
           <span>Danh sách đối tác</span>

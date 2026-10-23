@@ -58,13 +58,11 @@ export default function AdminLayout() {
                 <SidebarLink key={item.to} {...item} />
               ))}
             </ul>
-            <p className="nav-section-title">Section 1 — Nội dung website</p>
             <ul className="nav-sidebar">
               {contentNav.map((item) => (
                 <SidebarLink key={item.to} {...item} />
               ))}
             </ul>
-            <p className="nav-section-title">Section 2 — Vận hành sân &amp; đơn</p>
             <ul className="nav-sidebar">
               {operationsNav.map((item) => (
                 <SidebarLink key={item.to} {...item} />

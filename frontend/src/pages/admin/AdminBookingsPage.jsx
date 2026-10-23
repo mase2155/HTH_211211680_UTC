@@ -56,12 +56,7 @@ export default function AdminBookingsPage() {
     <>
       <div className="content-header">
         <h1>Đơn đặt lịch</h1>
-        <p className="breadcrumb-demo">Section 2 / Xét duyệt trạng thái đơn</p>
       </div>
-      <p className="small text-muted mb-3">
-        Chỉ dùng để duyệt, hủy hoặc hoàn thành đơn. Sửa thông tin khách / thanh toán tại mục{' '}
-        <strong>Quản lý đơn</strong>.
-      </p>
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="card">
         <div className="card-header">

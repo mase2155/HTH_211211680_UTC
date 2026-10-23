@@ -81,22 +81,17 @@ export default function AdminNewsPage() {
   }
 
   const posts = data?.items ?? [];
-  const nextPostId = getNextContentId(posts);
+  const nextPostId = getNextContentId(posts, data?.meta?.total);
   const formDisplayId = editingId ?? nextPostId;
 
   return (
     <>
       <div className="content-header">
         <h1>Quản lý tin tức</h1>
-        <p className="breadcrumb-demo">Section 1 / Tin tức</p>
       </div>
       {message.text && (
         <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'}`}>{message.text}</div>
       )}
-      <p className="small text-muted mb-3">
-        Thêm bài và đặt trạng thái <strong>Hiển thị</strong> sẽ xuất hiện <strong>phía dưới</strong> các bài cũ trên
-        trang <strong>Tin tức</strong>. ID tự sinh (bài tiếp theo: {nextPostId}), không chỉnh sửa được.
-      </p>
       <div className="card">
         <div className="card-header">
           <span>Danh sách bài viết</span>

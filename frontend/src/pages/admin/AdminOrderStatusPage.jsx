@@ -49,11 +49,6 @@ function OrderDetailForm({ booking, onSave, isSaving, onDelete, isDeleting }) {
 
   return (
     <div>
-      <p className="small text-muted mb-3">
-        Chỉ cập nhật thông tin khách và thanh toán. Duyệt / hủy / hoàn thành đơn thực hiện tại mục{' '}
-        <strong>Đơn đặt lịch</strong>.
-      </p>
-
       <div className="row g-3">
         <div className="col-md-6">
           <label className="form-label small">Mã đơn</label>
@@ -171,19 +166,18 @@ function OrderDetailForm({ booking, onSave, isSaving, onDelete, isDeleting }) {
         >
           {isSaving ? 'Đang lưu…' : 'Lưu'}
         </button>
-        <span className="small text-muted ms-2">Thay đổi chỉ được gửi lên server khi bấm Lưu.</span>
       </div>
 
       <hr className="my-4" />
       <div className="border border-danger rounded p-3 bg-light">
-        <h6 className="text-danger mb-2">Xóa đơn (hoá đơn)</h6>
+        <h6 className="text-danger mb-2">Xóa đơn</h6>
         <p className="small text-muted mb-2">
-          Thao tác không thể hoàn tác. Nhập <strong>mật khẩu tài khoản admin</strong> đang đăng nhập để xác nhận.
+          Thao tác không thể hoàn tác. Nhập mật khẩu tài khoản đang đăng nhập để xác nhận.
         </p>
         <div className="row g-2 align-items-end">
           <div className="col-md-6">
             <label className="form-label small mb-1" htmlFor="admin-delete-password">
-              Mật khẩu admin
+              Mật khẩu
             </label>
             <input
               id="admin-delete-password"
@@ -304,7 +298,6 @@ export default function AdminOrderStatusPage() {
     <>
       <div className="content-header">
         <h1>Quản lý đơn</h1>
-        <p className="breadcrumb-demo">Section 2 / Quản lý thông tin đơn đặt sân</p>
       </div>
 
       {notice && (
