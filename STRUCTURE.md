@@ -42,6 +42,8 @@ HTH_211211680_UTC/
 ├── reportChap2.md                     # Chương 2 báo cáo (nguồn Markdown)
 ├── reportChap2.docx                   # Chương 2 báo cáo (Word, xuất từ .md bằng Pandoc)
 ├── reportChap3.md                     # Chương 3 báo cáo: triển khai Backend/API/CSDL (giải thích intern)
+├── reportChap4.md                     # Chương 4 báo cáo: Frontend React, luồng đặt/thanh toán/hủy/admin
+├── reportChap4.docx                   # Chương 4 báo cáo (Word, xuất từ .md bằng Pandoc)
 ├── .gitignore
 │
 ├── database/                          # CSDL SQL Server

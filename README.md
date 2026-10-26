@@ -31,5 +31,6 @@ Quy tắc code cho AI nằm trong `.cursor/rules/`.
 | Chương | File | Nội dung |
 |--------|------|----------|
 | 2 — Thiết kế | `reportChap2.md` / `reportChap2.docx` | Use case, ERD, luồng nghiệp vụ |
+| 4 — Giao diện & luồng chính | `reportChap4.md` / `reportChap4.docx` | React, component, đặt sân / thanh toán / hủy / admin |
 | 3 — Backend | **`reportChap3.md`** | Cài đặt API, CSDL, workflow code (mức intern) |
 
