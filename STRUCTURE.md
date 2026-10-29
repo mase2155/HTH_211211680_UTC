@@ -191,9 +191,11 @@ HTH_211211680_UTC/
 │   └── vite.config.js                 # Proxy /api, /uploads → backend
 │
 ├── postman/
-│   ├── SportBooking.postman_collection.json   # Collection kiểm thử API (Chương 5) — bổ sung sau
-│   └── SportBooking.postman_environment.json  # baseUrl, accessToken, fieldId, bookingId...
-└── docs/                              # (Giai đoạn 6) — chưa tạo thư mục
+│   ├── SportBooking.postman_collection.json   # Collection kiểm thử API (sinh bằng scripts/generate-collection.js)
+│   ├── SportBooking.postman_environment.json  # baseUrl, token, fieldId, bookingId...
+│   └── scripts/
+│       └── generate-collection.js     # Tạo lại collection khi bổ sung request
+└── docs/
     └── test-cases.md                  # Kịch bản kiểm thử Chương 5
 ```
 
@@ -282,7 +284,7 @@ HTH_211211680_UTC/
 - ✅ Quản lý loại sân, khung giờ, sân (giá, ảnh, ngày nghỉ), người dùng trên admin
 
 ### Giai đoạn 6 – Tích hợp, kiểm thử, hoàn thiện (30/11 – 13/12)
-- ⬜ Postman collection đủ các nhóm API + test script lưu token/id
-- ⬜ `docs/test-cases.md`: tìm kiếm/lọc, đặt trùng khung giờ, hủy quá hạn, độ chính xác thống kê
-- ⬜ Kiểm thử đặt trùng đồng thời (2 request cùng lúc → 1 thành công, 1 lỗi 409)
-- ⬜ Kiểm tra responsive, sửa lỗi, cập nhật README hướng dẫn chạy
+- ✅ Postman collection + environment; script login lưu `accessToken` / `bookingId`
+- ✅ `docs/test-cases.md`: tìm kiếm/lọc, đặt trùng, hủy, thống kê
+- ✅ Integration test đặt trùng đồng thời (`Promise.all` → 201 + 409)
+- 🟡 Responsive admin + trang đặt/tìm sân (768px); README cập nhật — tiếp tục rà soát mobile 360px

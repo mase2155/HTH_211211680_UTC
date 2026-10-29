@@ -6,6 +6,20 @@
     padding-top: 10rem;
 }
 
+@media (max-width: 768px) {
+    .content-form {
+        padding-top: 7rem;
+    }
+
+    .booking-form-card {
+        padding: 1.25rem !important;
+    }
+
+    .form-section-title {
+        font-size: 1.35rem;
+    }
+}
+
 .page-subtitle {
     font-size: 1rem; 
 }
