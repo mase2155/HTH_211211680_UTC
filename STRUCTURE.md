@@ -143,7 +143,7 @@ HTH_211211680_UTC/
 │   │   │   ├── schedule/              # ScheduleBoard (bảng trạng thái), SlotPicker
 │   │   │   ├── bookings/              # API + hooks đơn, BookingStatusBadge, BookingForm
 │   │   │   ├── users/                 # API + hooks người dùng / hồ sơ
-│   │   │   ├── stats/                 # API + hooks thống kê, RevenueChart, StatCard
+│   │   │   ├── stats/                 # stats.api.js, components/RevenueChart.jsx
 │   │   │   ├── newsPosts/             # newsPosts.api.js
 │   │   │   ├── partnerItems/          # partnerItems.api.js
 │   │   │   └── siteContent/           # siteContentUpload.api.js (ảnh tin/đối tác)
@@ -179,7 +179,6 @@ HTH_211211680_UTC/
 │   │   │   │   ├── AdminFieldsPage.jsx    # CRUD sân, giá, trạng thái
 │   │   │   │   ├── AdminOrderStatusPage.jsx # Workflow chuyển trạng thái
 │   │   │   │   └── AdminUsersPage.jsx     # Quản lý người dùng (lọc, khóa/mở)
-│   │   │   │   (mở rộng sau: biểu đồ doanh thu)
 │   │   │   └── NotFoundPage.jsx
 │   │   ├── constants/                 # routes.js, queryKeys.js, bookingLabels.js
 │   │   ├── utils/                     # format.js, errors.js, date.js
@@ -279,7 +278,7 @@ HTH_211211680_UTC/
 - ✅ `AdminLayout` + sidebar (`/admin`, role Admin), `admin.css`
 - ✅ Section 1: CRUD tin tức & đối tác (`newsPosts`, `partnerItems`, migration `002`); trang Tin tức / Đối tác đọc API
 - ✅ Section 2: đơn đặt lịch (lọc, duyệt, hủy, hoàn thành), cập nhật trạng thái sân, workflow trạng thái đơn
-- 🟡 Dashboard tổng quan (số đơn chờ, doanh thu tổng); biểu đồ doanh thu / hiệu suất sân chưa có UI
+- ✅ Dashboard: tổng quan đơn/doanh thu, bảng + biểu đồ doanh thu theo ngày/tháng, hiệu suất từng sân
 - ✅ Quản lý loại sân, khung giờ, sân (giá, ảnh, ngày nghỉ), người dùng trên admin
 
 ### Giai đoạn 6 – Tích hợp, kiểm thử, hoàn thiện (30/11 – 13/12)
