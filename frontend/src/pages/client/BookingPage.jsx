@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { PAYMENT_METHOD_LABELS } from '../../constants/bookingLabels';
 import ScheduleStatusBoard from '../../features/bookings/components/ScheduleStatusBoard';
@@ -18,6 +18,7 @@ import '../../styles/pages/booking.css';
 
 export default function BookingPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, isAuthenticated } = useAuth();
   const fieldTypesQuery = useFieldTypes();
   const fieldTypes = fieldTypesQuery.data ?? [];
@@ -62,6 +63,20 @@ export default function BookingPage() {
       setValue('customerPhone', user.phone ?? '');
     }
   }, [user, setValue]);
+
+  useEffect(() => {
+    const typeParam = searchParams.get('fieldTypeId');
+    const fieldParam = searchParams.get('fieldId');
+    const slotParam = searchParams.get('timeSlotId');
+    const dateParam = searchParams.get('bookingDate');
+    if (typeParam) setFieldTypeId(Number(typeParam) || '');
+    if (dateParam) {
+      setValue('bookingDate', dateParam);
+      setBoardDate(dateParam);
+    }
+    if (fieldParam) setValue('fieldId', fieldParam);
+    if (slotParam) setValue('timeSlotId', slotParam);
+  }, [searchParams, setValue]);
 
   useEffect(() => {
     if (watchDate) setBoardDate(watchDate);

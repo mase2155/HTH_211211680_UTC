@@ -88,6 +88,9 @@ export default function SearchFieldsPage() {
                       <h5 className="fw-bold">{field.name}</h5>
                       <p className="text-muted mb-1">{field.fieldTypeName}</p>
                       <p className="mb-2">{field.address}</p>
+                      <Link to={ROUTES.fieldDetail(field.id)} className="btn btn-sm btn-outline-secondary me-2">
+                        Chi tiết
+                      </Link>
                       <Link to={ROUTES.booking} className="btn btn-sm btn-warning">
                         Đặt sân
                       </Link>

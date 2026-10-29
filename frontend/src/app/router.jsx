@@ -16,6 +16,7 @@ const ProfilePage = lazy(() => import('../pages/client/ProfilePage'));
 const MyBookingsPage = lazy(() => import('../pages/client/MyBookingsPage'));
 const PaymentPage = lazy(() => import('../pages/client/PaymentPage'));
 const SearchFieldsPage = lazy(() => import('../pages/client/SearchFieldsPage'));
+const FieldDetailPage = lazy(() => import('../pages/client/FieldDetailPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 const AdminLayout = lazy(() => import('../layouts/AdminLayout'));
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
@@ -46,6 +47,7 @@ export const router = createBrowserRouter([
       { index: true, element: suspense(<HomePage />) },
       { path: ROUTES.booking.slice(1), element: suspense(<BookingPage />) },
       { path: ROUTES.search.slice(1), element: suspense(<SearchFieldsPage />) },
+      { path: 'fields/:fieldId', element: suspense(<FieldDetailPage />) },
       { path: ROUTES.news.slice(1), element: suspense(<NewsPage />) },
       { path: ROUTES.partners.slice(1), element: suspense(<PartnersPage />) },
       { path: ROUTES.contact.slice(1), element: suspense(<ContactPage />) },
