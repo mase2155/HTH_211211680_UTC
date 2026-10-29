@@ -22,6 +22,7 @@ const operationsNav = [
   { to: `${adminBase}/operations/bookings`, label: 'Đơn đặt lịch', icon: 'fa-calendar-check' },
   { to: `${adminBase}/operations/fields`, label: 'Quản lý sân', icon: 'fa-futbol' },
   { to: `${adminBase}/operations/order-status`, label: 'Quản lý đơn', icon: 'fa-list-check' },
+  { to: `${adminBase}/operations/users`, label: 'Người dùng', icon: 'fa-users' },
 ];
 
 function SidebarLink({ to, label, icon }) {

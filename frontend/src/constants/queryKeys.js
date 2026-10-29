@@ -13,6 +13,7 @@ export const queryKeys = {
   adminFieldTypes: ['admin', 'fieldTypes'],
   adminTimeSlots: (filters) => ['admin', 'timeSlots', filters],
   adminStatsOverview: ['admin', 'stats', 'overview'],
+  adminUsers: (filters) => ['admin', 'users', filters],
   newsPosts: (filters) => ['newsPosts', filters],
   partnerItems: (filters) => ['partnerItems', filters],
 };

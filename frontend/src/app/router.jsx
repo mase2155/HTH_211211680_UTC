@@ -27,6 +27,7 @@ const AdminFieldsPage = lazy(() => import('../pages/admin/AdminFieldsPage'));
 const AdminOrderStatusPage = lazy(() => import('../pages/admin/AdminOrderStatusPage'));
 const AdminFieldTypesPage = lazy(() => import('../pages/admin/AdminFieldTypesPage'));
 const AdminTimeSlotsPage = lazy(() => import('../pages/admin/AdminTimeSlotsPage'));
+const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'));
 
 function PageLoader() {
   return (
@@ -83,6 +84,7 @@ export const router = createBrowserRouter([
           { path: 'catalog/time-slots', element: suspense(<AdminTimeSlotsPage />) },
           { path: 'operations/fields', element: suspense(<AdminFieldsPage />) },
           { path: 'operations/order-status', element: suspense(<AdminOrderStatusPage />) },
+          { path: 'operations/users', element: suspense(<AdminUsersPage />) },
         ],
       },
     ],

@@ -177,8 +177,9 @@ HTH_211211680_UTC/
 │   │   │   │   ├── AdminFieldTypesPage.jsx  # CRUD loại sân
 │   │   │   │   ├── AdminTimeSlotsPage.jsx   # CRUD khung giờ theo loại sân
 │   │   │   │   ├── AdminFieldsPage.jsx    # CRUD sân, giá, trạng thái
-│   │   │   │   └── AdminOrderStatusPage.jsx # Workflow chuyển trạng thái
-│   │   │   │   (mở rộng sau: AdminUsersPage, ngày nghỉ sân, biểu đồ doanh thu)
+│   │   │   │   ├── AdminOrderStatusPage.jsx # Workflow chuyển trạng thái
+│   │   │   │   └── AdminUsersPage.jsx     # Quản lý người dùng (lọc, khóa/mở)
+│   │   │   │   (mở rộng sau: biểu đồ doanh thu)
 │   │   │   └── NotFoundPage.jsx
 │   │   ├── constants/                 # routes.js, queryKeys.js, bookingLabels.js
 │   │   ├── utils/                     # format.js, errors.js, date.js
@@ -279,7 +280,7 @@ HTH_211211680_UTC/
 - ✅ Section 1: CRUD tin tức & đối tác (`newsPosts`, `partnerItems`, migration `002`); trang Tin tức / Đối tác đọc API
 - ✅ Section 2: đơn đặt lịch (lọc, duyệt, hủy, hoàn thành), cập nhật trạng thái sân, workflow trạng thái đơn
 - 🟡 Dashboard tổng quan (số đơn chờ, doanh thu tổng); biểu đồ doanh thu / hiệu suất sân chưa có UI
-- ⬜ Quản lý người dùng, loại sân, khung giờ, bảng giá, upload ảnh sân đầy đủ trên admin
+- ✅ Quản lý loại sân, khung giờ, sân (giá, ảnh, ngày nghỉ), người dùng trên admin
 
 ### Giai đoạn 6 – Tích hợp, kiểm thử, hoàn thiện (30/11 – 13/12)
 - ⬜ Postman collection đủ các nhóm API + test script lưu token/id
