@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../../constants/queryKeys';
 import {
@@ -23,7 +23,10 @@ export default function AdminFieldTypesPage() {
     queryFn: () => fetchAdminFieldTypesApi(),
   });
 
-  const items = data?.items ?? [];
+  const items = useMemo(() => {
+    const rows = data?.items ?? [];
+    return [...rows].sort((a, b) => Number(a.id) - Number(b.id));
+  }, [data?.items]);
   const nextId = getNextContentId(items, data?.meta?.total);
   const formDisplayId = editingId ?? nextId;
 

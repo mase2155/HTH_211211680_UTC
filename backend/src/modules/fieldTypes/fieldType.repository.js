@@ -24,7 +24,7 @@ async function list({ page, limit, isActive }, tx) {
     SELECT ${LIST_COLUMNS}, COUNT(*) OVER() AS totalCount
     FROM dbo.FieldTypes
     ${where}
-    ORDER BY Name
+    ORDER BY FieldTypeId
     OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
   `);
 
