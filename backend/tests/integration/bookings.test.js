@@ -77,6 +77,37 @@ describe('bookings API (CSDL thật)', () => {
     expect(second.body.error.code).toBe('SLOT_ALREADY_BOOKED');
   });
 
+  test('hai request đồng thời cùng slot: một 201 và một 409', async () => {
+    const agent = request(app);
+    const { token: token1 } = await registerAndLogin(agent);
+    const { token: token2 } = await registerAndLogin(agent);
+    const picked = await pickBookableSlot(agent, token1);
+    if (!picked) return;
+    const { field, slot } = picked;
+    const bookingDate = addDays(today(), 15);
+
+    const payload = {
+      fieldId: field.id,
+      timeSlotId: slot.id,
+      bookingDate,
+      customerName: 'Race test',
+      customerPhone: '0909000333',
+      paymentMethod: 'PayAtField',
+    };
+
+    const [first, second] = await Promise.all([
+      agent.post('/api/v1/bookings').set('Authorization', `Bearer ${token1}`).send(payload),
+      agent.post('/api/v1/bookings').set('Authorization', `Bearer ${token2}`).send(payload),
+    ]);
+
+    const statuses = [first.status, second.status].sort((a, b) => a - b);
+    expect(statuses).toEqual([201, 409]);
+    const conflict = first.status === 409 ? first : second;
+    if (conflict.status === 409) {
+      expect(conflict.body.error.code).toBe('SLOT_ALREADY_BOOKED');
+    }
+  });
+
   test('khách hủy đơn Pending của mình', async () => {
     const agent = request(app);
     const { token } = await registerAndLogin(agent);
