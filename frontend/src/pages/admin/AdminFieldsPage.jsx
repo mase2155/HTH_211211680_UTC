@@ -9,7 +9,7 @@ import {
   replaceFieldPricesApi,
   updateFieldApi,
 } from '../../features/fields/fields.api';
-import { fetchFieldTypesApi } from '../../features/fieldTypes/fieldTypes.api';
+import { fetchAdminFieldTypesApi } from '../../features/fieldTypes/fieldTypes.api';
 import { fetchTimeSlotsApi } from '../../features/timeSlots/timeSlots.api';
 import { getErrorMessage } from '../../utils/errors';
 import { formatAmount, parseAmount } from '../../utils/format';
@@ -216,8 +216,8 @@ export default function AdminFieldsPage() {
   });
 
   const typesQuery = useQuery({
-    queryKey: ['admin', 'fieldTypes'],
-    queryFn: () => fetchFieldTypesApi({ limit: 50 }),
+    queryKey: queryKeys.adminFieldTypes,
+    queryFn: () => fetchAdminFieldTypesApi({ limit: 50 }),
   });
 
   const invalidateFields = () =>
@@ -227,7 +227,11 @@ export default function AdminFieldsPage() {
     const items = data?.items ?? [];
     return [...items].sort((a, b) => Number(a.id) - Number(b.id));
   }, [data?.items]);
-  const fieldTypes = typesQuery.data ?? [];
+  const fieldTypes = useMemo(() => {
+    const items = typesQuery.data?.items ?? [];
+    if (!Array.isArray(items)) return [];
+    return items.filter((t) => t.isActive !== false);
+  }, [typesQuery.data]);
   const nextFieldId = getNextContentId(fields, data?.meta?.total);
 
   const updateMutation = useMutation({
