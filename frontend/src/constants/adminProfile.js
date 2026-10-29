@@ -6,7 +6,7 @@ export const ADMIN_PROFILE = Object.freeze({
   email: 'hathehung260923@gmail.com',
   className: 'Cử Nhân Công Nghệ Thông Tin 5 — K62',
   supervisor: Object.freeze({
-    title: 'Trưởng Phòng Hướng Dẫn',
+    title: 'Giảng Viên Hướng Dẫn',
     name: 'GV Đinh Công Tùng',
     phone: '0363641589',
     email: 'tungdc@utc.edu.vn',
