@@ -172,7 +172,7 @@ export default function AdminUsersPage() {
 
       {editingUser && (
         <div className="card mt-3">
-          <div className="card-header">Sửa người dùng #{editingUser.id}</div>
+          <div className="card-header">Thay đổi thông tin người dùng</div>
           <div className="card-body">
             <form className="row g-3" onSubmit={handleSave}>
               <div className="col-md-4">
