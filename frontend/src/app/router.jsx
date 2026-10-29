@@ -26,7 +26,6 @@ const AdminBookingsPage = lazy(() => import('../pages/admin/AdminBookingsPage'))
 const AdminFieldsPage = lazy(() => import('../pages/admin/AdminFieldsPage'));
 const AdminOrderStatusPage = lazy(() => import('../pages/admin/AdminOrderStatusPage'));
 const AdminFieldTypesPage = lazy(() => import('../pages/admin/AdminFieldTypesPage'));
-const AdminTimeSlotsPage = lazy(() => import('../pages/admin/AdminTimeSlotsPage'));
 const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'));
 
 function PageLoader() {
@@ -81,7 +80,6 @@ export const router = createBrowserRouter([
           { path: 'content/partners', element: suspense(<AdminPartnersPage />) },
           { path: 'operations/bookings', element: suspense(<AdminBookingsPage />) },
           { path: 'catalog/field-types', element: suspense(<AdminFieldTypesPage />) },
-          { path: 'catalog/time-slots', element: suspense(<AdminTimeSlotsPage />) },
           { path: 'operations/fields', element: suspense(<AdminFieldsPage />) },
           { path: 'operations/order-status', element: suspense(<AdminOrderStatusPage />) },
           { path: 'operations/users', element: suspense(<AdminUsersPage />) },

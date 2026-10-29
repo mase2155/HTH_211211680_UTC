@@ -175,7 +175,6 @@ HTH_211211680_UTC/
 │   │   │   │   ├── AdminPartnersPage.jsx  # CRUD đối tác
 │   │   │   │   ├── AdminBookingsPage.jsx  # Lọc, duyệt, hủy, hoàn thành đơn
 │   │   │   │   ├── AdminFieldTypesPage.jsx  # CRUD loại sân
-│   │   │   │   ├── AdminTimeSlotsPage.jsx   # CRUD khung giờ theo loại sân
 │   │   │   │   ├── AdminFieldsPage.jsx    # CRUD sân, giá, trạng thái
 │   │   │   │   ├── AdminOrderStatusPage.jsx # Workflow chuyển trạng thái
 │   │   │   │   └── AdminUsersPage.jsx     # Quản lý người dùng (lọc, khóa/mở)
@@ -281,7 +280,8 @@ HTH_211211680_UTC/
 - ✅ Section 1: CRUD tin tức & đối tác (`newsPosts`, `partnerItems`, migration `002`); trang Tin tức / Đối tác đọc API
 - ✅ Section 2: đơn đặt lịch (lọc, duyệt, hủy, hoàn thành), cập nhật trạng thái sân, workflow trạng thái đơn
 - ✅ Dashboard: tổng quan đơn/doanh thu, bảng + biểu đồ doanh thu theo ngày/tháng, hiệu suất từng sân
-- ✅ Quản lý loại sân, khung giờ (CRUD, lọc loại sân, BR02 trên API), sân (giá, ảnh, ngày nghỉ), người dùng trên admin
+- ✅ Quản lý loại sân, sân (giá theo khung giờ seed, ảnh, ngày nghỉ), người dùng trên admin
+- 🟡 UI quản lý khung giờ (Admin): chưa triển khai — dữ liệu khung giờ qua seed/SQL; API backend sẵn sàng
 
 ### Giai đoạn 6 – Tích hợp, kiểm thử, hoàn thiện (30/11 – 13/12)
 - ✅ Postman collection + environment; script login lưu `accessToken` / `bookingId`

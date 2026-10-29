@@ -13,10 +13,7 @@ const contentNav = [
   { to: `${adminBase}/content/partners`, label: 'Đối tác', icon: 'fa-handshake' },
 ];
 
-const catalogNav = [
-  { to: `${adminBase}/catalog/field-types`, label: 'Loại sân', icon: 'fa-layer-group' },
-  { to: `${adminBase}/catalog/time-slots`, label: 'Khung giờ', icon: 'fa-clock' },
-];
+const catalogNav = [{ to: `${adminBase}/catalog/field-types`, label: 'Loại sân', icon: 'fa-layer-group' }];
 
 const operationsNav = [
   { to: `${adminBase}/operations/bookings`, label: 'Đơn đặt lịch', icon: 'fa-calendar-check' },

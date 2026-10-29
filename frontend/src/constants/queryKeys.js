@@ -11,7 +11,6 @@ export const queryKeys = {
   adminBookings: (filters) => ['admin', 'bookings', filters],
   adminFields: (filters) => ['admin', 'fields', filters],
   adminFieldTypes: ['admin', 'fieldTypes'],
-  adminTimeSlots: (filters) => ['admin', 'timeSlots', filters],
   adminStatsOverview: ['admin', 'stats', 'overview'],
   adminStatsRevenue: (filters) => ['admin', 'stats', 'revenue', filters],
   adminStatsFields: ['admin', 'stats', 'fields'],
