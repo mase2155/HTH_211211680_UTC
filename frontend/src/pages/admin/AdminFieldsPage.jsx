@@ -14,6 +14,7 @@ import { fetchTimeSlotsApi } from '../../features/timeSlots/timeSlots.api';
 import { getErrorMessage } from '../../utils/errors';
 import { formatAmount, parseAmount } from '../../utils/format';
 import { getNextContentId } from '../../utils/contentId';
+import SiteImagePicker from '../../components/admin/SiteImagePicker';
 
 const FIELD_STATUSES = [
   { value: 'Active', label: 'Hoạt động' },
@@ -198,6 +199,8 @@ export default function AdminFieldsPage() {
     description: '',
     status: 'Active',
   });
+  const [pendingCreateImage, setPendingCreateImage] = useState(null);
+  const [pendingEditImage, setPendingEditImage] = useState(null);
 
   const listParams = useMemo(() => {
     const p = { limit: 100 };
@@ -226,7 +229,7 @@ export default function AdminFieldsPage() {
   const nextFieldId = getNextContentId(fields, data?.meta?.total);
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, payload }) => updateFieldApi(id, payload),
+    mutationFn: ({ id, payload, imageFile }) => updateFieldApi(id, payload, imageFile),
     onSuccess: (_, { fieldSnapshot, payload, onDone }) => {
       invalidateFields();
       setNotice({ type: 'success', text: buildFieldSaveSuccessMessage(payload, fieldSnapshot) });
@@ -267,13 +270,16 @@ export default function AdminFieldsPage() {
       address: field.address ?? '',
       description: field.description ?? '',
       status: field.status ?? 'Active',
+      imageUrl: field.imageUrl ?? '',
     });
+    setPendingEditImage(null);
     setNotice(null);
   }
 
   function cancelEditField() {
     setEditingFieldId(null);
     setEditForm(null);
+    setPendingEditImage(null);
   }
 
   const handleSaveEditField = () => {
@@ -287,13 +293,18 @@ export default function AdminFieldsPage() {
     if (address !== (editingField.address ?? '')) payload.address = address;
     if (description !== (editingField.description ?? '')) payload.description = description || undefined;
     if (editForm.status !== editingField.status) payload.status = editForm.status;
-    if (Object.keys(payload).length === 0) {
+    if (Object.keys(payload).length === 0 && !pendingEditImage) {
       setNotice({ type: 'warning', text: 'Chưa có thay đổi để lưu.' });
       return;
     }
+    const patchPayload = { ...payload };
+    if (pendingEditImage && Object.keys(patchPayload).length === 0) {
+      patchPayload.name = editForm.name.trim();
+    }
     updateMutation.mutate({
       id: editingField.id,
-      payload,
+      payload: patchPayload,
+      imageFile: pendingEditImage ?? undefined,
       fieldSnapshot: editingField,
       onDone: cancelEditField,
     });
@@ -301,13 +312,16 @@ export default function AdminFieldsPage() {
 
   const createMutation = useMutation({
     mutationFn: () =>
-      createFieldApi({
-        fieldTypeId: Number(createForm.fieldTypeId),
-        name: createForm.name.trim(),
-        address: createForm.address.trim(),
-        description: createForm.description.trim() || undefined,
-        status: createForm.status,
-      }),
+      createFieldApi(
+        {
+          fieldTypeId: Number(createForm.fieldTypeId),
+          name: createForm.name.trim(),
+          address: createForm.address.trim(),
+          description: createForm.description.trim() || undefined,
+          status: createForm.status,
+        },
+        pendingCreateImage ?? undefined,
+      ),
     onSuccess: () => {
       setCreateForm({
         fieldTypeId: '',
@@ -316,6 +330,7 @@ export default function AdminFieldsPage() {
         description: '',
         status: 'Active',
       });
+      setPendingCreateImage(null);
       invalidateFields();
     },
   });
@@ -425,6 +440,17 @@ export default function AdminFieldsPage() {
               <button type="submit" className="btn btn-sm btn-success w-100" disabled={createMutation.isPending}>
                 {createMutation.isPending ? '…' : 'Thêm'}
               </button>
+            </div>
+            <div className="col-12">
+              <SiteImagePicker
+                id="create-field-image"
+                label="Ảnh sân (tùy chọn)"
+                imageUrl=""
+                pendingFile={pendingCreateImage}
+                onPendingFileChange={setPendingCreateImage}
+                onImageUrlChange={() => {}}
+                disabled={createMutation.isPending}
+              />
             </div>
           </form>
         </div>
@@ -606,6 +632,17 @@ export default function AdminFieldsPage() {
                   maxLength={2000}
                   value={editForm.description}
                   onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
+                />
+              </div>
+              <div className="col-12">
+                <SiteImagePicker
+                  id="edit-field-image"
+                  label="Ảnh sân"
+                  imageUrl={editForm.imageUrl ?? ''}
+                  pendingFile={pendingEditImage}
+                  onPendingFileChange={setPendingEditImage}
+                  onImageUrlChange={(imageUrl) => setEditForm((f) => ({ ...f, imageUrl }))}
+                  disabled={updateMutation.isPending}
                 />
               </div>
               <div className="col-12 d-flex flex-wrap gap-2">

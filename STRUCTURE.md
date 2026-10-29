@@ -178,7 +178,7 @@ HTH_211211680_UTC/
 │   │   │   │   ├── AdminTimeSlotsPage.jsx   # CRUD khung giờ theo loại sân
 │   │   │   │   ├── AdminFieldsPage.jsx    # CRUD sân, giá, trạng thái
 │   │   │   │   └── AdminOrderStatusPage.jsx # Workflow chuyển trạng thái
-│   │   │   │   (mở rộng sau: AdminUsersPage, upload ảnh sân, biểu đồ doanh thu)
+│   │   │   │   (mở rộng sau: AdminUsersPage, ngày nghỉ sân, biểu đồ doanh thu)
 │   │   │   └── NotFoundPage.jsx
 │   │   ├── constants/                 # routes.js, queryKeys.js, bookingLabels.js
 │   │   ├── utils/                     # format.js, errors.js, date.js
