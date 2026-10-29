@@ -1,5 +1,5 @@
 const { ok, created, noContent } = require('../../utils/response');
-const newsPostService = require('./newsPost.service');
+const newsPostService = require('../../modules/newsPosts/newsPost.service');
 
 async function list(req, res) {
   const { items, meta } = await newsPostService.list(req.validated.query);

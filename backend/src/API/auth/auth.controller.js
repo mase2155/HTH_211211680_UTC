@@ -1,6 +1,6 @@
 const config = require('../../config/env');
 const { ok, created, noContent } = require('../../utils/response');
-const authService = require('./auth.service');
+const authService = require('../../modules/auth/auth.service');
 
 function refreshCookieOptions() {
   const maxAge = config.refreshToken.expiresDays * 24 * 60 * 60 * 1000;

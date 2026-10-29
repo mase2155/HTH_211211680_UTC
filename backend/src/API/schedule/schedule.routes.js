@@ -1,7 +1,7 @@
 const express = require('express');
 const validate = require('../../middlewares/validate');
 const scheduleController = require('./schedule.controller');
-const { boardQuery } = require('./schedule.validation');
+const { boardQuery } = require('../../modules/schedule/schedule.validation');
 
 const router = express.Router();
 

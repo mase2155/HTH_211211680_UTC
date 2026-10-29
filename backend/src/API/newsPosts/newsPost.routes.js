@@ -3,34 +3,34 @@ const validate = require('../../middlewares/validate');
 const { authenticate } = require('../../middlewares/authenticate');
 const authorize = require('../../middlewares/authorize');
 const { ROLES } = require('../../constants/roles');
-const fieldTypeController = require('./fieldType.controller');
-const { listQuery, createBody, updateBody, idParams } = require('./fieldType.validation');
+const newsPostController = require('./newsPost.controller');
+const { listQuery, createBody, updateBody, idParams } = require('../../modules/newsPosts/newsPost.validation');
 
 const router = express.Router();
 
-router.get('/', validate({ query: listQuery }), fieldTypeController.list);
-router.get('/:id', validate({ params: idParams }), fieldTypeController.getById);
+router.get('/', validate({ query: listQuery }), newsPostController.list);
+router.get('/:id', validate({ params: idParams }), newsPostController.getById);
 
 router.post(
   '/',
   authenticate,
   authorize(ROLES.ADMIN),
   validate({ body: createBody }),
-  fieldTypeController.create,
+  newsPostController.create,
 );
 router.patch(
   '/:id',
   authenticate,
   authorize(ROLES.ADMIN),
   validate({ params: idParams, body: updateBody }),
-  fieldTypeController.update,
+  newsPostController.update,
 );
 router.delete(
   '/:id',
   authenticate,
   authorize(ROLES.ADMIN),
   validate({ params: idParams }),
-  fieldTypeController.remove,
+  newsPostController.remove,
 );
 
 module.exports = router;

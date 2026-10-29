@@ -1,5 +1,5 @@
 const { ok, created, noContent } = require('../../utils/response');
-const partnerItemService = require('./partnerItem.service');
+const partnerItemService = require('../../modules/partnerItems/partnerItem.service');
 
 async function list(req, res) {
   const { items, meta } = await partnerItemService.list(req.validated.query);

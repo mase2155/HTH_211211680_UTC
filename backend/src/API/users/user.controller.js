@@ -1,5 +1,5 @@
 const { ok, noContent } = require('../../utils/response');
-const userService = require('./user.service');
+const userService = require('../../modules/users/user.service');
 
 async function updateMe(req, res) {
   const user = await userService.updateMe(req.user.id, req.validated.body);

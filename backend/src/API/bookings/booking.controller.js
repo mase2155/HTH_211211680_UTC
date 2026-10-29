@@ -1,5 +1,5 @@
 const { ok, created, noContent } = require('../../utils/response');
-const bookingService = require('./booking.service');
+const bookingService = require('../../modules/bookings/booking.service');
 
 async function create(req, res) {
   return created(res, await bookingService.create(req.user.id, req.validated.body));

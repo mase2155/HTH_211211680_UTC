@@ -1,5 +1,5 @@
 const { ok, created, noContent } = require('../../utils/response');
-const fieldClosureService = require('./fieldClosure.service');
+const fieldClosureService = require('../../modules/fieldClosures/fieldClosure.service');
 
 async function list(req, res) {
   return ok(res, await fieldClosureService.list(req.validated.params.id));

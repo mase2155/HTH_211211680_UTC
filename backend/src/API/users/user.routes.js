@@ -11,7 +11,7 @@ const {
   listUsersQuery,
   adminUpdateBody,
   idParams,
-} = require('./user.validation');
+} = require('../../modules/users/user.validation');
 
 const router = express.Router();
 

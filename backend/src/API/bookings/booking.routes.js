@@ -13,7 +13,7 @@ const {
   adminUpdateBody,
   adminDeleteBody,
   idParams,
-} = require('./booking.validation');
+} = require('../../modules/bookings/booking.validation');
 
 const router = express.Router();
 

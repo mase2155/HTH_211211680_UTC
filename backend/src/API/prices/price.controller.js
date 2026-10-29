@@ -1,5 +1,5 @@
 const { ok } = require('../../utils/response');
-const priceService = require('./price.service');
+const priceService = require('../../modules/prices/price.service');
 
 async function listByField(req, res) {
   return ok(res, await priceService.listByField(req.validated.params.id));

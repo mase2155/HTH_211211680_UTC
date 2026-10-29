@@ -1,5 +1,5 @@
 const { ok } = require('../../utils/response');
-const scheduleService = require('./schedule.service');
+const scheduleService = require('../../modules/schedule/schedule.service');
 
 async function byField(req, res) {
   const data = await scheduleService.byField(req.validated.params.id, req.validated.query.date);

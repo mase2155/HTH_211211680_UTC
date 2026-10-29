@@ -6,9 +6,11 @@ alwaysApply: false
 
 # Backend – kiến trúc phân tầng theo module
 
-Mỗi nghiệp vụ là 1 thư mục trong `backend/src/modules/<module>/`:
-`<name>.routes.js` → `<name>.controller.js` → `<name>.service.js` → `<name>.repository.js`,
-kèm `<name>.validation.js` (schema Zod).
+**API (HTTP):** toàn bộ `*.routes.js` và `*.controller.js` nằm trong `backend/src/API/<module>/`.
+**Nghiệp vụ + CSDL:** `backend/src/modules/<module>/` gồm `<name>.service.js`, `<name>.repository.js`,
+`<name>.validation.js` (schema Zod).
+
+Luồng: `API/*.routes` → `API/*.controller` → `modules/*.service` → `modules/*.repository`.
 
 | Tầng | Được làm | Cấm |
 |---|---|---|
@@ -18,7 +20,7 @@ kèm `<name>.validation.js` (schema Zod).
 | repository | SQL tham số hóa qua `mssql`, map cột → camelCase bằng alias | Quy tắc nghiệp vụ, ném lỗi HTTP |
 
 - Chiều phụ thuộc chỉ đi xuống. Service được gọi repository của module khác; không import controller/routes khác module.
-- Router được mount duy nhất tại `src/routes/index.js`. `app.js` dựng app, `server.js` khởi chạy + graceful shutdown.
+- Router được gom tại `src/API/index.js`; `src/routes/index.js` re-export API. `app.js` dựng app, `server.js` khởi chạy + graceful shutdown.
 
 ## Bắt buộc
 - Validate mọi input bằng middleware `validate({ params, query, body })`; controller chỉ đọc `req.validated.*`.

@@ -90,9 +90,15 @@ HTH_211211680_UTC/
 │   │   │   ├── sql.js                 # escapeLike, tham số IN, build câu UPDATE, nhận diện lỗi SQL
 │   │   │   ├── fileStorage.js         # Đường dẫn public của ảnh, xóa file cũ
 │   │   │   └── commonSchemas.js       # Zod dùng chung: id, ngày, giờ, phân trang, số điện thoại
-│   │   ├── modules/
+│   │   ├── API/                       # **Toàn bộ REST API** (route + controller), mount /api/v1
+│   │   │   ├── index.js               # Gom router: auth, fields, bookings, … + GET /health
+│   │   │   ├── auth/ · users/ · fieldTypes/ · timeSlots/ · fields/ · schedule/
+│   │   │   ├── bookings/ · stats/ · newsPosts/ · partnerItems/ · siteContentUpload/
+│   │   │   └── prices/ · fieldClosures/   # Controller phụ (giá, ngày nghỉ gắn vào routes /fields)
+│   │   │       (mỗi thư mục: *.routes.js · *.controller.js — validation gọi từ modules/)
+│   │   ├── modules/                   # **Nghiệp vụ + truy vấn CSDL** (không chứa route HTTP)
 │   │   │   ├── auth/                  # Đăng ký, đăng nhập, refresh, đăng xuất, /me
-│   │   │   │   ├── auth.routes.js · auth.controller.js · auth.service.js · auth.validation.js
+│   │   │   │   ├── auth.service.js · auth.validation.js
 │   │   │   │   └── refreshToken.repository.js
 │   │   │   ├── users/                 # Hồ sơ cá nhân, đổi mật khẩu; Admin quản lý người dùng, khóa/mở
 │   │   │   ├── fieldTypes/            # CRUD loại sân (bóng đá, cầu lông, tennis, pickleball)
@@ -105,12 +111,12 @@ HTH_211211680_UTC/
 │   │   │   ├── stats/                 # Tổng quan, doanh thu theo ngày/tháng, hiệu suất từng sân
 │   │   │   ├── newsPosts/             # CRUD tin tức (GET public, POST/PATCH/DELETE Admin)
 │   │   │   ├── partnerItems/          # CRUD đối tác hiển thị trang Khách hàng
-│   │   │   └── siteContentUpload/     # POST upload ảnh tin tức/đối tác (Admin, multipart)
-│   │   │       (mỗi module: *.routes.js · *.controller.js · *.service.js · *.repository.js · *.validation.js)
+│   │   │   └── siteContentUpload/     # (service nếu tách sau; upload xử lý trực tiếp ở API controller)
+│   │   │       (mỗi module: *.service.js · *.repository.js · *.validation.js)
 │   │   ├── jobs/
 │   │   │   └── expirePendingBookings.js  # Mỗi phút hủy đơn Online quá hạn giữ chỗ
 │   │   └── routes/
-│   │       └── index.js               # Mount toàn bộ router dưới /api/v1 + /health
+│   │       └── index.js               # Re-export ../API (giữ import cũ trong app.js)
 │   ├── tests/
 │   │   ├── setupEnv.js                # Biến môi trường giả cho Jest
 │   │   ├── unit/                      # datetime, token, sql, booking.service, newsPost.service

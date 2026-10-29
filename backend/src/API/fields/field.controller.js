@@ -1,5 +1,5 @@
 const { ok, created, noContent } = require('../../utils/response');
-const fieldService = require('./field.service');
+const fieldService = require('../../modules/fields/field.service');
 
 async function list(req, res) {
   const { items, meta } = await fieldService.list(req.validated.query);

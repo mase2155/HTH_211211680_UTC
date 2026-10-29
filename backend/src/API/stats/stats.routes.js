@@ -4,7 +4,7 @@ const { authenticate } = require('../../middlewares/authenticate');
 const authorize = require('../../middlewares/authorize');
 const { ROLES } = require('../../constants/roles');
 const statsController = require('./stats.controller');
-const { revenueQuery } = require('./stats.validation');
+const { revenueQuery } = require('../../modules/stats/stats.validation');
 
 const router = express.Router();
 

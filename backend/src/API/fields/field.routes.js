@@ -10,11 +10,11 @@ const fieldController = require('./field.controller');
 const priceController = require('../prices/price.controller');
 const fieldClosureController = require('../fieldClosures/fieldClosure.controller');
 const scheduleController = require('../schedule/schedule.controller');
-const { listQuery, createBody, updateBody, idParams } = require('./field.validation');
-const { replaceBody } = require('../prices/price.validation');
-const { createBody: closureBody } = require('../fieldClosures/fieldClosure.validation');
-const { fieldIdParams, closureIdParams } = require('../fieldClosures/fieldClosure.validation');
-const { fieldScheduleQuery } = require('../schedule/schedule.validation');
+const { listQuery, createBody, updateBody, idParams } = require('../../modules/fields/field.validation');
+const { replaceBody } = require('../../modules/prices/price.validation');
+const { createBody: closureBody } = require('../../modules/fieldClosures/fieldClosure.validation');
+const { fieldIdParams, closureIdParams } = require('../../modules/fieldClosures/fieldClosure.validation');
+const { fieldScheduleQuery } = require('../../modules/schedule/schedule.validation');
 
 const router = express.Router();
 

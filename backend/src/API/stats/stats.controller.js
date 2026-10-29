@@ -1,5 +1,5 @@
 const { ok } = require('../../utils/response');
-const statsService = require('./stats.service');
+const statsService = require('../../modules/stats/stats.service');
 
 async function overview(req, res) {
   return ok(res, await statsService.getOverview());

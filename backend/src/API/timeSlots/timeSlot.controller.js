@@ -1,5 +1,5 @@
 const { ok, created, noContent } = require('../../utils/response');
-const timeSlotService = require('./timeSlot.service');
+const timeSlotService = require('../../modules/timeSlots/timeSlot.service');
 
 async function list(req, res) {
   const { items, meta } = await timeSlotService.list(req.validated.query);
