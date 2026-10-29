@@ -139,7 +139,7 @@ HTH_211211680_UTC/
 │   │   │   ├── fieldTypes/            # API + hooks loại sân
 │   │   │   ├── timeSlots/             # API + hooks khung giờ
 │   │   │   ├── prices/                # API + hooks bảng giá
-│   │   │   ├── fieldClosures/         # API + hooks ngày nghỉ
+│   │   │   ├── fieldClosures/         # fieldClosures.api.js (ngày nghỉ sân)
 │   │   │   ├── schedule/              # ScheduleBoard (bảng trạng thái), SlotPicker
 │   │   │   ├── bookings/              # API + hooks đơn, BookingStatusBadge, BookingForm
 │   │   │   ├── users/                 # API + hooks người dùng / hồ sơ

@@ -15,6 +15,7 @@ import { getErrorMessage } from '../../utils/errors';
 import { formatAmount, parseAmount } from '../../utils/format';
 import { getNextContentId } from '../../utils/contentId';
 import SiteImagePicker from '../../components/admin/SiteImagePicker';
+import FieldClosuresModal from '../../components/admin/FieldClosuresModal';
 
 const FIELD_STATUSES = [
   { value: 'Active', label: 'Hoạt động' },
@@ -189,6 +190,7 @@ export default function AdminFieldsPage() {
   const queryClient = useQueryClient();
   const [filterTypeId, setFilterTypeId] = useState('');
   const [priceField, setPriceField] = useState(null);
+  const [closureField, setClosureField] = useState(null);
   const [notice, setNotice] = useState(null);
   const [editingFieldId, setEditingFieldId] = useState(null);
   const [editForm, setEditForm] = useState(null);
@@ -527,6 +529,13 @@ export default function AdminFieldsPage() {
                         </button>
                         <button
                           type="button"
+                          className="btn btn-sm btn-outline-info"
+                          onClick={() => setClosureField(f)}
+                        >
+                          Ngày nghỉ
+                        </button>
+                        <button
+                          type="button"
                           className="btn btn-sm btn-outline-danger"
                           disabled={deleteMutation.isPending}
                           onClick={() => {
@@ -676,6 +685,13 @@ export default function AdminFieldsPage() {
         <FieldPricesModal
           field={priceField}
           onClose={() => setPriceField(null)}
+          onNotice={setNotice}
+        />
+      )}
+      {closureField && (
+        <FieldClosuresModal
+          field={closureField}
+          onClose={() => setClosureField(null)}
           onNotice={setNotice}
         />
       )}
