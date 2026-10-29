@@ -8,10 +8,19 @@ import {
   fetchAdminTimeSlotsApi,
   updateTimeSlotApi,
 } from '../../features/timeSlots/timeSlots.api';
+import { toTimeInputValue } from '../../utils/date';
 import { getErrorMessage } from '../../utils/errors';
 import { getNextContentId } from '../../utils/contentId';
 
 const emptyForm = { fieldTypeId: '', startTime: '', endTime: '', isActive: true };
+
+function compareTimeSlots(a, b) {
+  const typeDiff = Number(a.fieldTypeId) - Number(b.fieldTypeId);
+  if (typeDiff !== 0) return typeDiff;
+  const startDiff = String(a.startTime).localeCompare(String(b.startTime));
+  if (startDiff !== 0) return startDiff;
+  return Number(a.id) - Number(b.id);
+}
 
 export default function AdminTimeSlotsPage() {
   const queryClient = useQueryClient();
@@ -25,10 +34,12 @@ export default function AdminTimeSlotsPage() {
     queryFn: () => fetchAdminFieldTypesApi(),
   });
 
-  const fieldTypes = useMemo(
-    () => (typesQuery.data?.items ?? []).filter((t) => t.isActive !== false),
-    [typesQuery.data?.items],
-  );
+  const fieldTypes = useMemo(() => {
+    const rows = typesQuery.data?.items ?? [];
+    return [...rows]
+      .filter((t) => t.isActive !== false)
+      .sort((a, b) => Number(a.id) - Number(b.id));
+  }, [typesQuery.data?.items]);
 
   const listParams = useMemo(() => {
     const p = {};
@@ -41,29 +52,38 @@ export default function AdminTimeSlotsPage() {
     queryFn: () => fetchAdminTimeSlotsApi(listParams),
   });
 
-  const items = data?.items ?? [];
+  const items = useMemo(() => {
+    const rows = data?.items ?? [];
+    return [...rows].sort(compareTimeSlots);
+  }, [data?.items]);
+
   const nextId = getNextContentId(items, data?.meta?.total);
   const formDisplayId = editingId ?? nextId;
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ['admin', 'timeSlots'] });
     queryClient.invalidateQueries({ queryKey: ['timeSlots'] });
+    queryClient.invalidateQueries({ queryKey: ['schedule'] });
   };
 
   const saveMutation = useMutation({
     mutationFn: () => {
+      const startTime = toTimeInputValue(form.startTime);
+      const endTime = toTimeInputValue(form.endTime);
       if (editingId) {
         const current = items.find((s) => s.id === editingId);
         const payload = {};
-        if (form.startTime && form.startTime !== current?.startTime) payload.startTime = form.startTime;
-        if (form.endTime && form.endTime !== current?.endTime) payload.endTime = form.endTime;
+        const curStart = toTimeInputValue(current?.startTime);
+        const curEnd = toTimeInputValue(current?.endTime);
+        if (startTime && startTime !== curStart) payload.startTime = startTime;
+        if (endTime && endTime !== curEnd) payload.endTime = endTime;
         if (form.isActive !== current?.isActive) payload.isActive = form.isActive;
         return updateTimeSlotApi(editingId, payload);
       }
       return createTimeSlotApi({
         fieldTypeId: Number(form.fieldTypeId),
-        startTime: form.startTime,
-        endTime: form.endTime,
+        startTime,
+        endTime,
       });
     },
     onSuccess: () => {
@@ -95,8 +115,8 @@ export default function AdminTimeSlotsPage() {
     setEditingId(slot.id);
     setForm({
       fieldTypeId: String(slot.fieldTypeId),
-      startTime: slot.startTime ?? '',
-      endTime: slot.endTime ?? '',
+      startTime: toTimeInputValue(slot.startTime),
+      endTime: toTimeInputValue(slot.endTime),
       isActive: slot.isActive !== false,
     });
     setMessage({ type: '', text: '' });
@@ -111,14 +131,22 @@ export default function AdminTimeSlotsPage() {
     setMessage({ type: '', text: '' });
   }
 
+  function cancelEdit() {
+    setEditingId(null);
+    setForm(emptyForm);
+    setMessage({ type: '', text: '' });
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.startTime || !form.endTime) return;
+    const startTime = toTimeInputValue(form.startTime);
+    const endTime = toTimeInputValue(form.endTime);
+    if (!startTime || !endTime) return;
     if (!editingId && !form.fieldTypeId) {
       setMessage({ type: 'warning', text: 'Chọn loại sân trước khi thêm khung giờ.' });
       return;
     }
-    if (form.endTime <= form.startTime) {
+    if (endTime <= startTime) {
       setMessage({ type: 'warning', text: 'Giờ kết thúc phải sau giờ bắt đầu.' });
       return;
     }
@@ -126,8 +154,8 @@ export default function AdminTimeSlotsPage() {
       const current = items.find((s) => s.id === editingId);
       const unchanged =
         current &&
-        form.startTime === current.startTime &&
-        form.endTime === current.endTime &&
+        startTime === toTimeInputValue(current.startTime) &&
+        endTime === toTimeInputValue(current.endTime) &&
         form.isActive === current.isActive;
       if (unchanged) {
         setMessage({ type: 'warning', text: 'Chưa có thay đổi để lưu.' });
@@ -138,15 +166,20 @@ export default function AdminTimeSlotsPage() {
   };
 
   const editingSlot = editingId ? items.find((s) => s.id === editingId) : null;
+  const formTitle = editingId ? 'Thay đổi thông tin khung giờ' : 'Thêm khung giờ';
 
   return (
     <>
       <div className="content-header">
         <h1>Quản lý khung giờ</h1>
-        <p className="text-muted small mb-0">Khung giờ gắn với loại sân; các sân cùng loại dùng chung lịch.</p>
+        <p className="text-muted small mb-0">
+          Khung giờ theo loại sân (BR01). Không chồng lấn; không đổi giờ khi còn đơn tương lai (BR02).
+        </p>
       </div>
       {message.text && (
-        <div className={`alert alert-${message.type === 'success' ? 'success' : message.type === 'warning' ? 'warning' : 'danger'}`}>
+        <div
+          className={`alert alert-${message.type === 'success' ? 'success' : message.type === 'warning' ? 'warning' : 'danger'}`}
+        >
           {message.text}
         </div>
       )}
@@ -155,8 +188,11 @@ export default function AdminTimeSlotsPage() {
         <div className="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center">
           <span>Danh sách khung giờ ({items.length})</span>
           <div className="d-flex flex-wrap gap-2 align-items-center">
-            <label className="small text-muted mb-0">Loại sân:</label>
+            <label className="small text-muted mb-0" htmlFor="slot-filter-type">
+              Loại sân:
+            </label>
             <select
+              id="slot-filter-type"
               className="form-select form-select-sm"
               style={{ width: '12rem' }}
               value={filterTypeId}
@@ -169,7 +205,12 @@ export default function AdminTimeSlotsPage() {
                 </option>
               ))}
             </select>
-            <button type="button" className="btn btn-primary btn-sm" onClick={startCreate} disabled={fieldTypes.length === 0}>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={startCreate}
+              disabled={fieldTypes.length === 0}
+            >
               <i className="fa-solid fa-plus me-1" /> Thêm
             </button>
           </div>
@@ -199,11 +240,11 @@ export default function AdminTimeSlotsPage() {
               </thead>
               <tbody>
                 {items.map((slot) => (
-                  <tr key={slot.id}>
+                  <tr key={slot.id} className={editingId === slot.id ? 'table-active' : undefined}>
                     <td>{slot.id}</td>
                     <td>{slot.fieldTypeName}</td>
-                    <td>{slot.startTime}</td>
-                    <td>{slot.endTime}</td>
+                    <td>{toTimeInputValue(slot.startTime)}</td>
+                    <td>{toTimeInputValue(slot.endTime)}</td>
                     <td>{slot.isActive ? 'Đang dùng' : 'Ngừng'}</td>
                     <td className="text-end text-nowrap">
                       <div className="btn-action-group d-inline-flex gap-2">
@@ -215,7 +256,7 @@ export default function AdminTimeSlotsPage() {
                           className="btn btn-outline-danger btn-sm"
                           disabled={deleteMutation.isPending}
                           onClick={() => {
-                            if (window.confirm(`Xóa khung ${slot.startTime}–${slot.endTime}?`)) {
+                            if (window.confirm(`Xóa khung ${toTimeInputValue(slot.startTime)}–${toTimeInputValue(slot.endTime)}?`)) {
                               deleteMutation.mutate(slot.id);
                             }
                           }}
@@ -234,7 +275,7 @@ export default function AdminTimeSlotsPage() {
 
       {fieldTypes.length > 0 && (
         <div className="card mt-3">
-          <div className="card-header">{editingId ? `Sửa khung giờ #${editingId}` : 'Thêm khung giờ'}</div>
+          <div className="card-header">{formTitle}</div>
           <div className="card-body">
             <form className="row g-3" onSubmit={handleSubmit}>
               <div className="col-md-2">
@@ -323,10 +364,8 @@ export default function AdminTimeSlotsPage() {
                   <button
                     type="button"
                     className="btn btn-outline-secondary btn-sm ms-2"
-                    onClick={() => {
-                      setEditingId(null);
-                      setForm(emptyForm);
-                    }}
+                    onClick={cancelEdit}
+                    disabled={saveMutation.isPending}
                   >
                     Hủy
                   </button>

@@ -18,3 +18,9 @@ export function formatTimeRange(startTime, endTime) {
   if (!startTime || !endTime) return '';
   return `${startTime.slice(0, 5)} - ${endTime.slice(0, 5)}`;
 }
+
+/** Chuẩn hóa giờ từ API (HH:mm:ss) cho input type="time". */
+export function toTimeInputValue(value) {
+  if (!value) return '';
+  return String(value).slice(0, 5);
+}

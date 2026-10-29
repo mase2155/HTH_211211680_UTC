@@ -30,7 +30,7 @@ async function list({ page, limit, fieldTypeId, isActive }, tx) {
     FROM dbo.TimeSlots ts
     JOIN dbo.FieldTypes ft ON ft.FieldTypeId = ts.FieldTypeId
     ${where}
-    ORDER BY ts.StartTime
+    ORDER BY ts.FieldTypeId, ts.StartTime, ts.TimeSlotId
     OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
   `);
   const total = result.recordset[0]?.totalCount ?? 0;
