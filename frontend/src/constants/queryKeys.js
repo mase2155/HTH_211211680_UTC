@@ -10,6 +10,7 @@ export const queryKeys = {
   bookingDetail: (id) => ['bookings', id],
   adminBookings: (filters) => ['admin', 'bookings', filters],
   adminFields: (filters) => ['admin', 'fields', filters],
+  adminFieldTypes: ['admin', 'fieldTypes'],
   adminStatsOverview: ['admin', 'stats', 'overview'],
   newsPosts: (filters) => ['newsPosts', filters],
   partnerItems: (filters) => ['partnerItems', filters],

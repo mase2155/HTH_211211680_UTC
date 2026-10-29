@@ -24,6 +24,7 @@ const AdminPartnersPage = lazy(() => import('../pages/admin/AdminPartnersPage'))
 const AdminBookingsPage = lazy(() => import('../pages/admin/AdminBookingsPage'));
 const AdminFieldsPage = lazy(() => import('../pages/admin/AdminFieldsPage'));
 const AdminOrderStatusPage = lazy(() => import('../pages/admin/AdminOrderStatusPage'));
+const AdminFieldTypesPage = lazy(() => import('../pages/admin/AdminFieldTypesPage'));
 
 function PageLoader() {
   return (
@@ -75,6 +76,7 @@ export const router = createBrowserRouter([
           { path: 'content/news', element: suspense(<AdminNewsPage />) },
           { path: 'content/partners', element: suspense(<AdminPartnersPage />) },
           { path: 'operations/bookings', element: suspense(<AdminBookingsPage />) },
+          { path: 'catalog/field-types', element: suspense(<AdminFieldTypesPage />) },
           { path: 'operations/fields', element: suspense(<AdminFieldsPage />) },
           { path: 'operations/order-status', element: suspense(<AdminOrderStatusPage />) },
         ],

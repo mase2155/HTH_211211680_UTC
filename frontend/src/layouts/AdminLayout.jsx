@@ -13,6 +13,10 @@ const contentNav = [
   { to: `${adminBase}/content/partners`, label: 'Đối tác', icon: 'fa-handshake' },
 ];
 
+const catalogNav = [
+  { to: `${adminBase}/catalog/field-types`, label: 'Loại sân', icon: 'fa-layer-group' },
+];
+
 const operationsNav = [
   { to: `${adminBase}/operations/bookings`, label: 'Đơn đặt lịch', icon: 'fa-calendar-check' },
   { to: `${adminBase}/operations/fields`, label: 'Quản lý sân', icon: 'fa-futbol' },
@@ -60,6 +64,11 @@ export default function AdminLayout() {
             </ul>
             <ul className="nav-sidebar">
               {contentNav.map((item) => (
+                <SidebarLink key={item.to} {...item} />
+              ))}
+            </ul>
+            <ul className="nav-sidebar">
+              {catalogNav.map((item) => (
                 <SidebarLink key={item.to} {...item} />
               ))}
             </ul>

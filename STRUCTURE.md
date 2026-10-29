@@ -174,9 +174,10 @@ HTH_211211680_UTC/
 │   │   │   │   ├── AdminNewsPage.jsx      # CRUD tin tức
 │   │   │   │   ├── AdminPartnersPage.jsx  # CRUD đối tác
 │   │   │   │   ├── AdminBookingsPage.jsx  # Lọc, duyệt, hủy, hoàn thành đơn
-│   │   │   │   ├── AdminFieldsPage.jsx    # Cập nhật trạng thái sân
+│   │   │   │   ├── AdminFieldTypesPage.jsx  # CRUD loại sân
+│   │   │   │   ├── AdminFieldsPage.jsx    # CRUD sân, giá, trạng thái
 │   │   │   │   └── AdminOrderStatusPage.jsx # Workflow chuyển trạng thái
-│   │   │   │   (mở rộng sau: UsersPage, FieldTypesPage, TimeSlotsPage, PricesPage, biểu đồ doanh thu)
+│   │   │   │   (mở rộng sau: AdminTimeSlotsPage, AdminUsersPage, biểu đồ doanh thu)
 │   │   │   └── NotFoundPage.jsx
 │   │   ├── constants/                 # routes.js, queryKeys.js, bookingLabels.js
 │   │   ├── utils/                     # format.js, errors.js, date.js
