@@ -15,6 +15,7 @@ const contentNav = [
 
 const catalogNav = [
   { to: `${adminBase}/catalog/field-types`, label: 'Loại sân', icon: 'fa-layer-group' },
+  { to: `${adminBase}/catalog/time-slots`, label: 'Khung giờ', icon: 'fa-clock' },
 ];
 
 const operationsNav = [
