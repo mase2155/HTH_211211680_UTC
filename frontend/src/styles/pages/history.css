@@ -1,26 +1,42 @@
-/* Trang lịch sử đặt sân — scope .history-page (khách hàng) */
+/*
+ * Trang lịch sử đặt sân (Khách hàng)
+ * — Header site: components/layout/Header.jsx + layout.css (không style ở đây)
+ * — Chỉ style nội dung trong <main> / .history-page
+ */
 
-.history-page .main_content {
-    background: linear-gradient(180deg, #f1f5f9 0%, #f8f9fa 40%, #f8f9fa 100%);
+.history-page__main {
+    background: linear-gradient(180deg, #f1f5f9 0%, #f8f9fa 45%, #f8f9fa 100%);
+    padding-top: var(--client-header-clearance, 10rem);
+    padding-bottom: 3rem;
+    min-height: calc(100vh - 8rem);
 }
 
-.history-page .content-form {
-    padding-top: 9rem;
-    padding-bottom: 1rem;
-}
-
-.history-page .booking-form-card {
+.history-page__container {
     max-width: 72rem;
-    border-top: 0.25rem solid #bd945f;
 }
 
-.history-page .form-section-title {
+.history-panel {
+    background-color: #ffffff;
+    border: 0.0625rem solid #e2e8f0;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.05);
+    border-top: 0.25rem solid #bd945f;
+    padding: 1.75rem 1.5rem;
+}
+
+.history-page-intro {
+    margin-bottom: 0.25rem;
+}
+
+.history-page-title {
     color: #2c2e53;
     font-size: clamp(1.35rem, 4vw, 2rem);
     letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
 }
 
-.history-page .form-section-title .fa-clock-rotate-left {
+.history-page-title .fa-clock-rotate-left {
     color: #bd945f;
 }
 
@@ -29,6 +45,22 @@
     color: #64748b;
     max-width: 40rem;
     line-height: 1.55;
+}
+
+.history-btn-primary {
+    background-color: #bd945f;
+    border: none;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-weight: 700;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
+}
+
+.history-btn-primary:hover {
+    background-color: #2c2e53;
+    color: #fff;
+    transform: translateY(-0.125rem);
 }
 
 /* Thanh lọc */
@@ -58,7 +90,9 @@
 .history-page .history-filters .history-filter-select,
 .history-page .history-filters .history-filter-date {
     min-height: 2.5rem;
-    border-color: #cbd5e1;
+    padding: 0.5rem 0.85rem;
+    border: 0.0625rem solid #cbd5e1;
+    border-radius: 0.5rem;
     font-size: 0.875rem;
     font-weight: 600;
     color: #334155;
@@ -86,18 +120,18 @@
     color: #2c2e53;
 }
 
-.history-page .history-filters .btn-submit-booking {
-    font-weight: 700;
+.history-page .history-filters .history-btn-primary {
     font-size: 0.875rem;
     white-space: nowrap;
     min-height: 2.5rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    padding: 0.5rem 1rem;
 }
 
 /* Tóm tắt số đơn */
-.history-summary {
+.history-page .history-summary {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -111,7 +145,7 @@
     color: #78350f;
 }
 
-.history-summary strong {
+.history-page .history-summary strong {
     color: #92400e;
 }
 
@@ -166,13 +200,13 @@
     color: #64748b;
 }
 
-.history-code-link {
+.history-page .history-code-link {
     color: #2c2e53;
     font-weight: 700;
     transition: color 0.15s ease;
 }
 
-.history-code-link:hover {
+.history-page .history-code-link:hover {
     color: #bd945f;
 }
 
@@ -252,14 +286,14 @@
 }
 
 /* Thẻ mobile */
-.history-card-list {
+.history-page .history-card-list {
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
     margin-top: 0.5rem;
 }
 
-.history-booking-card {
+.history-page .history-booking-card {
     background: #fff;
     border: 1px solid #e2e8f0;
     border-radius: 0.75rem;
@@ -268,7 +302,7 @@
     border-left: 0.25rem solid #bd945f;
 }
 
-.history-booking-card__head {
+.history-page .history-booking-card__head {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -276,20 +310,20 @@
     margin-bottom: 0.65rem;
 }
 
-.history-booking-card__field {
+.history-page .history-booking-card__field {
     font-weight: 700;
     color: #2c2e53;
     font-size: 1rem;
     line-height: 1.3;
 }
 
-.history-booking-card__meta {
+.history-page .history-booking-card__meta {
     font-size: 0.875rem;
     color: #64748b;
     margin-bottom: 0.5rem;
 }
 
-.history-booking-card__row {
+.history-page .history-booking-card__row {
     display: flex;
     justify-content: space-between;
     gap: 0.5rem;
@@ -297,16 +331,16 @@
     margin-bottom: 0.35rem;
 }
 
-.history-booking-card__row span:first-child {
+.history-page .history-booking-card__row span:first-child {
     color: #64748b;
 }
 
-.history-booking-card__amount {
+.history-page .history-booking-card__amount {
     font-weight: 700;
     color: #2c2e53;
 }
 
-.history-booking-card__actions {
+.history-page .history-booking-card__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
@@ -363,7 +397,7 @@
     color: #64748b;
 }
 
-/* Modal chi tiết */
+/* Modal chi tiết (tiêu đề modal — không phải header site) */
 .history-page .history-detail-modal {
     z-index: 1050;
     background: rgba(44, 46, 83, 0.55);
@@ -376,7 +410,7 @@
     box-shadow: 0 1rem 2.5rem rgba(44, 46, 83, 0.2);
 }
 
-.history-page .history-detail-modal .modal-header {
+.history-page .history-detail-modal .history-detail-modal__head {
     background: #2c2e53;
     color: #fff;
     border-bottom: 0.2rem solid #bd945f;
@@ -432,12 +466,8 @@
 }
 
 @media (max-width: 768px) {
-    .history-page .content-form {
-        padding-top: 6.5rem;
-    }
-
-    .history-page .booking-form-card {
-        padding: 1.25rem !important;
+    .history-panel {
+        padding: 1.25rem;
         border-radius: 0.75rem;
     }
 
@@ -454,17 +484,17 @@
     .history-page .history-filters .history-filter-select,
     .history-page .history-filters .history-filter-date,
     .history-page .history-filters .history-btn-clear,
-    .history-page .history-filters .btn-submit-booking {
+    .history-page .history-filters .history-btn-primary {
         width: 100%;
     }
 }
 
 @media (max-width: 360px) {
-    .history-booking-card {
+    .history-page .history-booking-card {
         padding: 0.85rem;
     }
 
-    .history-page .form-section-title {
+    .history-page-title {
         font-size: 1.25rem;
     }
 }

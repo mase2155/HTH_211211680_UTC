@@ -39,7 +39,7 @@ export default function BookingDetailModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-content">
-          <div className="modal-header">
+          <div className="modal-header history-detail-modal__head">
             <h5 className="modal-title" id="bookingDetailTitle">
               Chi tiết đơn đặt sân
             </h5>

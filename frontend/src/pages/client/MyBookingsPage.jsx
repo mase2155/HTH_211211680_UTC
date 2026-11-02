@@ -15,7 +15,6 @@ import { formatCurrency, formatDate } from '../../utils/format';
 import { formatTimeRange } from '../../utils/date';
 import { isCustomerCancellable } from '../../utils/bookingDatetime';
 import { getErrorMessage } from '../../utils/errors';
-import '../../styles/pages/booking.css';
 import '../../styles/pages/history.css';
 
 const PAGE_SIZE = 10;
@@ -253,14 +252,14 @@ export default function MyBookingsPage() {
 
   return (
     <div className="history-page">
-      <div className="main_content">
-        <div className="content-form">
-          <div className="booking-form-card container p-4 p-md-5 mb-5">
-            <header className="history-header">
-              <h3 className="form-section-title mb-1">
+      <div className="history-page__main">
+        <div className="container history-page__container">
+          <div className="history-panel mb-5">
+            <header className="history-page-intro">
+              <h1 className="history-page-title">
                 <i className="fa-solid fa-clock-rotate-left me-2" aria-hidden />
                 Lịch sử đặt sân
-              </h3>
+              </h1>
               <p className="history-page-subtitle mb-0">
                 Xem đơn đã đặt, thanh toán trực tuyến hoặc hủy trước giờ sử dụng ít nhất{' '}
                 {BOOKING_CANCEL_BEFORE_MINUTES} phút.
@@ -302,7 +301,7 @@ export default function MyBookingsPage() {
                     Xóa lọc
                   </button>
                 )}
-                <Link to={ROUTES.booking} className="btn-submit-booking px-3 py-2 text-decoration-none">
+                <Link to={ROUTES.booking} className="history-btn-primary px-3 py-2">
                   Đặt sân mới
                 </Link>
               </div>
@@ -336,7 +335,7 @@ export default function MyBookingsPage() {
                     ? 'Không có đơn nào khớp bộ lọc.'
                     : 'Bạn chưa có đơn đặt sân nào.'}
                 </p>
-                <Link to={ROUTES.booking} className="btn-submit-booking px-4 py-2 text-decoration-none">
+                <Link to={ROUTES.booking} className="history-btn-primary px-4 py-2">
                   Đặt sân ngay
                 </Link>
               </div>
