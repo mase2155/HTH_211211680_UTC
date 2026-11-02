@@ -47,6 +47,11 @@
     line-height: 1.55;
 }
 
+.history-page-note-label {
+    font-weight: 700;
+    color: #92400e;
+}
+
 .history-btn-primary {
     background-color: #bd945f;
     border: none;

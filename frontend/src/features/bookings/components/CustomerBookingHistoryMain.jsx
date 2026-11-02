@@ -214,8 +214,8 @@ export default function CustomerBookingHistoryMain({
             Lịch sử đặt sân
           </h1>
           <p className="history-page-subtitle mb-0">
-            Xem đơn đã đặt, thanh toán trực tuyến hoặc hủy trước giờ sử dụng ít nhất{' '}
-            {BOOKING_CANCEL_BEFORE_MINUTES} phút.
+            <span className="history-page-note-label">* Lưu ý:</span> Chỉ có thể hủy đơn trước giờ sử dụng
+            ít nhất {BOOKING_CANCEL_BEFORE_MINUTES} phút
           </p>
         </div>
 
