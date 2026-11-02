@@ -6,7 +6,7 @@ export default function ClientLayout() {
   return (
     <div className="client-layout">
       <Header />
-      <main>
+      <main className="client-main">
         <Outlet />
       </main>
       <Footer />

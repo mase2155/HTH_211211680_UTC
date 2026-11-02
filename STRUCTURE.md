@@ -147,7 +147,7 @@ HTH_211211680_UTC/
 │   │   │   ├── prices/                # API + hooks bảng giá
 │   │   │   ├── fieldClosures/         # fieldClosures.api.js (ngày nghỉ sân)
 │   │   │   ├── schedule/              # ScheduleBoard (bảng trạng thái), SlotPicker
-│   │   │   ├── bookings/              # API + hooks đơn, BookingStatusBadge, BookingForm
+│   │   │   ├── bookings/              # API + hooks đơn, BookingStatusBadge, CustomerBookingHistoryMain, BookingForm
 │   │   │   ├── users/                 # API + hooks người dùng / hồ sơ
 │   │   │   ├── stats/                 # stats.api.js, components/RevenueChart.jsx
 │   │   │   ├── newsPosts/             # newsPosts.api.js

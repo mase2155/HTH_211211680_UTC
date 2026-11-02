@@ -1,10 +1,10 @@
 /*
  * Trang lịch sử đặt sân (Khách hàng)
- * — Header site: components/layout/Header.jsx + layout.css (không style ở đây)
- * — Chỉ style nội dung trong <main> / .history-page
+ * — Header/Footer: ClientLayout + Header.jsx / Footer.jsx
+ * — Nội dung: .history-page nằm trong ClientLayout > main.client-main
  */
 
-.history-page__main {
+.client-layout .client-main .history-page {
     background: linear-gradient(180deg, #f1f5f9 0%, #f8f9fa 45%, #f8f9fa 100%);
     padding-top: var(--client-header-clearance, 10rem);
     padding-bottom: 3rem;
