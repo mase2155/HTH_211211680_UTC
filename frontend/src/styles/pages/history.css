@@ -1,0 +1,470 @@
+/* Trang lịch sử đặt sân — scope .history-page (khách hàng) */
+
+.history-page .main_content {
+    background: linear-gradient(180deg, #f1f5f9 0%, #f8f9fa 40%, #f8f9fa 100%);
+}
+
+.history-page .content-form {
+    padding-top: 9rem;
+    padding-bottom: 1rem;
+}
+
+.history-page .booking-form-card {
+    max-width: 72rem;
+    border-top: 0.25rem solid #bd945f;
+}
+
+.history-page .form-section-title {
+    color: #2c2e53;
+    font-size: clamp(1.35rem, 4vw, 2rem);
+    letter-spacing: 0.02em;
+}
+
+.history-page .form-section-title .fa-clock-rotate-left {
+    color: #bd945f;
+}
+
+.history-page-subtitle {
+    font-size: 0.9375rem;
+    color: #64748b;
+    max-width: 40rem;
+    line-height: 1.55;
+}
+
+/* Thanh lọc */
+.history-page .history-toolbar {
+    margin-top: 1.25rem;
+    padding: 1rem 1.15rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    gap: 0.75rem;
+}
+
+.history-page .history-toolbar-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+}
+
+.history-page .history-filters {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+}
+
+.history-page .history-filters .history-filter-select,
+.history-page .history-filters .history-filter-date {
+    min-height: 2.5rem;
+    border-color: #cbd5e1;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+    background-color: #fff;
+}
+
+.history-page .history-filters .history-filter-select {
+    min-width: 11rem;
+}
+
+.history-page .history-filters .history-filter-date {
+    min-width: 10rem;
+}
+
+.history-page .history-filters .history-btn-clear {
+    border-color: #cbd5e1;
+    color: #475569;
+    font-weight: 600;
+    min-height: 2.5rem;
+}
+
+.history-page .history-filters .history-btn-clear:hover {
+    background: #fff;
+    border-color: #94a3b8;
+    color: #2c2e53;
+}
+
+.history-page .history-filters .btn-submit-booking {
+    font-weight: 700;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    min-height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tóm tắt số đơn */
+.history-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin: 1.25rem 0 0.75rem;
+    padding: 0.65rem 1rem;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: #78350f;
+}
+
+.history-summary strong {
+    color: #92400e;
+}
+
+/* Bảng desktop */
+.history-page .history-table-wrap {
+    margin-top: 0.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(44, 46, 83, 0.06);
+}
+
+.history-page .history-table {
+    margin-bottom: 0;
+    font-size: 0.9375rem;
+}
+
+.history-page .history-table thead th {
+    background: #2c2e53;
+    color: #f8fafc;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.9rem 1rem;
+    border: none;
+    white-space: nowrap;
+}
+
+.history-page .history-table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: #eef2f6;
+    color: #334155;
+}
+
+.history-page .history-table tbody tr:nth-child(even) {
+    background-color: #fafbfc;
+}
+
+.history-page .history-table tbody tr:hover {
+    background-color: #fff8eb;
+}
+
+.history-page .history-table .history-col-amount {
+    font-weight: 700;
+    color: #2c2e53;
+    white-space: nowrap;
+}
+
+.history-page .history-table .history-col-payment small {
+    color: #64748b;
+}
+
+.history-code-link {
+    color: #2c2e53;
+    font-weight: 700;
+    transition: color 0.15s ease;
+}
+
+.history-code-link:hover {
+    color: #bd945f;
+}
+
+/* Nút thao tác */
+.history-page .history-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    justify-content: flex-end;
+}
+
+.history-page .history-btn-detail {
+    border-color: #cbd5e1;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.8125rem;
+}
+
+.history-page .history-btn-detail:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #2c2e53;
+}
+
+.history-page .history-btn-pay {
+    background-color: #bd945f;
+    border-color: #bd945f;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.8125rem;
+}
+
+.history-page .history-btn-pay:hover {
+    background-color: #a67d4d;
+    border-color: #a67d4d;
+    color: #fff;
+}
+
+.history-page .history-btn-cancel {
+    font-weight: 600;
+    font-size: 0.8125rem;
+}
+
+/* Badge trạng thái */
+.history-page .history-badge {
+    display: inline-block;
+    padding: 0.35em 0.75em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 999px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+
+.history-page .history-badge--pending {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #fde68a;
+}
+
+.history-page .history-badge--confirmed {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #93c5fd;
+}
+
+.history-page .history-badge--completed {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #6ee7b7;
+}
+
+.history-page .history-badge--cancelled {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #cbd5e1;
+}
+
+/* Thẻ mobile */
+.history-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.history-booking-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1rem 1.1rem;
+    box-shadow: 0 2px 8px rgba(44, 46, 83, 0.06);
+    border-left: 0.25rem solid #bd945f;
+}
+
+.history-booking-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.65rem;
+}
+
+.history-booking-card__field {
+    font-weight: 700;
+    color: #2c2e53;
+    font-size: 1rem;
+    line-height: 1.3;
+}
+
+.history-booking-card__meta {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+.history-booking-card__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 0.35rem;
+}
+
+.history-booking-card__row span:first-child {
+    color: #64748b;
+}
+
+.history-booking-card__amount {
+    font-weight: 700;
+    color: #2c2e53;
+}
+
+.history-booking-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.85rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed #e2e8f0;
+}
+
+/* Trạng thái rỗng / tải */
+.history-page .history-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+}
+
+.history-page .history-state-icon {
+    font-size: 2.5rem;
+    color: #cbd5e1;
+    margin-bottom: 0.75rem;
+}
+
+.history-page .history-state--loading .spinner-border {
+    width: 2.75rem;
+    height: 2.75rem;
+    color: #bd945f !important;
+}
+
+.history-page .history-alert {
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    margin-top: 1rem;
+}
+
+/* Phân trang */
+.history-page .history-pagination .page-link {
+    color: #2c2e53;
+    font-weight: 600;
+    border-color: #e2e8f0;
+    min-width: 2.25rem;
+    text-align: center;
+}
+
+.history-page .history-pagination .page-item.active .page-link {
+    background-color: #bd945f;
+    border-color: #bd945f;
+    color: #fff;
+}
+
+.history-page .history-pagination .page-item.disabled .page-link {
+    color: #94a3b8;
+}
+
+.history-page .history-pagination-meta {
+    font-size: 0.8125rem;
+    color: #64748b;
+}
+
+/* Modal chi tiết */
+.history-page .history-detail-modal {
+    z-index: 1050;
+    background: rgba(44, 46, 83, 0.55);
+}
+
+.history-page .history-detail-modal .modal-content {
+    border: none;
+    border-radius: 0.85rem;
+    overflow: hidden;
+    box-shadow: 0 1rem 2.5rem rgba(44, 46, 83, 0.2);
+}
+
+.history-page .history-detail-modal .modal-header {
+    background: #2c2e53;
+    color: #fff;
+    border-bottom: 0.2rem solid #bd945f;
+    padding: 1rem 1.25rem;
+}
+
+.history-page .history-detail-modal .modal-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.history-page .history-detail-modal .btn-close {
+    filter: invert(1);
+    opacity: 0.85;
+}
+
+.history-page .history-detail-modal .modal-body {
+    padding: 1.25rem 1.35rem;
+    max-height: min(70vh, 32rem);
+}
+
+.history-page .history-detail-dl dt {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.history-page .history-detail-dl dd {
+    margin-bottom: 0.85rem;
+    color: #1e293b;
+    font-size: 0.9375rem;
+}
+
+.history-page .history-detail-modal .modal-footer {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    padding: 0.85rem 1.25rem;
+}
+
+.history-page .history-detail-modal .modal-footer .btn-warning {
+    background-color: #bd945f;
+    border-color: #bd945f;
+    color: #fff;
+    font-weight: 700;
+}
+
+.history-page .history-detail-modal .modal-footer .btn-warning:hover {
+    background-color: #a67d4d;
+    border-color: #a67d4d;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .history-page .content-form {
+        padding-top: 6.5rem;
+    }
+
+    .history-page .booking-form-card {
+        padding: 1.25rem !important;
+        border-radius: 0.75rem;
+    }
+
+    .history-page .history-toolbar {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .history-page .history-filters {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .history-page .history-filters .history-filter-select,
+    .history-page .history-filters .history-filter-date,
+    .history-page .history-filters .history-btn-clear,
+    .history-page .history-filters .btn-submit-booking {
+        width: 100%;
+    }
+}
+
+@media (max-width: 360px) {
+    .history-booking-card {
+        padding: 0.85rem;
+    }
+
+    .history-page .form-section-title {
+        font-size: 1.25rem;
+    }
+}

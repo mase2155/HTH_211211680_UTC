@@ -1,3 +1,6 @@
+/** Khớp mặc định `BOOKING_CANCEL_BEFORE_MINUTES` trên backend (có thể ghi đè bằng VITE). */
+export const BOOKING_CANCEL_BEFORE_MINUTES = Number(import.meta.env.VITE_BOOKING_CANCEL_BEFORE_MINUTES) || 60;
+
 export const BOOKING_STATUS = Object.freeze({
   PENDING: 'Pending',
   CONFIRMED: 'Confirmed',

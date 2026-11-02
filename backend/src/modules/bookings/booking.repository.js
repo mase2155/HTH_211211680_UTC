@@ -90,7 +90,7 @@ async function insert(data, tx) {
   return findById(result.recordset[0].id, tx);
 }
 
-async function listByUser({ userId, page, limit, status }, tx) {
+async function listByUser({ userId, page, limit, status, bookingDate }, tx) {
   const request = await createRequest(tx);
   request.input('userId', sql.Int, userId);
   request.input('offset', sql.Int, toOffset({ page, limit }));
@@ -99,6 +99,10 @@ async function listByUser({ userId, page, limit, status }, tx) {
   if (status) {
     request.input('status', sql.NVarChar(20), status);
     where += ' AND b.Status = @status';
+  }
+  if (bookingDate) {
+    request.input('bookingDate', sql.Date, bookingDate);
+    where += ' AND b.BookingDate = @bookingDate';
   }
   const result = await request.query(`
     SELECT ${BOOKING_COLUMNS}, COUNT(*) OVER() AS totalCount

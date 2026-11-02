@@ -24,6 +24,7 @@ const createBody = z.object({
 
 const listMineQuery = paginationQuery.extend({
   status: z.enum(BOOKING_STATUS_VALUES).optional(),
+  bookingDate: dateSchema.optional(),
 });
 
 const listAllQuery = paginationQuery.extend({
