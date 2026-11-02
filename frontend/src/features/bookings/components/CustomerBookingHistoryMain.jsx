@@ -219,12 +219,14 @@ export default function CustomerBookingHistoryMain({
           </p>
         </div>
 
-        <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end history-toolbar">
-          <div className="history-toolbar-hint">
-            <p className="history-toolbar-label mb-0">Bộ lọc</p>
-            <span className="small text-muted">Lọc theo trạng thái hoặc ngày chơi trên sân</span>
+        <div className="history-toolbar">
+          <div className="history-toolbar__header">
+            <h2 className="history-toolbar-title">Bộ lọc</h2>
+            <p className="history-toolbar-subtitle mb-0">
+              Lọc theo trạng thái hoặc ngày chơi trên sân
+            </p>
           </div>
-          <div className="d-flex flex-wrap gap-2 align-items-center history-filters">
+          <div className="history-toolbar__controls d-flex flex-wrap gap-2 align-items-center history-filters">
             <select
               className="form-select form-select-sm history-filter-select"
               value={statusFilter}
@@ -288,13 +290,6 @@ export default function CustomerBookingHistoryMain({
           </div>
         ) : (
           <>
-            {meta && (
-              <p className="history-summary mb-0" role="status">
-                Hiển thị <strong>{items.length}</strong> đơn trên trang này · tổng{' '}
-                <strong>{meta.total}</strong> đơn
-                {hasActiveFilters ? ' (đã lọc)' : ''}
-              </p>
-            )}
             <CustomerBookingsTable
               items={items}
               onViewDetail={onViewDetail}
