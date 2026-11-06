@@ -47,13 +47,18 @@ HTH_211211680_UTC/
 ├── .gitignore
 │
 ├── database/                          # CSDL SQL Server
+│   ├── SQL_FULL.sql                   # Gộp migration + seed + ghi chú cú pháp (nộp Git/báo cáo)
 │   ├── migrations/
 │   │   ├── 001_init_schema.sql        # Tạo 8 bảng, ràng buộc, index chống đặt trùng
-│   │   └── 002_site_content.sql       # NewsPosts, PartnerItems (tin tức & đối tác)
+│   │   ├── 002_site_content.sql       # NewsPosts, PartnerItems (tin tức & đối tác)
+│   │   └── 007_renumber_field_ids.sql # Reseed FieldId 1..N khi có lỗ hổng ID
 │   └── seeds/
 │       ├── 001_master_data.sql        # Loại sân, khung giờ, sân, bảng giá mẫu (idempotent)
 │       ├── 002_site_content.sql       # Bài tin & thẻ đối tác mẫu (idempotent)
-│       └── 003_admin_profile.sql      # Đồng bộ hồ sơ Admin đồ án (idempotent)
+│       ├── 003_admin_profile.sql      # Đồng bộ hồ sơ Admin đồ án (idempotent)
+│       ├── 004_fields_three_per_type.sql
+│       ├── 005_remove_legacy_field_names.sql
+│       └── 006_remove_demo_prefix_content.sql
 │
 ├── backend/
 │   ├── scripts/
